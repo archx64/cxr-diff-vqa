@@ -1,0 +1,25 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9">
+  <diagram name="Page-1" id="cONnMUoMEMXQmoelUA4E">
+    <mxGraphModel dx="1426" dy="859" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2dfMAaeUPd3iET-78nuh-1" value="&lt;br&gt;&lt;div&gt;There are no significant change&lt;br&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="200" y="320" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="2dfMAaeUPd3iET-78nuh-2" value="What has changed in the left lung?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#7ea6e0;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="440" y="250" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2dfMAaeUPd3iET-78nuh-3" value="A small, new opacity is noted in the left lower lobe, suspicious for early pneumonia" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;gradientColor=#ea6b66;strokeColor=#b85450;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="200" y="440" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="2dfMAaeUPd3iET-78nuh-5" value="Proposed" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="465" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2dfMAaeUPd3iET-78nuh-6" value="Baseline" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="345" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

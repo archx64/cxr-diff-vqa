@@ -3,6 +3,21 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Datasets
+data/
+dataset/
+archive/
+
+*.zip
+*.gz
+
+# Virtual Environments
+*-env/
+
+# Document files
+*.pdf
+
+
 # C extensions
 *.so
 

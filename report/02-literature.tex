@@ -1,0 +1,60 @@
+\setlength{\footskip}{8mm}
+
+\chapter{RELATED WORK}
+
+The primary function of this section is 1) to reveal the gap of past work, 2) identify potential hypotheses, 3) identify potential experimental design.  All of these is to position your work to the current research.  \textbf{Do not write descriptively or give lectures.   Write with the mind to position your work.}
+
+One more guidance:  Look at your research questions.   Anything related to your research questions should be here.   Anything NOT related should be omitted.
+
+\textbf{Be very careful what to include and not to include.  You do not want your readers to be confused what you plan to do by including some work but you did not include it in the methodology!!
+}
+
+\textbf{Sectionize your related work nicely.  Don't write everything in one sphagetti}
+
+\section{Topic 1}
+
+
+\section{Topic 2}
+
+
+\section{Topic 3}
+
+Example Table (see Tables \ref{tab:sourcetasklearningtable} and \ref{tab:targettasklearningtable}).
+
+\begin{table}[hbt!]
+\caption{Summary of source task learning approaches}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccc}
+\hline
+               & \multicolumn{1}{l}{}     & \multicolumn{5}{c}{Source task learning}                                                                                                                                                                                                         \\ \cline{3-7} 
+Paper          & \multicolumn{1}{l}{Year} & Learning setting  & \begin{tabular}[c]{@{}c@{}}Source tasks \\ (datasets)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Shared-task \\ (tokens)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Task-specific \\ (tokens)\end{tabular} & Pretrained model  \\ \hline
+Prefix Merging & 2022                     & Multi-task        & QA, Sum                                                            & 20                                                              & 10                                                                & Frozen            \\
+Unisumm        & 2023                     & Multi-task        & 5                                                                  & 256                                                             & 256                                                               & Unfrozen          \\
+SPoT           & 2022                     & Single-task       & 16                                                                 & -                                                               & 20                                                                & Frozen            \\
+PANDA          & 2022                     & Single-task       & 21                                                                 & -                                                               & 20                                                                & Frozen            \\
+ATTEMPT        & 2022                     & Single-task       & 21                                                                 & -                                                               & 100                                                               & Frozen            \\
+MPT            & 2023                     & Multi-task       & 23                                                                 & 100                                                             & 100                                                               & Frozen            \\ \hline
+\textit{Ours}  & \textit{-}               & \textit{Compared} & \textit{-}                                                         & \textit{Compared}                                               & \textit{-}                                                        & \textit{Compared} \\ \hline
+\end{tabular}%
+}
+\label{tab:sourcetasklearningtable}
+\end{table}
+
+
+\begin{table}[hbt!]
+\caption{Summary of target task learning approaches}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccc}
+\hline
+               & \multicolumn{1}{l}{} & \multicolumn{4}{c}{Target task learning}                                                                                                                                                                                                                                                                                & \multicolumn{1}{l}{}           \\ \cline{3-7} 
+Paper          & Year                 & Method                                                                    & \begin{tabular}[c]{@{}c@{}}Target Prefix \\ Initialization\end{tabular}           & \begin{tabular}[c]{@{}c@{}}Target-task \\ (tokens)\end{tabular} & \multicolumn{1}{l}{\begin{tabular}[c]{@{}l@{}}Target tasks\\ (datasets)\end{tabular}} & \multicolumn{1}{l}{Generation} \\ \hline
+Prefix Merging & 2022                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}          & \begin{tabular}[c]{@{}c@{}}Both task-specific \\ and shared prefixes\end{tabular} & 40                                                              & 3                                                                                     & \ding{51}      \\
+Unisumm        & 2023                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}          & Shared prefix                                                                     & 256                                                             & 2                                                                                     & \ding{51}      \\
+SPoT           & 2022                 & \begin{tabular}[c]{@{}c@{}}Cosine similarity \\ of Embedding\end{tabular} & \begin{tabular}[c]{@{}c@{}}Prefix embedding \\ with highest score\end{tabular}    & 120                                                             & 10                                                                                    & \ding{55}      \\
+PANDA          & 2022                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}         & Random tokens                                                                     & 20                                                              & 9                                                                                     & \ding{55}      \\
+ATTEMPT        & 2022                 & \begin{tabular}[c]{@{}c@{}}Attention based \\ Interpolation\end{tabular}  & Random tokens                                                                     & 100                                                             & 21                                                                                    & \ding{55}      \\
+MPT            & 2023                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}         & Shared prefix                                                                     & 100                                                             & 23                                                                                    & \ding{55}     \\ \hline
+\end{tabular}%
+}
+\label{tab:targettasklearningtable}
+\end{table}
