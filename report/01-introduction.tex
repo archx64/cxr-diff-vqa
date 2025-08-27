@@ -1,50 +1,68 @@
 \chapter{INTRODUCTION} 
 
 \section{Background of the Study}
-In the \textbf{first} part, you should explain the background.   \textbf{Background means many citations} \citep{vaswani2017attention, ho2020denoising}.  If you want to put citation as SUBJECT, do like this:  \cite{vaswani2017attention} found this.   Avoid useless statistics, etc.  Focus on summarizing past work.   Background is like a condensed form of related work.
+
+The automated interpretation of radiological images through Visual Question Answering (VQA) has emerged as a significant subfield, aiming to create systems that can reason over medical imagery to answer complex clinical queries. Unlike general-domain VQA, Medical VQA requires a deep, specialized understanding of subtle pathologies and anatomical context. To address this, the field has seen the development of specialized datasets and models designed to handle the unique challenges of medical imaging.
+
+A critical task within clinical practice is the longitudinal assessment of disease, where radiologists compare serial images of a patient to track progression or treatment response. This has given rise to a specialized task known as Difference VQA (DiffVQA), which focuses on answering questions about the disparities between two images taken at different time points. The introduction of the Medical-Diff-VQA dataset \cite{medical-dff-vqa}. provided the first large-scale benchmark for this task.
+
+Initial approaches to DiffVQA focused on architectural innovations. EKAID \cite{ekaid} proposed a graph-based representation, using anatomical structures as nodes to compute an "image-difference" feature. Concurrently, ReAl \cite{real} introduced a generative model with a dedicated residual encoder designed to process a pixel-subtracted image, forcing the model to focus on difference signals. These methods established a baseline for how to process paired image features. Subsequent work, however, demonstrated that representation learning is paramount.
+
+PLURAL \cite{plural} showed that a vision-language model, pretrained extensively on both natural and longitudinal medical data, could significantly outperform architecturally-focused models, highlighting the importance of a robust feature foundation. Most recently, RegioMix \cite{regiomix} introduced a retrieval-augmented paradigm, which generates context by mixing and matching relevant anatomical regions from a database, achieving a substantial leap in performance. While these methods have progressively advanced the state-of-the-art, they either attempt to overcome geometric variance through feature manipulation and representation learning or sidestep it via retrieval, rather than addressing the root cause directly.
 
 \section{Statement of the Problem}
-In the \textbf{second} part, explain the problem you are interested to solve.  Be specific.  Convince the reader that it's a problem.  The gap of past work must be hinted through the \textit{Background of the Study}. 
+
+The core, unaddressed problem in the current Difference VQA paradigm is the semantic ambiguity of the residual image. All current state-of-the-art models are vulnerable to errors caused by the inherent geometric misalignment between longitudinal chest X-ray pairs. In clinical reality, a patient's orientation, position, and level of inspiration will never be identical between two scans. This creates significant, non-pathological pixel differences that are often more pronounced than the subtle signals of true disease progression.
+
+When a simple pixel-wise subtraction is performed, these geometric artifacts are conflated with genuine clinical findings, creating a noisy and unreliable input signal. This forces the VQA model to attempt the nearly impossible task of disentangling true pathology from registration artifacts. Consequently, current models are prone to misinterpreting these artifacts, leading to a high rate of characteristic errors, and they lack the sensitivity to detect subtle, slow-growing pathologies whose signals are drowned out by the geometric noise.
 
 \section{Research Questions}
-Following the problem, you should list the research questions.
+Following the problem, there are three research questions
 \begin{enumerate}
-    \item A
-    \item B
-    \item C
+    \item What are the characteristics and quantifiable frequencies of diagnostic errors generated within the difference VQA paradigm when models rely on unregistered longitudinal chest x-rays?
+    
+    \item What architectural and algorithmic choices constitute an optimal multi-stage registration pipeline to  minimize non-pathological variance in longitudinal chest x-rays for the difference VQA task?
+    
+    \item What is the performance impact of proposed registration-enhanced Diff VQA model, compared to leading methods like EKAID, PLURAL or ReAI, on established metrics such as BLEU, ROUGE-L, CIDEr, and to what extent does it demonstrate superior clinical impact through enhanced sensitivity to subtle pathological differences?
 \end{enumerate}
 
 \section{Hypotheses (Optional)}
-Following the research questions, you should list the corresponding hypotheses.  It's optional but is recommended.
-\begin{enumerate}
-    \item A
-    \item B
-    \item C
-\end{enumerate}
+Characteristics and diagnostic errors generated within difference VQA models are primarily caused by misinterpretation of geometric artifacts in unregistered images. Thus, implementing an optimal, registration pipeline designed specifically to minimize this non-pathological variance, will result in a VQA model that demonstrates a significant improvement on quantitative evaluation metrics while benchmarked against leading non-registration models such as EKAID, PLURAL and ReAI. 
+
 
 \section{Objectives of the Study}
 
 List the objectives.
 \begin{enumerate}
-    \item A
-    \item B
-    \item C
+    \item To detect and quantify the characteristic errors in baseline DiffVQA models that arise from a lack of image registration
+    \item To design and implement an optimal multi-stage (rigid + deformable) registration pipeline tailored for longitudinal chest X-rays
+    \item To demonstrate the superior performance of a registration-enhanced VQA model against state-of-the-art benchmarks and showcase its enhanced capabilities
 \end{enumerate}
 
 \section{Methodology}
-In the \textbf{third} part, you should explain what you did, explaining the key methodology of your work.   Be high-level here.  Use the right keywords.  Write enough to convince the readers that your methodology is sound.
+The proposed methodology introduces image registration into the standard DiffVQA workflow. The core of this work is a multi-stage registration pipeline that first applies a rigid transformation to correct for global shifts in patient positioning and rotation, followed by a deformable registration algorithm (e.g., B-spline or Demons-based) to account for non-rigid anatomical changes such as differences in inspiration. 
 
-Usually, one paragraph is enough. Do not write more than two paragraphs.
+This pipeline will be used to warp the reference image to match the geometry of the main image. A high-fidelity residual image will then be generated via pixel-wise subtraction. This clean residual, which isolates true pathological change, will be integrated into the ReAl generative VQA backbone to directly evaluate the impact of the registration step in a controlled experimental setup.
 
 \section{Scope}
-Here,  explain what is the scope of your work.  Discuss what you DO NOT plan to do and why.  This is important to manage the expectations of your readers.   Use bullet list.
+In scope:
 \begin{itemize}
-    \item A
-    \item B
+    \item The work will exclusively use the public MIMIC-Diff-VQA dataset for all training, validation, and testing.
+    \item The primary focus will be on the "difference" question category to directly test the hypothesis.
+    \item The methodology involves implementing and integrating established registration algorithms, not inventing new ones.
+    \item Evaluation will be a direct benchmark against the published results of EKAID, PLURAL, and ReAl using standard metrics (BLEU, ROUGE-L, CIDEr).
+\end{itemize}
+
+Out of scope:
+\begin{itemize}
+	\item This thesis will not develop a end-to-end VQA architecture from scratch. The goal is to prove the value of image-registration step.
+	\item This work will not involve the collection of new clinical data or the execution of trials with human radiologists.
+	\item The VQA task will not be expanded beyond the question types and formats established in the MIMIC-Diff-VQA dataset.
 \end{itemize}
 
 \section{Key Findings}
-In the \textbf{fourth} part, explain the key key findings what did you achieve.  Only the main things.   Leave all the details to your RESULT section.   This will help the committee better grasp your work.
+The integration of a deformable registration pipeline is expected to yield a statistically significant improvement in performance across all standard VQA metrics, with the most substantial gains anticipated on the CIDEr metric, which rewards the correct identification of specific clinical terms. The registration-enhanced model is expected to demonstrate qualitatively superior accuracy, correctly identifying subtle pathological changes in curated test cases where non-registration-based models are predicted to fail due to the overwhelming presence of geometric noise.
 
 \section{Contributions}
-The \textbf{last} part, clearly point out 2-3 contributions of this work, why we should care, and why it is important for the research community.  Focus on novelty.
+We propose and validate an optimized registration pipeline as an essential pre-processing module for DiffVQA, fundamentally improving the integrity of the input data and establishing a new best practice for the field. We will establish a new state-of-the-art performance benchmark on the MIMIC-Diff-VQA dataset, demonstrating the critical importance of geometric alignment and paving the way for more robust and clinically reliable models. This work provides the first systematic quantification of registration-induced artifacts as a primary and predictable source of error in the Difference VQA paradigm.
+

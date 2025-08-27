@@ -13,3 +13,67 @@
   pages={6840--6851},
   year={2020}
 }
+
+@misc{medical-dff-vqa,
+	title={Medical-Diff-VQA: A Large-Scale Medical Dataset for Difference Visual Question Answering on Chest X-Ray Images},
+	author    = {Hu, Xinyue and Gu, Lin and An, Qiyuan and Zhang, Mengliang and Liu, Liangchen and Kobayashi, Kazuma and Harada, Tatsuya and Summers, Ronald and Zhu, Yingying},
+	year={2025},
+	publisher={PhysioNet},
+	version={1.0.1},
+	url={https://doi.org/10.13026/e6dd-cn74},
+	doi={10.13026/e6dd-cn74}
+}
+
+@InProceedings{real,
+	author = { Lu, Zilin and Xie, Yutong and Zeng, Qingjie and Lu, Mengkang and Wu, Qi and Xia, Yong},
+	title = {Spot the Difference: Difference Visual Question Answering with Residual Alignment},
+	booktitle = {proceedings of Medical Image Computing and Computer Assisted Intervention -- MICCAI 2024},
+	year = {2024},
+	publisher = {Springer Nature Switzerland},
+	volume = {LNCS 15005},
+	month = {October},
+	page = {649 -- 658}
+}
+
+@inproceedings{ekaid,
+	author = {Hu, Xinyue and Gu, Lin and An, Qiyuan and Zhang, Mengliang and Liu, Liangchen and Kobayashi, Kazuma and Harada, Tatsuya and Summers, Ronald M. and Zhu, Yingying},
+	title = {Expert Knowledge-Aware Image Difference Graph Representation Learning for Difference-Aware Medical Visual Question Answering},
+	year = {2023},
+	isbn = {9798400701030},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	url = {https://doi.org/10.1145/3580305.3599819},
+	doi = {10.1145/3580305.3599819},
+	abstract = {To contribute to automating the medical vision-language model, we propose a novel Chest-Xray Different Visual Question Answering (VQA) task. Given a pair of main and reference images, this task attempts to answer several questions on both diseases and, more importantly, the differences between them. This is consistent with the radiologist's diagnosis practice that compares the current image with the reference before concluding the report. We collect a new dataset, namely MIMIC-Diff-VQA, including 700,703 QA pairs from 164,324 pairs of main and reference images. Compared to existing medical VQA datasets, our questions are tailored to the Assessment-Diagnosis-Intervention-Evaluation treatment procedure used by clinical professionals. Meanwhile, we also propose a novel expert knowledge-aware graph representation learning model to address this task. The proposed baseline model leverages expert knowledge such as anatomical structure prior, semantic, and spatial knowledge to construct a multi-relationship graph, representing the image differences between two images for the image difference VQA task. The dataset and code can be found at https://github.com/Holipori/MIMIC-Diff-VQA. We believe this work would further push forward the medical vision language model.},
+	booktitle = {Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+	pages = {4156–4165},
+	numpages = {10},
+	keywords = {visual question answering, medical imaging, datasets},
+	location = {Long Beach, CA, USA},
+	series = {KDD '23}
+}
+
+@inproceedings{regiomix,
+	author = {Yung, Ka-Wai and Sivaraj, Jayaram and Stoyanov, Danail and Loukogeorgakis, Stavros and Mazomenos, Evangelos B.},
+	title = {Region-Specific Retrieval Augmentation for Longitudinal Visual Question Answering: A Mix-and-Match Paradigm},
+	year = {2024},
+	isbn = {978-3-031-72085-7},
+	publisher = {Springer-Verlag},
+	address = {Berlin, Heidelberg},
+	url = {https://doi.org/10.1007/978-3-031-72086-4_55},
+	doi = {10.1007/978-3-031-72086-4_55},
+	abstract = {Visual Question Answering (VQA) has advanced in recent years, inspiring adaptations to radiology for medical diagnosis. Longitudinal VQA, which requires an understanding of changes in images over time, can further support patient monitoring and treatment decision-making. This work introduces RegioMix, a retrieval augmented paradigm for longitudinal VQA, formulating a novel approach that generates retrieval objects through a mix-and-match technique, utilizing different regions from various retrieved images. Furthermore, this process generates a pseudo-difference description based on the retrieved pair, by leveraging available reports from each retrieved region. To align such statements to both the posed question and input image pair, we introduce a Dual Alignment module. Experiments on the MIMIC-Diff-VQA X-ray dataset demonstrate our method’s superiority, outperforming the state-of-the-art by 77.7 in CIDEr score and 8.3\% in BLEU-4, while relying solely on the training dataset for retrieval, showcasing the effectiveness of our approach. Code is available at .},
+	booktitle = {Medical Image Computing and Computer Assisted Intervention – MICCAI 2024: 27th International Conference, Marrakesh, Morocco, October 6–10, 2024, Proceedings, Part V},
+	pages = {585–594},
+	numpages = {10},
+	keywords = {Visual Question Answering, Retrieval Augmentation, X-ray Imaging},
+	location = {Marrakesh, Morocco}
+}
+
+@inproceedings{plural,
+	title={Pretraining Vision-Language Model for Difference Visual Question Answering in Longitudinal Chest X-rays},
+	author={Yeongjae Cho, Taehee Kim, Heejun Shin and Sungzoon Cho, Dongmyung Shin},
+	booktitle={International Conference on Medical Imaging with Deep Learning (MIDL)},
+	year={2024},
+	url={https://openreview.net/forum?id=QTFVYcV92b}
+}

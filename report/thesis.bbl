@@ -1,0 +1,189 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Hu%
+\ \protect \BOthers {.}}{%
+Hu%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2023}}%
+}]{%
+ekaid}
+\APACinsertmetastar {%
+ekaid}%
+\begin{APACrefauthors}%
+Hu, X.%
+, Gu, L.%
+, An, Q.%
+, Zhang, M.%
+, Liu, L.%
+, Kobayashi, K.%
+\BDBL {}Zhu, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2023}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Expert Knowledge-Aware Image Difference Graph
+  Representation Learning for Difference-Aware Medical Visual Question
+  Answering} {Expert knowledge-aware image difference graph representation
+  learning for difference-aware medical visual question answering}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Proceedings of the 29th ACM SIGKDD Conference on
+  Knowledge Discovery and Data Mining} {Proceedings of the 29th acm sigkdd
+  conference on knowledge discovery and data mining}\ (\BPG~4156–4165).
+\newblock
+\APACaddressPublisher{New York, NY, USA}{Association for Computing Machinery}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.1145/3580305.3599819}
+  \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.1145/3580305.3599819} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Hu%
+\ \protect \BOthers {.}}{%
+Hu%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2025}}%
+}]{%
+medical-dff-vqa}
+\APACinsertmetastar {%
+medical-dff-vqa}%
+\begin{APACrefauthors}%
+Hu, X.%
+, Gu, L.%
+, An, Q.%
+, Zhang, M.%
+, Liu, L.%
+, Kobayashi, K.%
+\BDBL {}Zhu, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2025}{}{}.
+\newblock
+\APACrefbtitle {Medical-Diff-VQA: A Large-Scale Medical Dataset for Difference
+  Visual Question Answering on Chest X-Ray Images.} {Medical-diff-vqa: A
+  large-scale medical dataset for difference visual question answering on chest
+  x-ray images.}
+\newblock
+\APACaddressPublisher{}{PhysioNet}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.13026/e6dd-cn74} \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.13026/e6dd-cn74} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Lu%
+\ \protect \BOthers {.}}{%
+Lu%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2024}}%
+}]{%
+real}
+\APACinsertmetastar {%
+real}%
+\begin{APACrefauthors}%
+Lu, Z.%
+, Xie, Y.%
+, Zeng, Q.%
+, Lu, M.%
+, Wu, Q.%
+\BCBL {}\ \BBA {} Xia, Y.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{October}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Spot the Difference: Difference Visual Question
+  Answering with Residual Alignment} {Spot the difference: Difference visual
+  question answering with residual alignment}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {proceedings of Medical Image Computing and Computer
+  Assisted Intervention -- MICCAI 2024} {proceedings of medical image computing
+  and computer assisted intervention -- miccai 2024}\ (\BVOL\ LNCS 15005).
+\newblock
+\APACaddressPublisher{}{Springer Nature Switzerland}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Yeongjae~Cho%
+\ \BBA {} Sungzoon~Cho%
+}{%
+Yeongjae~Cho%
+\ \BBA {} Sungzoon~Cho%
+}{%
+{\protect \APACyear {2024}}%
+}]{%
+plural}
+\APACinsertmetastar {%
+plural}%
+\begin{APACrefauthors}%
+Yeongjae~Cho, H\BPBI S., Taehee~Kim%
+\BCBT {}\ \BBA {} Sungzoon~Cho, D\BPBI S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Pretraining Vision-Language Model for Difference Visual
+  Question Answering in Longitudinal Chest X-rays} {Pretraining vision-language
+  model for difference visual question answering in longitudinal chest
+  x-rays}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {International Conference on Medical Imaging with Deep
+  Learning (MIDL).} {International conference on medical imaging with deep
+  learning (midl).}
+\newblock
+\begin{APACrefURL} \url{https://openreview.net/forum?id=QTFVYcV92b}
+  \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Yung%
+, Sivaraj%
+, Stoyanov%
+, Loukogeorgakis%
+\BCBL {}\ \BBA {} Mazomenos%
+}{%
+Yung%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2024}}%
+}]{%
+regiomix}
+\APACinsertmetastar {%
+regiomix}%
+\begin{APACrefauthors}%
+Yung, K\BHBI W.%
+, Sivaraj, J.%
+, Stoyanov, D.%
+, Loukogeorgakis, S.%
+\BCBL {}\ \BBA {} Mazomenos, E\BPBI B.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Region-Specific Retrieval Augmentation for Longitudinal
+  Visual Question Answering: A Mix-and-Match Paradigm} {Region-specific
+  retrieval augmentation for longitudinal visual question answering: A
+  mix-and-match paradigm}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Medical Image Computing and Computer Assisted
+  Intervention – MICCAI 2024: 27th International Conference, Marrakesh,
+  Morocco, October 6–10, 2024, Proceedings, Part V} {Medical image computing
+  and computer assisted intervention – miccai 2024: 27th international
+  conference, marrakesh, morocco, october 6–10, 2024, proceedings, part v}\
+  (\BPG~585–594).
+\newblock
+\APACaddressPublisher{Berlin, Heidelberg}{Springer-Verlag}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.1007/978-3-031-72086-4_55}
+  \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.1007/978-3-031-72086-4_55} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}

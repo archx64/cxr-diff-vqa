@@ -2,22 +2,51 @@
 
 \chapter{RELATED WORK}
 
-The primary function of this section is 1) to reveal the gap of past work, 2) identify potential hypotheses, 3) identify potential experimental design.  All of these is to position your work to the current research.  \textbf{Do not write descriptively or give lectures.   Write with the mind to position your work.}
+This chapter reviews the literature relevant to Difference Visual Question Answering (DiffVQA) and medical image registration. The goal is to identify the critical gap in current methodologies that this thesis aims to fill, thereby justifying the proposed hypothesis and experimental design.
 
-One more guidance:  Look at your research questions.   Anything related to your research questions should be here.   Anything NOT related should be omitted.
+\section{The Difference VQA Task and its Core Signal}
+The clinical practice of longitudinal image comparison has motivated the creation of the Difference VQA task, a specialized subfield of Medical VQA. The introduction of the Medical-Diff-VQA dataset \cite{medical-dff-vqa} was a crucial step, providing a large-scale benchmark to train and evaluate models on their ability to answer questions about temporal changes in chest X-rays.
 
-\textbf{Be very careful what to include and not to include.  You do not want your readers to be confused what you plan to do by including some work but you did not include it in the methodology!!
-}
+The foundational assumption of all DiffVQA models is the existence of a "difference signal" that can be extracted by comparing two images. Models like ReAl \cite{real} attempt to capture this signal directly by performing a pixel-wise subtraction to create a residual image, which is then fed into a dedicated encoder. This approach explicitly hypothesizes that the most important information is contained within this raw difference.
 
-\textbf{Sectionize your related work nicely.  Don't write everything in one sphagetti}
+However, as noted by \cite{medical-dff-vqa}, the geometric variance in real-world medical images due to patient positioning and non-rigid deformation can be far more significant than the subtle signals from disease. This creates a fundamental challenge that is central to this thesis: the raw difference signal is inherently noisy and ambiguous. This directly motivates our first research question, which seeks to detect and quantify the errors arising from this ambiguity.
 
-\section{Topic 1}
+\section{Methodologies for Handling the Difference Signal}
+Current state-of-the-art models have employed three distinct strategies to interpret the noisy difference signal, yet none of them involve explicit geometric alignment of the input pair. This shared omission represents the central gap in the literature.
 
+\begin{table}[h!]
+	\centering
+	\caption{Comparative Analysis of State-of-the-Art DiffVQA Methodologies}
+	\label{tab:diffvqa_comparison}
+	\begin{tabular}{|l|l|p{5cm}|p{6cm}|}
+		\hline
+		\textbf{Approach} & \textbf{Models} & \textbf{Core Technique} & \textbf{Geometric Variance} \\ \hline \hline
+		Architectural & EKAID, ReAl & Design specialized graph or residual modules to process difference features. & Implicitly Assumed: The architecture is expected to learn to distinguish signal from noise within the feature space. \\ \hline
+		Pretraining & PLURAL & Learn robust, generalizable representations from large-scale data. & Learned Robustness: The model learns to be invariant to common variances but does not explicitly correct them. \\ \hline
+		Retrieval & RegioMix & Retrieve well-matched anatomical regions from a database to provide context. & Sidestepped: Avoids the alignment problem for the input pair by finding other, better-matched examples. \\ \hline
+	\end{tabular}
+\end{table}
 
-\section{Topic 2}
+The first strategy involves architectural innovation. EKAID \cite{ekaid} constructs knowledge-aware graphs from anatomical regions, while ReAl \cite{real} uses a dedicated residual encoder. Both methods attempt to disentangle the signal from noise at the feature level. The second strategy, pretraining, is exemplified by PLURAL \cite{plural}, which leverages large datasets to learn representations that are inherently more robust to common variances. The third and most recent strategy is retrieval-augmented generation, used by RegioMix \cite{regiomix}. This approach cleverly sidesteps the alignment problem by finding well-matched regions from a database to inform its answer.
 
+While each of these approaches has advanced the state-of-the-art, they all treat the geometric misalignment as a feature-level problem to be overcome, rather than a data-level problem to be solved. This gap motivates our second research question: to design a pipeline that corrects this data-level issue directly.
 
-\section{Topic 3}
+\section{Methodologies for Handling Difference Signal}
+Medical image registration is a mature field dedicated to geometrically aligning images. The techniques are broadly categorized into two classes, both of which are essential for handling the complexities of longitudinal chest X-rays.
+
+\begin{table}[h!]
+	\centering
+	\caption{Medical Image Registration Techniques}
+	\label{tab:registration_techniques}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Registration Type} & \textbf{Algorithm Examples} & \textbf{Applicability to Chest X-ray} \\ \hline \hline
+		Rigid & Mutual Information, Normalized Cross-Correlation & Corrects for global changes in patient position, rotation, and scale. A necessary first step. \\ \hline
+		Deformable & B-Spline Free-Form Deformation, Demons & Corrects for local, non-linear changes like breathing, posture, and soft-tissue shifts. Crucial for fine alignment. \\ \hline
+	\end{tabular}
+\end{table}
+
+Rigid registration algorithms correct for global transformations, while deformable (non-rigid) registration algorithms handle local, non-linear warping. The established success of these methods in other areas of medical image analysis provides a strong foundation for a potential experimental design. By creating a multi-stage pipeline that combines both rigid and deformable registration, it is possible to construct a pre-processing module that minimizes the non-pathological variance in the MIMIC-Diff-VQA dataset. The existence of these robust techniques makes the hypothesis that they can improve DiffVQA performance directly testable, which forms the basis of our third research question and the experimental design of this thesis.
 
 Example Table (see Tables \ref{tab:sourcetasklearningtable} and \ref{tab:targettasklearningtable}).
 
@@ -42,19 +71,19 @@ MPT            & 2023                     & Multi-task       & 23               
 
 
 \begin{table}[hbt!]
-\caption{Summary of target task learning approaches}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccccc}
-\hline
-               & \multicolumn{1}{l}{} & \multicolumn{4}{c}{Target task learning}                                                                                                                                                                                                                                                                                & \multicolumn{1}{l}{}           \\ \cline{3-7} 
-Paper          & Year                 & Method                                                                    & \begin{tabular}[c]{@{}c@{}}Target Prefix \\ Initialization\end{tabular}           & \begin{tabular}[c]{@{}c@{}}Target-task \\ (tokens)\end{tabular} & \multicolumn{1}{l}{\begin{tabular}[c]{@{}l@{}}Target tasks\\ (datasets)\end{tabular}} & \multicolumn{1}{l}{Generation} \\ \hline
-Prefix Merging & 2022                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}          & \begin{tabular}[c]{@{}c@{}}Both task-specific \\ and shared prefixes\end{tabular} & 40                                                              & 3                                                                                     & \ding{51}      \\
-Unisumm        & 2023                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}          & Shared prefix                                                                     & 256                                                             & 2                                                                                     & \ding{51}      \\
-SPoT           & 2022                 & \begin{tabular}[c]{@{}c@{}}Cosine similarity \\ of Embedding\end{tabular} & \begin{tabular}[c]{@{}c@{}}Prefix embedding \\ with highest score\end{tabular}    & 120                                                             & 10                                                                                    & \ding{55}      \\
-PANDA          & 2022                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}         & Random tokens                                                                     & 20                                                              & 9                                                                                     & \ding{55}      \\
-ATTEMPT        & 2022                 & \begin{tabular}[c]{@{}c@{}}Attention based \\ Interpolation\end{tabular}  & Random tokens                                                                     & 100                                                             & 21                                                                                    & \ding{55}      \\
-MPT            & 2023                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}         & Shared prefix                                                                     & 100                                                             & 23                                                                                    & \ding{55}     \\ \hline
-\end{tabular}%
-}
-\label{tab:targettasklearningtable}
+	\caption{Summary of target task learning approaches}
+	\label{tab:targettasklearningtable} % It's good practice to put the label after the caption
+	\resizebox{\columnwidth}{!}{%
+		\begin{tabular}{lcccccc}
+			\hline
+			& \multicolumn{1}{l}{} & \multicolumn{4}{c}{Target task learning}                                                                                                                                                                                                                                                                        & \multicolumn{1}{l}{}         \\ \cline{3-6} % <-- FIXED: Was \cline{3-7}
+			Paper          & Year                 & Method                                                                 & \begin{tabular}[c]{@{}c@{}}Target Prefix \\ Initialization\end{tabular}    & \begin{tabular}[c]{@{}c@{}}Target-task \\ (tokens)\end{tabular} & \multicolumn{1}{l}{\begin{tabular}[c]{@{}l@{}}Target tasks\\ (datasets)\end{tabular}} & \multicolumn{1}{l}{Generation} \\ \hline
+			Prefix Merging & 2022                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}         & \begin{tabular}[c]{@{}c@{}}Both task-specific \\ and shared prefixes\end{tabular} & 40                                                              & 3                                                                                         & \ding{51}                      \\
+			Unisumm        & 2023                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}         & Shared prefix                                                              & 256                                                             & 2                                                                                         & \ding{51}                      \\
+			SPoT           & 2022                 & \begin{tabular}[c]{@{}c@{}}Cosine similarity \\ of Embedding\end{tabular} & \begin{tabular}[c]{@{}c@{}}Prefix embedding \\ with highest score\end{tabular}   & 120                                                             & 10                                                                                        & \ding{55}                      \\
+			PANDA          & 2022                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}        & Random tokens                                                              & 20                                                              & 9                                                                                         & \ding{55}                      \\
+			ATTEMPT        & 2022                 & \begin{tabular}[c]{@{}c@{}}Attention based \\ Interpolation\end{tabular} & Random tokens                                                              & 100                                                             & 21                                                                                        & \ding{55}                      \\
+			MPT            & 2023                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}        & Shared prefix                                                              & 100                                                             & 23                                                                                        & \ding{55}                      \\ \hline
+		\end{tabular}%
+	}
 \end{table}

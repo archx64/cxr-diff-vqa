@@ -3,6 +3,12 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+R2Gen/
+CXR-RePaiR-main/
+
+*.aux
+*.bkp
+
 # Datasets
 data/
 dataset/

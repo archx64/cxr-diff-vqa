@@ -1,0 +1,28 @@
+~\hfill \textbf {Page}\par 
+\contentsline {chapter}{\bf TITLE PAGE}{i}{Doc-Start}%
+\contentsline {chapter}{\bf AUTHOR'S DECLARATION}{iii}{section*.2}%
+\contentsline {chapter}{\bf ACKNOWLEDGEMENTS}{iv}{section*.3}%
+\contentsline {chapter}{\bf ABSTRACT}{v}{section*.4}%
+\contentsline {chapter}{\bf LIST OF TABLES}{vii}{section*.6}%
+\contentsline {chapter}{\bf LIST OF FIGURES}{viii}{section*.8}%
+\contentsline {chapter}{\numberline {1}INTRODUCTION}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Background of the Study}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Statement of the Problem}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Research Questions}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Hypotheses (Optional)}{3}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Objectives of the Study}{3}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Methodology}{3}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Scope}{3}{section.1.7}%
+\contentsline {section}{\numberline {1.8}Key Findings}{4}{section.1.8}%
+\contentsline {section}{\numberline {1.9}Contributions}{4}{section.1.9}%
+\contentsline {chapter}{\numberline {2}RELATED WORK}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}The Difference VQA Task and its Core Signal}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Methodologies for Handling the Difference Signal}{5}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Methodologies for Handling Difference Signal}{6}{section.2.3}%
+\contentsline {chapter}{\bf REFERENCES}{9}{section*.14}%
+\contentsline {chapter}{\bf APPENDICES}{10}{section*.15}%
+\contentsline {section}{\bf \uppercase {APPENDIX A: TITLE}}{11}{section*.16}%
+\setcounter {tocdepth}{-5}
+\contentsline {chapter}{\numberline {A}\uppercase {TITLE}}{11}{appendix.A}%
+\setcounter {tocdepth}{2}
+\contentsline {chapter}{\bf VITA}{12}{section*.18}%
