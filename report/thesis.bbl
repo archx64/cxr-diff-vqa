@@ -109,6 +109,39 @@ Lu, Z.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Marhuenda%
+, Aas-Alas%
+\BCBL {}\ \BBA {} Paredes%
+}{%
+Marhuenda%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2025}}%
+}]{%
+encoder-decoder}
+\APACinsertmetastar {%
+encoder-decoder}%
+\begin{APACrefauthors}%
+Marhuenda, O\BHBI R.%
+, Aas-Alas, A.%
+\BCBL {}\ \BBA {} Paredes.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2025}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Unveiling Differences: A Vision Encoder-Decoder Model
+  for Difference Medical Visual Question Answering} {Unveiling differences: A
+  vision encoder-decoder model for difference medical visual question
+  answering}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Medical Imaging with Deep Learning.} {Medical imaging
+  with deep learning.}
+\newblock
+\begin{APACrefURL} \url{https://openreview.net/forum?id=8CNssOg7fk}
+  \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Yeongjae~Cho%
 \ \BBA {} Sungzoon~Cho%
 }{%

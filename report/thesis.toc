@@ -17,8 +17,8 @@
 \contentsline {section}{\numberline {1.9}Contributions}{4}{section.1.9}%
 \contentsline {chapter}{\numberline {2}RELATED WORK}{5}{chapter.2}%
 \contentsline {section}{\numberline {2.1}The Difference VQA Task and its Core Signal}{5}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Methodologies for Handling the Difference Signal}{5}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Methodologies for Handling Difference Signal}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.2}Methodologies for Handling the Difference Signal}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Methodologies for Handling Difference Signal}{7}{section.2.3}%
 \contentsline {chapter}{\bf REFERENCES}{9}{section*.14}%
 \contentsline {chapter}{\bf APPENDICES}{10}{section*.15}%
 \contentsline {section}{\bf \uppercase {APPENDIX A: TITLE}}{11}{section*.16}%
