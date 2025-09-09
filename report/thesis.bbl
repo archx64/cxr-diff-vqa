@@ -1,6 +1,43 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
+Cho%
+, Kim%
+, Shin%
+, Cho%
+\BCBL {}\ \BBA {} Shin%
+}{%
+Cho%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2024}}%
+}]{%
+plural}
+\APACinsertmetastar {%
+plural}%
+\begin{APACrefauthors}%
+Cho, Y.%
+, Kim, T.%
+, Shin, H.%
+, Cho, S.%
+\BCBL {}\ \BBA {} Shin, D.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Pretraining Vision-Language Model for Difference Visual
+  Question Answering in Longitudinal Chest X-rays} {Pretraining vision-language
+  model for difference visual question answering in longitudinal chest
+  x-rays}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Medical Imaging with Deep Learning.} {Medical imaging
+  with deep learning.}
+\newblock
+\begin{APACrefURL} \url{https://openreview.net/forum?id=QTFVYcV92b}
+  \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Hu%
 \ \protect \BOthers {.}}{%
 Hu%
@@ -76,6 +113,78 @@ Hu, X.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Johnson%
+, Lungren%
+\BCBL {}\ \protect \BOthers {.}}{%
+Johnson%
+, Lungren%
+\BCBL {}\ \protect \BOthers {.}}{%
+{\protect \APACyear {2024}}%
+}]{%
+mimic-cxr-jpg}
+\APACinsertmetastar {%
+mimic-cxr-jpg}%
+\begin{APACrefauthors}%
+Johnson, A.%
+, Lungren, M.%
+, Peng, Y.%
+, Lu, Z.%
+, Mark, R.%
+, Berkowitz, S.%
+\BCBL {}\ \BBA {} Horng, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+\APACrefbtitle {MIMIC-CXR-JPG - chest radiographs with structured labels
+  (version 2.1.0).} {Mimic-cxr-jpg - chest radiographs with structured labels
+  (version 2.1.0).}
+\newblock
+\APACaddressPublisher{}{PhysioNet}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.13026/jsn5-t979} \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.13026/jsn5-t979} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Johnson%
+, Pollard%
+, Mark%
+, Berkowitz%
+\BCBL {}\ \BBA {} Horng%
+}{%
+Johnson%
+, Pollard%
+\BCBL {}\ \protect \BOthers {.}}{%
+{\protect \APACyear {2024}}%
+}]{%
+mimic-cxr}
+\APACinsertmetastar {%
+mimic-cxr}%
+\begin{APACrefauthors}%
+Johnson, A.%
+, Pollard, T.%
+, Mark, R.%
+, Berkowitz, S.%
+\BCBL {}\ \BBA {} Horng, S.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2024}{}{}.
+\newblock
+\APACrefbtitle {MIMIC-CXR Database (version 2.1.0).} {Mimic-cxr database
+  (version 2.1.0).}
+\newblock
+\APACaddressPublisher{}{PhysioNet}.
+\newblock
+\begin{APACrefURL} \url{https://doi.org/10.13026/4jqj-jw95} \end{APACrefURL}
+\newblock
+\begin{APACrefDOI} \doi{10.13026/4jqj-jw95} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Lu%
 \ \protect \BOthers {.}}{%
 Lu%
@@ -110,7 +219,9 @@ Lu, Z.%
 
 \bibitem [\protect \citeauthoryear {%
 Marhuenda%
+, Obrador-Reina%
 , Aas-Alas%
+, Albiol%
 \BCBL {}\ \BBA {} Paredes%
 }{%
 Marhuenda%
@@ -121,9 +232,11 @@ encoder-decoder}
 \APACinsertmetastar {%
 encoder-decoder}%
 \begin{APACrefauthors}%
-Marhuenda, O\BHBI R.%
-, Aas-Alas, A.%
-\BCBL {}\ \BBA {} Paredes.%
+Marhuenda, L\BHBI J.%
+, Obrador-Reina, M.%
+, Aas-Alas, M.%
+, Albiol, A.%
+\BCBL {}\ \BBA {} Paredes, R.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
@@ -142,45 +255,8 @@ Marhuenda, O\BHBI R.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
-Yeongjae~Cho%
-\ \BBA {} Sungzoon~Cho%
-}{%
-Yeongjae~Cho%
-\ \BBA {} Sungzoon~Cho%
-}{%
-{\protect \APACyear {2024}}%
-}]{%
-plural}
-\APACinsertmetastar {%
-plural}%
-\begin{APACrefauthors}%
-Yeongjae~Cho, H\BPBI S., Taehee~Kim%
-\BCBT {}\ \BBA {} Sungzoon~Cho, D\BPBI S.%
-\end{APACrefauthors}%
-\unskip\
-\newblock
-\APACrefYearMonthDay{2024}{}{}.
-\newblock
-{\BBOQ}\APACrefatitle {Pretraining Vision-Language Model for Difference Visual
-  Question Answering in Longitudinal Chest X-rays} {Pretraining vision-language
-  model for difference visual question answering in longitudinal chest
-  x-rays}.{\BBCQ}
-\newblock
-\BIn{} \APACrefbtitle {International Conference on Medical Imaging with Deep
-  Learning (MIDL).} {International conference on medical imaging with deep
-  learning (midl).}
-\newblock
-\begin{APACrefURL} \url{https://openreview.net/forum?id=QTFVYcV92b}
-  \end{APACrefURL}
-\PrintBackRefs{\CurrentBib}
-
-\bibitem [\protect \citeauthoryear {%
 Yung%
-, Sivaraj%
-, Stoyanov%
-, Loukogeorgakis%
-\BCBL {}\ \BBA {} Mazomenos%
-}{%
+\ \protect \BOthers {.}}{%
 Yung%
 \ \protect \BOthers {.}}{%
 {\protect \APACyear {2024}}%
@@ -189,11 +265,12 @@ regiomix}
 \APACinsertmetastar {%
 regiomix}%
 \begin{APACrefauthors}%
-Yung, K\BHBI W.%
+Yung%
+, Evangelos~B., K\BHBI W.%
 , Sivaraj, J.%
 , Stoyanov, D.%
 , Loukogeorgakis, S.%
-\BCBL {}\ \BBA {} Mazomenos, E\BPBI B.%
+\BCBL {}\ \BBA {} Mazomenos.%
 \end{APACrefauthors}%
 \unskip\
 \newblock

@@ -2,86 +2,96 @@
 
 \chapter{METHODOLOGY}
 
-A \textbf{big figure} here, explaining your whole methodology (see Figure \ref{fig:sourcetasktraining} for example).
+This chapter details the technical design and implementation of the proposed model, which introduces a new paradigm for Difference Visual Question Answering (DiffVQA) centered on efficiency, explicit reasoning, and robustness. The proposed methodology is a departure from the "brute-force," dense-processing approaches of prior work. Instead, we introduce a series of novel, lightweight modules designed to intelligently distill visual information, explicitly model the directionality of clinical change, and actively mitigate model hallucination. The architecture is designed to be self-contained, leveraging a self-supervised pre-training strategy to learn difference-sensitive representations without relying on external text corpora.
 
-\begin{figure}[hbt!]
-\caption{Overview of multi-task pre-training with prefix approach.}
-\centerline{\includegraphics[width=15cm]{figures/sourcetasktraining.png}}
-\label{fig:sourcetasktraining}
-\small{\textit{Note.} For each task, it corresponds to different sub-prefix embeddings. Here, The prefix embedding indices for text summarization is [1, 2, 3, 4] and it changes to [1, 2, 5, 6] for QA where indices [1, 2], [3, 4], [5, 6] correspond to shared-task, text summarization and question answering respectively.}
+To ensure reproducibility, each component of the architecture is described in detail, from the initial feature extraction to the final loss calculation. The specific models, mathematical formulations, and training strategies will be comprehensively employed. The following sections will break down the three core stages of the methodology: the self-supervised warmup phase, the main VQA model architecture, and the final training strategy that combines generative and contrastive objectives. This modular design allows for clear, targeted evaluation of each of our core contributions. Figure~\ref{fig:high_architecture} shows high level architecture of the proposed methodology.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/high_architecture.png}
+	\caption{High Level Architecture Overview}
+	\label{fig:high_architecture}
 \end{figure}
 
-\textbf{A symbol of good methodology is that people read it,  they can reproduce it.  So make sure you are very clear what you did and write it clearly.  Follow the convention in your field of study.}}
+\section{Self-Supervised Pre-training: Masked Residual Modeling}
+To equip the visual components of our model with a foundational understanding of radiological change, we employ a self-supervised pre-training strategy termed Masked Residual Modeling (MRM). This stage precedes the main VQA training and is crucial for our model's self-contained nature, as it learns difference-sensitive representations from images alone, without requiring radiology reports or other text corpora. Figure~\ref{fig:mrm} shows architecture of masked residual modeling module.
 
-Here I cannot guide you how to write your methodology.  It basically breaks down your proposed system into components and demonstrate your algorithm or models or systems.  
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/mrm.png}
+	\caption{Masked Residual Modeling}
+	\label{fig:mrm}
+\end{figure}
 
-If you are pure HCI user study,  then you can just copy the Experiment chapter and call it your methodology.
+\subsection{Masked Residual Modeling}
+The masked residual modeling (MRM) process is designed to force the model to learn the contextual structure of the difference maps. First, an unlabeled image pair $(I_{cur}, I_{ref})$ is passed through the Directional Residual Stack (DRS) to generate the concatenated residual map, $R$. A significant portion of the patches in this map, approximately 75 percent, are then randomly masked. The unmasked patches are fed into the QDT's vision backbone, which is tasked with predicting the content of the masked patches.
 
-This is an example:
-\section{Prefix Pre-Training}
-In order to facilitate learning, we aim to transfer task-specific knowledge from text summarizing and question-answering (source tasks) to query-focused summarization (target task). In addition to the two source tasks, we also incorporate shared-task prefix (see Figure \ref{fig:phase1}). This is done via prefix tuning. 
+\subsection{Reconstruction Loss}
+The training is guided by a reconstruction loss, which measures the dissimilarity between the model's predicted patches and the original, unmasked patches. We use a Mean Squared Error (MSE) loss for this objective.
 
-\subsection{Prefix-tuning} \label{subsection-prefix-tuning}
+$$
+L_{\text{MRM}} = \frac{1}{|M|} \sum_{i \in M} (R_{i}^{*} - \hat{R}_{i}^{*})^{2}
+$$
 
-Considering a transformer-based encoder-decoder such as Bart \cite{lewis2019bart} $LM_{\theta} = [LM_{en}; LM_{de}]$ parameterized by $\theta$, as our pretrained model, for each task $t$, we inject task-specific prefix vectors of encoder $(P_{en})$ and decoder $(P_{de})$, $P_{\theta_{p}} = [P_{en}; P_{de}]$ parameterized by $\theta_{p}$, into the model. Following \citet{li2021prefix}, the prefix vectors are prepended to each transformer layer as additional key and value vectors. Hence, we obtain $LM_{\theta, \theta_{p}} = [P_{en}; LM_{en}; P_{de}; LM_{de}]$
+Here, M is the set of masked patch indices, $R_i$ is the original patch, and 
+$\hat{R}_i$ is the reconstructed patch.
 
-For the pre-training, given the input document $X$, the objective is to minimize the negative log-likelihood of generating the target output $Y = \{y_{1}, y_{1}, ..., y_{|Y|} \}$:
-
-\begin{equation}
-L(\theta , \theta_{p}) = \sum_{i}^{|Y|} log \mathbb{P}(y_{i} | X, y_{1}, ..., y_{i-1}) 
-\end{equation}
-
-Note that the prefix parameters $\theta_{p}$ are trainable while the parameters of LM $\theta$ are either kept intact or being updated. Next, we further explain how we perform 1) Multi-task Pre-Training with Prefix; and 2) Single-task Pre-Training with Prefix in details below.
-
-% and taking the encoder layer in transformer as an example, let $z = [x]$ denote its input sequence. We use $h_{i}$ to represent the concatenation of all activation from all layers at the index $i$. The $h_{i}$ for all $i\in x$ in encoder layer is a function of $z_{i}$ and the other activations in the context based on the LM, as follows:
-
-% \[h_{i} = LM_{\phi}(z_{i}, h_{\neq i}) \]
-
-% Prefix-tuning prepends prefixes for the encoder layer to obtain $z = [prefix;x]$. In this case, the length of the prefix is represented by $|P_{idx}|$, while the series of prefix embedding indices is represented by $P_{idx}$. The prefix parameters are initialized to be stored in a trainable matrix $P_{\theta} \in R^{|P_{idx}| \times d}$ where $d$ is the LM dimension. During the training, only respective prefix are updated by maximizing the likelihood of generating the target sequence $y$, as follows:
-
-% $h_{i} = \left\{\begin{matrix} P_{\theta}[i, :], &  if i \in P_{idx}\\ LM_{\phi}(z){i}, h_{\neq i}) & otherwise \end{matrix}\right.$
-
-% During the training in prefix-tuning, the objective maintains the same as normal task, but only the prefix parameters $\theta$ are trainable and the parameters of the $LM_{\theta}$ are fixed. In this case, the prefix parameters contain all the task-specific knowledge learned from the training.
+\section{Main Model Architecture}
+Our main architecture is a novel, lightweight pipeline designed for efficiency and explicit reasoning. It comprises three key modules: the Directional Residual Stack (DRS), the Question-Guided Difference Tokenizer (QDT), and the Lightweight Answer Predictor.
 
 
-\subsection{Multi-Task Pre-Training with Prefix}
-Similar to prefix-tuning, a trainable parameters $P_{\theta_{p}}$ is used to store the prefix embedding parameters. However, the difference is that there are $n$ tasks denoted as $[task_{1}, ..., task_{n}] $. Here, we denote $P_{idx}$ to represent the prefix embedding indices, and $|P_{idx}|$ is denoted as total prefix length. Hence, the trainable prefix $P_{\theta_{p}} \in |P_{idx}| \times dim_{p}$ is initialized to store the prefix parameters. 
 
-In the multi-task setting, the matrix $P_{\theta_{p}}$ is decomposed into text summarization  $P_{\theta_{p}}^{sum} \in |P_{idx}^{sum}| \times dim_{p} $, question-answering $P_{\theta_{p}}^{qa} \in |P_{idx}^{qa}| \times dim_{p}$ and shared-task prefix $P_{\theta_{p}}^{shared} \in |P_{idx}^{shared}| \times dim_{p}$. For each task, it corresponds to different sub-prefix embeddings. Hence, prefix embedding indices for text summarization differ from those of QA. For instance, the length of task-specific prefix and shared-task prefixes are set to 2. The prefix embedding indices for text summarization is [1, 2, 3, 4] and it changes to [1, 2, 5, 6] for QA where indices [1, 2], [3, 4], [5, 6] correspond to shared-task, text summarization and question answering respectively (See Figure \ref{fig:sourcetasktraining}).
+\subsection{Directional Residual Stack}
+To explicitly model the directionality of clinical change, the DRS computes three distinct residual maps from shallow features, f, extracted by a tiny, frozen backbone (e.g., a pre-trained ResNet-18).
+\begin{itemize}
+	\item Emergence/Worsening Map ($R^{+}$): This map isolates features that are new or more prominent in the current image.
+	\[
+	R^{+} = f(I_{\text{cur}}) - f(I_{\text{ref}})
+	\]
+	
+	\item Resolution/Improvement Map ($R^{-}$): This map isolates features that have disappeared or become less prominent.
+	\[
+	R^{-} = f(I_{\text{ref}}) - f(I_{\text{cur}})
+	\]
+	
+	\item Magnitude Map ($R_{\text{abs}}$): This map captures the overall, direction-agnostic magnitude of change.
+	\[
+	R_{\text{abs}} = |f(I_{\text{cur}}) - f(I_{\text{ref}})|
+	\]
+\end{itemize}
 
-Specifically, during the training, it is optimized according to the following objective:
+These three maps are then concatenated along the channel dimension to form a single, rich difference representation, $R$, which is passed to the next module.
 
-\begin{equation}
-L(\theta , \theta_{p_{idx}^{task}}) = \sum_{i}^{|Y|} \log \mathbb{P}(y_{i} | X, y_{1}, ..., y_{i-1}) 
-\end{equation}
+\subsection{Question Guided Difference Tokenizer}
+The QDT is designed to distill the dense $R$ map into a sparse set of the most relevant visual tokens. The natural-language question, q, is first encoded into a feature vector, $f_{Q}$, using a small, frozen text encoder such as ClinicalBERT's embedding layer. A single cross-attention layer then uses $f_{Q}$ as the query and the patches of $R$ as the keys and values. A Top-K selector with a Gumbel-Softmax is applied to the attention weights to select the K most relevant patches, which become our K Difference Tokens. This selection map is also preserved as an Evidence Heatmap for interpretability.
 
-Note that for fine-tuning pre-trained model setting, following the work of \citet{chen2023unisumm}, we set different weight decay regularization on different parameters for the prefixes and pre-trained model. Specifically, prefixes and pre-trained model have separate optimizers during pre-training where lower weight decay value $d_{p} = 0.01$ is set on prefix optimizer and a higher weight decay value $d = 0.05$ is set on pre-trained model. This enables prefixes to flexibly learn task-specific knowledge and enforces pre-trained model to learn broader generalization across different tasks. 
+\subsection{Lightweight Answer Predictor}
+To maintain computational efficiency, a small, frozen sequence-to-sequence language model such as T5-small is employed. Parameter-Efficient Fine-Tuning (PEFT) is used by adding trainable Low-Rank Adaptation (LoRA) adapters only to the cross-attention layers. The K Difference Tokens serve as the memory for these cross-attention layers, providing the necessary visual context for the language model to generate a free-form text answer.
 
-Formally, at training step $i$:
-\begin{equation}
-\theta^{i+1} = (1-d)\theta^{i} - \alpha ^{i}\bigtriangledown f^{i}(\theta^{i})
-\end{equation}
+\section{Training Strategy and Loss Functions}
+The model is trained end-to-end using a dual-objective loss function designed to maximize both accuracy and robustness.
 
-\begin{equation}
-\theta^{i+1}_{p} = (1-d_{p})\theta^{i}_{p} - \alpha ^{i}_{p}\bigtriangledown f^{i}_{p}(\theta^{i}_{p})
-\end{equation}
+\subsection{Counterfactual Regularizer}
+To mitigate the model's tendency to hallucinate, a counterfactual regularizer (CFA-Reg) is introduced. For each training sample $(I_{cur},I_{ref}, Q, A)$, we generate a logical opposite by either swapping the images $(I_{ref},I_{cur})$ or negating a directional term in the question (e.g., "worsened" → "improved"). The model performs a forward pass on both the real and counterfactual inputs, generating two distinct answer distributions, $P_{real}$ and $P_{cofa}$.
 
-where $\alpha^{i}$ and $\alpha^{i}_{p}$ are the learning rates for pretrained model and prefixes, and $\bigtriangledown f^{i}(\theta^{i})$ and $\bigtriangledown f^{i}_{p}(\theta^{i}_{p})$ are the batch gradient for pretrained model and prefix.
+\subsection{Combined Loss Function}
+The total loss is a weighted sum of a standard generation loss and the novel contrastive KL loss.
+$$ L_{total} = L_{generation} + \dot{\alpha} $$
 
-% Note that for the unfrozen LM setting, we optimize $\theta$ and $\theta_{p_{idx}^{task}}$  together.
+\begin{itemize}
+	\item The Generation Loss $(L_{gen})$ is a standard cross-entropy loss between the model's predicted answer and the ground-truth answer for the real input.
+	\item The Counterfactual Loss $(L_{CFA})$ is the negative Kullback-Leibler (KL) divergence between the real and counterfactual answer distributions. Minimizing this term forces the distributions apart, training the model to be sensitive to logical contradictions.
+	\[
+	L_{CFA} = -D_{KL}(P_{real}||P_{cofa})
+	\]
+\end{itemize}
 
+\section{Dataset}
+All experiments in this thesis will be conducted using \cite{medical-dff-vqa}. This dataset is the standard benchmark for the longitudinal chest x-ray Difference VQA task and was used by all related state-of-the-art models, ensuring a fair and direct comparison. The dataset contains 700,703 question-answer pairs over 164,324 pairs of longitudinal chest X-ray images.
 
-% Taking encoder as an example, a trainable parameters $P_{en} \in |P_{idx}| \times  prefix \ dim$ is initialized to store the encoder prefix embedding parameters where $P_{idx}$ represents the prefix embedding indices, and $|P_{idx}|$ is denoted as total prefix length.  
-
-
-% Specifically we use $P_{idx}^n$ to denote the indices of prefix embedding of $task_{n}$  
-
-% Following the work of \cite{yuan2022few}, we decompose QS into QA and Sum and obtain shared and task specific knowledge through pre-fix tuning approach \cite{li2021prefix} from large-scale data such as SQUAD \cite{rajpurkar2016squad}, and XSUM \cite{xsum}. 
-\subsection{Single-Task Pre-Training with Prefix}
-In contrast to multi-task learning where matrix $P_{\theta_{p}}$ is decomposed into text summarization  $P_{\theta_{p}}^{sum} \in |P_{idx}^{sum}| \times dim_{p} $, question-answering $P_{\theta_{p}}^{qa} \in |P_{idx}^{qa}| \times dim_{p}$ and shared-task prefix $P_{\theta_{p}}^{shared} \in |P_{idx}^{shared}| \times dim_{p}$, in single-task setting, each task is independently learned. Note that for fine-tuning pre-trained model setting, the model learns together with shared-task prefix.
-
-% \subsection{Shared-task Prefix Pre-Training}
+The images are derived from \cite{mimic-cxr}. The JPG images used for training are sourced from \cite{mimic-cxr-jpg}, while the original DICOM files are sourced from \cite{mimic-cxr}. For the scope of this work, and in line with the focused approach of prior state-of-the-art research, only the "difference" question type subset will be used for training and evaluation.
 
 
-\section{Applying the Pre-Trained Prefix to Target Task}
-After training on source tasks, we obtain the prefix parameters that contain task specific knowledge from text summarization and question-answering. We continue vanilla prefix-tuning on it. Note that we can apply the trained prefixes in two manners, one with two source task and a shared-task prefix and one with only the shared-task prefix.
+
+
+

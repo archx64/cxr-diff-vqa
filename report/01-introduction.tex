@@ -1,68 +1,68 @@
 \chapter{INTRODUCTION} 
 
 \section{Background of the Study}
+The automated interpretation of longitudinal radiological images, a cornerstone of clinical practice, has recently been formalized under the task of Difference Visual Question Answering (DiffVQA). The release of \cite{medical-dff-vqa} was a pivotal moment, enabling the development of models to answer nuanced questions about temporal changes in patient scans. The subsequent evolution of state-of-the-art models has revealed a consistent, yet resource-intensive, paradigm.
 
-The automated interpretation of radiological images through Visual Question Answering (VQA) has emerged as a significant subfield, aiming to create systems that can reason over medical imagery to answer complex clinical queries. Unlike general-domain VQA, Medical VQA requires a deep, specialized understanding of subtle pathologies and anatomical context. To address this, the field has seen the development of specialized datasets and models designed to handle the unique challenges of medical imaging.
-
-A critical task within clinical practice is the longitudinal assessment of disease, where radiologists compare serial images of a patient to track progression or treatment response. This has given rise to a specialized task known as Difference VQA (DiffVQA), which focuses on answering questions about the disparities between two images taken at different time points. The introduction of the Medical-Diff-VQA dataset \cite{medical-dff-vqa}. provided the first large-scale benchmark for this task.
-
-Initial approaches to DiffVQA focused on architectural innovations. EKAID \cite{ekaid} proposed a graph-based representation, using anatomical structures as nodes to compute an "image-difference" feature. Concurrently, ReAl \cite{real} introduced a generative model with a dedicated residual encoder designed to process a pixel-subtracted image, forcing the model to focus on difference signals. These methods established a baseline for how to process paired image features. Subsequent work, however, demonstrated that representation learning is paramount.
-
-PLURAL \cite{plural} showed that a vision-language model, pretrained extensively on both natural and longitudinal medical data, could significantly outperform architecturally-focused models, highlighting the importance of a robust feature foundation. Most recently, RegioMix \cite{regiomix} introduced a retrieval-augmented paradigm, which generates context by mixing and matching relevant anatomical regions from a database, achieving a substantial leap in performance. While these methods have progressively advanced the state-of-the-art, they either attempt to overcome geometric variance through feature manipulation and representation learning or sidestep it via retrieval, rather than addressing the root cause directly.
+Initial architectural innovations, such as the graph-based representations in \cite{ekaid} and the dedicated residual encoder in \cite{real}, established methods for processing paired image features. However, these models operate on dense visual feature maps, a computationally expensive approach. Recognizing the need for stronger representations, \cite{plural} demonstrated that extensive pre-training on large-scale natural and medical corpora significantly boosts performance, but at the cost of being highly data-hungry and dependent on external reports. More recently, retrieval-augmented models like \cite{regiomix} and powerful backbones like the Swin Transformer in the \cite{encoder-decoder} have pushed performance further. While these models are highly effective, they represent a "brute-force" methodology: they rely on massive model scale, computationally expensive database searches, or the processing of thousands of visual tokens from the entire image to implicitly learn the difference signal.
 
 \section{Statement of the Problem}
-
-The core, unaddressed problem in the current Difference VQA paradigm is the semantic ambiguity of the residual image. All current state-of-the-art models are vulnerable to errors caused by the inherent geometric misalignment between longitudinal chest X-ray pairs. In clinical reality, a patient's orientation, position, and level of inspiration will never be identical between two scans. This creates significant, non-pathological pixel differences that are often more pronounced than the subtle signals of true disease progression.
-
-When a simple pixel-wise subtraction is performed, these geometric artifacts are conflated with genuine clinical findings, creating a noisy and unreliable input signal. This forces the VQA model to attempt the nearly impossible task of disentangling true pathology from registration artifacts. Consequently, current models are prone to misinterpreting these artifacts, leading to a high rate of characteristic errors, and they lack the sensitivity to detect subtle, slow-growing pathologies whose signals are drowned out by the geometric noise.
+The dominant paradigm in Difference VQA is fundamentally inefficient and lacks explicit clinical reasoning. Current models are computationally expensive, requiring the processing of dense visual information from two full images, even when the question pertains to a small, localized change. This brute-force approach is not only wasteful but also fails to explicitly model the directionality of clinical findings, making it difficult to distinguish between concepts like "worsened" versus "improved." Furthermore, this reliance on large, complex models without strong logical constraints makes them prone to hallucination—confidently reporting changes that do not exist, a critical failure for any clinical support tool. The field lacks a model that is computationally efficient, explicitly models the direction of change, and is robust against hallucination.
 
 \section{Research Questions}
-Following the problem, there are three research questions
+Following the problem, There are three research questions:
 \begin{enumerate}
-    \item What are the characteristics and quantifiable frequencies of diagnostic errors generated within the difference VQA paradigm when models rely on unregistered longitudinal chest x-rays?
-    
-    \item What architectural and algorithmic choices constitute an optimal multi-stage registration pipeline to  minimize non-pathological variance in longitudinal chest x-rays for the difference VQA task?
-    
-    \item What is the performance impact of proposed registration-enhanced Diff VQA model, compared to leading methods like EKAID, PLURAL or ReAI, on established metrics such as BLEU, ROUGE-L, CIDEr, and to what extent does it demonstrate superior clinical impact through enhanced sensitivity to subtle pathological differences?
+    \item Can longitudinal, difference-focused questions be accurately answered using only a handful of question-guided difference tokens, instead of processing all image patches?
+    \item Does explicitly modeling the direction of change between two images help the model distinguish clinical phrases like “new,” “worse,” “improved,” and “resolved”?
+    \item Can a counterfactual training signal, such as swapping images or negating terms in the question, reduce the model’s tendency to hallucinate differences?
 \end{enumerate}
 
-\section{Hypotheses (Optional)}
-Characteristics and diagnostic errors generated within difference VQA models are primarily caused by misinterpretation of geometric artifacts in unregistered images. Thus, implementing an optimal, registration pipeline designed specifically to minimize this non-pathological variance, will result in a VQA model that demonstrates a significant improvement on quantitative evaluation metrics while benchmarked against leading non-registration models such as EKAID, PLURAL and ReAI. 
-
+\section{Hypotheses}
+There are three hypotheses to answer the research question:
+\begin{enumerate}
+    \item A small set of sparse, question-guided difference tokens is sufficient to achieve state-of-the-art performance, leading to a dramatic increase in computational efficiency.
+    \item Explicitly modeling the direction of change with separate residual maps will lead to a significant improvement in accuracy on questions involving directional clinical terms.
+    \item Training with a counterfactual regularizer will result in a lower false positive rate on unchanged image pairs and improved logical consistency compared to models trained without it.
+\end{enumerate}
 
 \section{Objectives of the Study}
+The main objective is to design and develop lightweight, difference aware medical VQA system that can provide faithful visual evidence to support its answer while being compute efficient and not requiring retrieval databases, radiology reports or expert annotations. The sub-objectives are:
 
-List the objectives.
 \begin{enumerate}
-    \item To detect and quantify the characteristic errors in baseline DiffVQA models that arise from a lack of image registration
-    \item To design and implement an optimal multi-stage (rigid + deformable) registration pipeline tailored for longitudinal chest X-rays
-    \item To demonstrate the superior performance of a registration-enhanced VQA model against state-of-the-art benchmarks and showcase its enhanced capabilities
+    \item To validate the effectiveness of a question-guided tokenizer (QDT) at distilling visual information into a sparse set of tokens.
+    \item To evaluate the impact of a directional residual stack (DRS) on the model's ability to reason about the direction of clinical change.
+    \item To measure the reduction in model hallucination achieved by introducing a counterfactual regularizer
 \end{enumerate}
 
 \section{Methodology}
-The proposed methodology introduces image registration into the standard DiffVQA workflow. The core of this work is a multi-stage registration pipeline that first applies a rigid transformation to correct for global shifts in patient positioning and rotation, followed by a deformable registration algorithm (e.g., B-spline or Demons-based) to account for non-rigid anatomical changes such as differences in inspiration. 
-
-This pipeline will be used to warp the reference image to match the geometry of the main image. A high-fidelity residual image will then be generated via pixel-wise subtraction. This clean residual, which isolates true pathological change, will be integrated into the ReAl generative VQA backbone to directly evaluate the impact of the registration step in a controlled experimental setup.
+This work introduces a novel, lightweight architecture that shifts from a brute-force to an efficient, explicit reasoning paradigm. The methodology is centered on three key innovations. First, a Directional Residual Stack (DRS) computes three separate difference maps to explicitly model the directionality of change (worsened, improved) and its magnitude. Second, a Question-Guided Difference Tokenizer (QDT) uses cross-attention to distill these dense maps into a small, sparse set of K difference tokens, drastically reducing the computational load for the downstream language model. The answer is then generated by a lightweight, frozen language model with parameter-efficient LoRA adapters. To ensure robustness, the model is trained with a Counterfactual Regularizer, which uses a contrastive KL loss on logically opposite input pairs to minimize hallucination. The vision components are pre-trained using a self-supervised Masked Residual Modeling (MRM) task, making the entire framework self-contained and removing the need for external radiology reports.
 
 \section{Scope}
 In scope:
 \begin{itemize}
-    \item The work will exclusively use the public MIMIC-Diff-VQA dataset for all training, validation, and testing.
-    \item The primary focus will be on the "difference" question category to directly test the hypothesis.
-    \item The methodology involves implementing and integrating established registration algorithms, not inventing new ones.
-    \item Evaluation will be a direct benchmark against the published results of EKAID, PLURAL, and ReAl using standard metrics (BLEU, ROUGE-L, CIDEr).
+    \item The thesis will exclusively use the public MIMIC-Diff-VQA dataset, focusing on the "difference" question category for all experiments.
+    \item The core of the work is the design, implementation, and evaluation of our novel, lightweight VQA architecture and its specific modules (DRS, QDT, CFA-Reg, MRM).
+    \item Evaluation will consist of targeted ablation studies and a direct benchmark against a comprehensive suite of SOTA models (EKAID, ReAl, PLURAL, RegioMix, VED).
 \end{itemize}
 
 Out of scope:
 \begin{itemize}
-	\item This thesis will not develop a end-to-end VQA architecture from scratch. The goal is to prove the value of image-registration step.
-	\item This work will not involve the collection of new clinical data or the execution of trials with human radiologists.
-	\item The VQA task will not be expanded beyond the question types and formats established in the MIMIC-Diff-VQA dataset.
+	\item This work will not involve the collection of new clinical data or the execution of clinical trials with human radiologists.
+	\item This thesis will not develop a new, general-purpose medical VQA system.
 \end{itemize}
 
-\section{Key Findings}
-The integration of a deformable registration pipeline is expected to yield a statistically significant improvement in performance across all standard VQA metrics, with the most substantial gains anticipated on the CIDEr metric, which rewards the correct identification of specific clinical terms. The registration-enhanced model is expected to demonstrate qualitatively superior accuracy, correctly identifying subtle pathological changes in curated test cases where non-registration-based models are predicted to fail due to the overwhelming presence of geometric noise.
 
-\section{Contributions}
-We propose and validate an optimized registration pipeline as an essential pre-processing module for DiffVQA, fundamentally improving the integrity of the input data and establishing a new best practice for the field. We will establish a new state-of-the-art performance benchmark on the MIMIC-Diff-VQA dataset, demonstrating the critical importance of geometric alignment and paving the way for more robust and clinically reliable models. This work provides the first systematic quantification of registration-induced artifacts as a primary and predictable source of error in the Difference VQA paradigm.
+\section{Expected Key Findings}
+\begin{itemize}
+	\item The proposed model is expected to achieve performance comparable or superior to current state-of-the-art models with a fraction of the computational cost, demonstrating the viability of an efficiency-focused paradigm.
+	
+	\item The Directional Residual Stack will be shown to provide a significant accuracy boost on questions involving directional clinical terms (e.g., "worsened," "resolved") compared to direction-agnostic baselines.
+	
+	\item The Counterfactual Regularizer will be proven to significantly reduce the model's false positive rate on unchanged image pairs, demonstrating a measurable improvement in model robustness and a reduction in hallucination.
+\end{itemize}
 
+\section{Contribution}
+\begin{itemize}
+	\item This thesis introduces a novel, lightweight paradigm for DiffVQA centered on efficiency, explicit reasoning, and robustness, shifting the field away from the dominant brute-force, resource-intensive methodologies.
+	\item Three new, independently valuable modules, the Directional Residual Stack (DRS) for explicit directional reasoning, the Question-Guided Difference Tokenizer (QDT) for extreme computational efficiency, and the Counterfactual Regularizer (CFA-Reg), is developed for reducing model hallucination.
+	\item A new state-of-the-art benchmark with a model that is not only more accurate and robust but also more computationally accessible and self-contained, as it does not require massive external corpora for pre-training, is introduced.
+\end{itemize}

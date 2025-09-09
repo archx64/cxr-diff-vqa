@@ -1,90 +1,74 @@
 \setlength{\footskip}{8mm}
 
 \chapter{RELATED WORK}
+This chapter critically reviews the state-of-the-art in Difference Visual Question Answering (DiffVQA) to establish the research gaps that motivate this thesis. The literature is analyzed through the lens of our three core research questions, focusing on the prevailing paradigms of computational efficiency, directional reasoning, and model robustness. By dissecting the implicit weaknesses of current methodologies, we identify the need for a new, lightweight paradigm and establish the foundation for our proposed architecture and experimental design.
 
-This chapter reviews the literature relevant to Difference Visual Question Answering (DiffVQA) and medical image registration. The goal is to identify the critical gap in current methodologies that this thesis aims to fill, thereby justifying the proposed hypothesis and experimental design.
+The analysis reveals a dominant "brute-force" approach across existing models, which rely on processing dense visual information and require significant computational or data resources. Furthermore, these models lack explicit mechanisms for reasoning about the directionality of clinical change and are not specifically trained to be robust against hallucination. This chapter will demonstrate how these limitations create a clear opportunity for a more efficient, explicit, and robust model, directly aligning with the central hypotheses of this work.
 
-\section{The Difference VQA Task and its Core Signal}
-The clinical practice of longitudinal image comparison has motivated the creation of the Difference VQA task, a specialized subfield of Medical VQA. The introduction of the Medical-Diff-VQA dataset \cite{medical-dff-vqa} was a crucial step, providing a large-scale benchmark to train and evaluate models on their ability to answer questions about temporal changes in chest X-rays.
+\section{Dense-Processing Paradigm and Computational Inefficiency}
+A foundational characteristic of all current state-of-the-art DiffVQA models is their reliance on processing dense visual feature maps from the entirety of both input images. Architectural approaches like \cite{ekaid} and \cite{real}, while innovative in their feature manipulation, still require a computationally expensive processing of all visual information to find the relevant difference signals. This brute-force method is further scaled up in models like \cite{encoder-decoder}, which uses a massive Swin Transformer backbone to achieve high performance at the cost of significant computational overhead.
 
-The foundational assumption of all DiffVQA models is the existence of a "difference signal" that can be extracted by comparing two images. Models like ReAl \cite{real} attempt to capture this signal directly by performing a pixel-wise subtraction to create a residual image, which is then fed into a dedicated encoder. This approach explicitly hypothesizes that the most important information is contained within this raw difference.
+This paradigm implicitly assumes that all regions of the images are potentially relevant for any given question. However, this is clinically inefficient. A question about a "new opacity in the right lower lobe" should not require the model to deeply process the left apex. This inefficiency creates a significant research gap for a model that can intelligently select and process only the most salient visual information. This gap directly motivates our first research question and the design of our Question-Guided Difference Tokenizer (QDT), which hypothesizes that a sparse set of tokens is sufficient for accurate reasoning.
 
-However, as noted by \cite{medical-dff-vqa}, the geometric variance in real-world medical images due to patient positioning and non-rigid deformation can be far more significant than the subtle signals from disease. This creates a fundamental challenge that is central to this thesis: the raw difference signal is inherently noisy and ambiguous. This directly motivates our first research question, which seeks to detect and quantify the errors arising from this ambiguity. Most recently, \cite{encoder-decoder} proposed a Vision Encoder-Decoder (VED) utilizes a powerful Swin Transformer as the vision encoder, fine-tuned on medical data in a multi-stage training process. While achieving the highest scores to date, this model continues the trend of tackling the difference problem at the feature level.  
+\section{Implicit vs Explicit Directional Reasoning}
+The clinical lexicon for describing change is inherently directional, using terms like "worsened," "improved," "new," and "resolved." Current DiffVQA models, however, do not have explicit mechanisms to model this directionality. Models like \cite{real} compute a single residual map $(I_{cur} - I_{ref})$, which conflates the signal for new findings with noise and does not provide an explicit signal for resolved findings. This forces the language model to implicitly learn the concept of directionality from the text data alone, a difficult and often unreliable process.
 
-\section{Methodologies for Handling the Difference Signal}
-Current state-of-the-art models have employed three distinct strategies to interpret the noisy difference signal, yet none of them involve explicit geometric alignment of the input pair. This shared omission represents the central gap in the literature.
+This lack of explicit directional modeling represents a key limitation in the field's ability to perform fine-grained clinical reasoning. It directly leads to our second research question, which investigates whether explicitly modeling the direction of change can improve performance on these types of clinical questions. The Directional Residual Stack (DRS), which computes separate maps for emergence/worsening $(R^+)$ and resolution/improvement $(R^-)$, is designed specifically to fill this gap.
 
-\begin{table}[h!]
-	\centering
-	\caption{Comparative Analysis of State-of-the-Art DiffVQA Methodologies}
-	\label{tab:diffvqa_comparison}
-	\begin{tabular}{|l|l|p{5cm}|p{6cm}|}
-		\hline
-		\textbf{Approach} & \textbf{Models} & \textbf{Core Technique} & \textbf{Geometric Variance} \\ \hline \hline
-		Architectural & EKAID, ReAl & Design specialized graph or residual modules to process difference features. & Implicitly Assumed: The architecture is expected to learn to distinguish signal from noise within the feature space. \\ \hline
-		Pretraining & PLURAL & Learn robust, generalizable representations from large-scale data. & Learned Robustness: The model learns to be invariant to common variances but does not explicitly correct them. \\ \hline
-		Retrieval & RegioMix & Retrieve well-matched anatomical regions from a database to provide context. & Sidestepped: Avoids the alignment problem for the input pair by finding other, better-matched examples. \\ \hline
-	\end{tabular}
-\end{table}
+\section {Retrieval Augmentation as a Brute-Force Proxy}
+A distinct and highly effective strategy for DiffVQA is retrieval-augmented generation (RAG), pioneered by \cite{regiomix}. This approach sidesteps the difficulty of interpreting the raw difference signal by retrieving relevant examples from a database. The model generates "retrieval objects" by mixing and matching different anatomical regions from various images in the training set to provide a rich context for its answer generation. 
 
-The first strategy involves architectural innovation. EKAID \cite{ekaid} constructs knowledge-aware graphs from anatomical regions, while ReAl \cite{real} uses a dedicated residual encoder. Both methods attempt to disentangle the signal from noise at the feature level. The second strategy, pretraining, is exemplified by PLURAL \cite{plural}, which leverages large datasets to learn representations that are inherently more robust to common variances. The third strategy is retrieval-augmented generation, used by RegioMix \cite{regiomix}. This approach cleverly sidesteps the alignment problem by finding well-matched regions from a database to inform its answer. The last and most recent approach, \cite{encoder-decoder}, uses a learnable token added to the features of each image to help the model distinguish between them but it does not perform an explicit geometric alignment of the two images. This further underscores that the foundational problem of registration remains an open and critical gap in the field.
+While this method achieves state-of-the-art performance, it represents a different kind of brute-force approach. Its effectiveness is contingent on the ability to find a closely matched pair within its database, requiring an inefficient and computationally expensive search process for every single query. Furthermore, this paradigm is inherently limited by the contents of its retrieval database and struggles to reason about truly novel or rare pathological changes that are not well-represented. This reliance on an external knowledge base contrasts with our self-contained model, which is designed to reason from the provided images alone.
 
+\section{Data Dependency and Self-contained Learning}
+Extensive pre-training highly affects the performance of many modern vision-language models. In the DiffVQA space, \cite{plural} exemplifies this, achieving high performance by pre-training on a massive corpus of natural images and, crucially, longitudinal chest X-ray reports. While effective, this approach creates a significant data dependency, as it relies on the availability of large, curated text corpora that are not always accessible.
 
-While each of these approaches has advanced the state-of-the-art, they all treat the geometric misalignment as a feature-level problem to be overcome, rather than a data-level problem to be solved. This gap motivates our second research question: to design a pipeline that corrects this data-level issue directly.
+This reliance on external reports presents an opportunity for a more self-contained approach. Our proposed self-supervised pre-training strategy, Masked Residual Modeling (MRM), is designed to address this. By teaching the model to reconstruct masked portions of the residual maps, the author hypothesizes that the vision components can learn a robust, contextual understanding of radiological change using only the images themselves, thereby removing the need for external report data.
 
-\section{Methodologies for Handling Difference Signal}
-Medical image registration is a mature field dedicated to geometrically aligning images. The techniques are broadly categorized into two classes, both of which are essential for handling the complexities of longitudinal chest X-rays.
+\section{Model Robustness and Hallucination}
+Generative vision-language models having tendency to hallucinate is one of the well-documented failures. Confidently hallucinating creates plausible but factually incorrect responses. Despite this, none of the existing DiffVQA models, from \cite{ekaid} to the latest \cite{encoder-decoder} model, incorporate an explicit mechanism during training to make them robust against this specific failure mode. They are trained to maximize accuracy on positive findings but are not explicitly trained to be skeptical or to recognize the absence of change.
+
+This lack of a robustness mechanism motivates our third research question and the design of the Counterfactual Regularizer (CFA-Reg). By training the model with a contrastive loss on logically opposite input pairs (e.g., real vs. counterfactual questions), the author hypothesizes that the model's tendency to hallucinate differences on unchanged image pairs can be significantly reduced.
+
+\section{Comparative Analysis of Methodologies}
+The following table summarizes the key limitations of the current state-of-the-art models and po
 
 \begin{table}[h!]
 	\centering
-	\caption{Medical Image Registration Techniques}
-	\label{tab:registration_techniques}
-	\begin{tabular}{|l|l|p{7cm}|}
-		\hline
-		\textbf{Registration Type} & \textbf{Algorithm Examples} & \textbf{Applicability to Chest X-ray} \\ \hline \hline
-		Rigid & Mutual Information, Normalized Cross-Correlation & Corrects for global changes in patient position, rotation, and scale. A necessary first step. \\ \hline
-		Deformable & B-Spline Free-Form Deformation, Demons & Corrects for local, non-linear changes like breathing, posture, and soft-tissue shifts. Crucial for fine alignment. \\ \hline
-	\end{tabular}
-\end{table}
-
-Rigid registration algorithms correct for global transformations, while deformable (non-rigid) registration algorithms handle local, non-linear warping. The established success of these methods in other areas of medical image analysis provides a strong foundation for a potential experimental design. By creating a multi-stage pipeline that combines both rigid and deformable registration, it is possible to construct a pre-processing module that minimizes the non-pathological variance in the MIMIC-Diff-VQA dataset. The existence of these robust techniques makes the hypothesis that they can improve DiffVQA performance directly testable, which forms the basis of our third research question and the experimental design of this thesis.
-
-Example Table (see Tables \ref{tab:sourcetasklearningtable} and \ref{tab:targettasklearningtable}).
-
-\begin{table}[hbt!]
-\caption{Summary of source task learning approaches}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccccc}
-\hline
-               & \multicolumn{1}{l}{}     & \multicolumn{5}{c}{Source task learning}                                                                                                                                                                                                         \\ \cline{3-7} 
-Paper          & \multicolumn{1}{l}{Year} & Learning setting  & \begin{tabular}[c]{@{}c@{}}Source tasks \\ (datasets)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Shared-task \\ (tokens)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Task-specific \\ (tokens)\end{tabular} & Pretrained model  \\ \hline
-Prefix Merging & 2022                     & Multi-task        & QA, Sum                                                            & 20                                                              & 10                                                                & Frozen            \\
-Unisumm        & 2023                     & Multi-task        & 5                                                                  & 256                                                             & 256                                                               & Unfrozen          \\
-SPoT           & 2022                     & Single-task       & 16                                                                 & -                                                               & 20                                                                & Frozen            \\
-PANDA          & 2022                     & Single-task       & 21                                                                 & -                                                               & 20                                                                & Frozen            \\
-ATTEMPT        & 2022                     & Single-task       & 21                                                                 & -                                                               & 100                                                               & Frozen            \\
-MPT            & 2023                     & Multi-task       & 23                                                                 & 100                                                             & 100                                                               & Frozen            \\ \hline
-\textit{Ours}  & \textit{-}               & \textit{Compared} & \textit{-}                                                         & \textit{Compared}                                               & \textit{-}                                                        & \textit{Compared} \\ \hline
-\end{tabular}%
-}
-\label{tab:sourcetasklearningtable}
-\end{table}
-
-
-\begin{table}[hbt!]
-	\caption{Summary of target task learning approaches}
-	\label{tab:targettasklearningtable} % It's good practice to put the label after the caption
-	\resizebox{\columnwidth}{!}{%
-		\begin{tabular}{lcccccc}
+	\caption{Comparative Analysis of Limitations in State-of-the-Art DiffVQA Models.}
+	\label{tab:sota_limitations}
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{lcccc}
 			\hline
-			& \multicolumn{1}{l}{} & \multicolumn{4}{c}{Target task learning}                                                                                                                                                                                                                                                                        & \multicolumn{1}{l}{}         \\ \cline{3-6} % <-- FIXED: Was \cline{3-7}
-			Paper          & Year                 & Method                                                                 & \begin{tabular}[c]{@{}c@{}}Target Prefix \\ Initialization\end{tabular}    & \begin{tabular}[c]{@{}c@{}}Target-task \\ (tokens)\end{tabular} & \multicolumn{1}{l}{\begin{tabular}[c]{@{}l@{}}Target tasks\\ (datasets)\end{tabular}} & \multicolumn{1}{l}{Generation} \\ \hline
-			Prefix Merging & 2022                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}         & \begin{tabular}[c]{@{}c@{}}Both task-specific \\ and shared prefixes\end{tabular} & 40                                                              & 3                                                                                         & \ding{51}                      \\
-			Unisumm        & 2023                 & \begin{tabular}[c]{@{}c@{}}Vanilla \\ Prefix-tuning\end{tabular}         & Shared prefix                                                              & 256                                                             & 2                                                                                         & \ding{51}                      \\
-			SPoT           & 2022                 & \begin{tabular}[c]{@{}c@{}}Cosine similarity \\ of Embedding\end{tabular} & \begin{tabular}[c]{@{}c@{}}Prefix embedding \\ with highest score\end{tabular}   & 120                                                             & 10                                                                                        & \ding{55}                      \\
-			PANDA          & 2022                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}        & Random tokens                                                              & 20                                                              & 9                                                                                         & \ding{55}                      \\
-			ATTEMPT        & 2022                 & \begin{tabular}[c]{@{}c@{}}Attention based \\ Interpolation\end{tabular} & Random tokens                                                              & 100                                                             & 21                                                                                        & \ding{55}                      \\
-			MPT            & 2023                 & \begin{tabular}[c]{@{}c@{}}Knowledge \\ Distillation\end{tabular}        & Shared prefix                                                              & 100                                                             & 23                                                                                        & \ding{55}                      \\ \hline
+			\textbf{Model/Methodology} & \textbf{\begin{tabular}[c]{@{}c@{}}Computational\\ Inefficiency\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Implicit Directional\\ Reasoning\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}High Data\\ Dependency\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Lacks Explicit\\ Robustness Training\end{tabular}} \\ \hline
+			\cite{ekaid} & \checkmark & \checkmark & & \checkmark \\
+			\cite{real} & \checkmark & \checkmark & & \checkmark \\
+			\cite{regiomix} & \checkmark & & \checkmark & \checkmark \\
+			\cite{plural} & \checkmark & \checkmark & \checkmark & \checkmark \\
+			\cite{encoder-decoder} & \checkmark & \checkmark & & \checkmark \\ \hline
+			\textbf{Our Proposed Model} & \textit{Addressed by QDT} & \textit{Addressed by DRS} & \textit{Addressed by MRM} & \textit{Addressed by CFA-Reg} \\ \hline
 		\end{tabular}%
 	}
+\end{table}
+
+\begin{table}[h!]
+	\centering
+	\caption{Mapping of Proposed Components to Research Gaps}
+	\label{tab:component_mapping_booktabs}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{lll}
+		\toprule
+		\textbf{Proposed Component} & \textbf{Research Gap Addressed} & \textbf{Corresponding Research Question} \\ 
+		\midrule
+		Question-Guided Difference & The inefficiency of processing & RQ1: Can accurate answers be generated \\
+		Tokenizer (QDT) & dense visual features. & from a few sparse tokens? \\
+		\addlinespace
+		Directional Residual Stack & The lack of explicit directional & RQ2: Does explicit directionality improve \\
+		(DRS) & reasoning in current models. & reasoning on clinical terms? \\
+		\addlinespace
+		Counterfactual Regularizer & The vulnerability of generative & RQ3: Can counterfactual training reduce \\
+		(CFA-Reg) & models to hallucination. & the hallucination of differences? \\
+		\bottomrule
+	\end{tabular}
+}
 \end{table}
