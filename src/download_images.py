@@ -2,18 +2,29 @@ import os
 from google.cloud import storage
 from pathlib import Path
 from logging import Logger
-from config import (
-    logger,
+from lib.config import (
+    setup_logging,
     BLUE,
     YELLOW,
     GREEN,
     RED,
     COLOR_END,
-    BUCKET_NAME,
-    GCS_FOLDER,
-    LOCAL_DESTINATION,
-    BILLING_PROJECT_ID,
 )
+
+LOG_DIR = "logs"
+CHILD_DIR = "p11"
+GCS_PARENT_DIR = "files"
+LOCAL_PARENT_DIR = "D:/MIMIC-CXR-JPG"
+
+LOG_FILE = f"{LOG_DIR}/{CHILD_DIR}.log"
+BILLING_PROJECT_ID = "summer-branch-251417"
+BUCKET_NAME = "mimic-cxr-jpg-2.1.0.physionet.org"
+GCS_FOLDER = f"{GCS_PARENT_DIR}/{CHILD_DIR}/"  # os.path.join(GCS_PARENT_DIR, CHILD_DIR)
+LOCAL_DESTINATION = (
+    f"{LOCAL_PARENT_DIR}/{CHILD_DIR}/"  # os.path.join(LOCAL_PARENT_DIR, CHILD_DIR)
+)
+
+logger = setup_logging(log_file=LOG_FILE)
 
 
 def download_folder_from_requester_pays_bucket(

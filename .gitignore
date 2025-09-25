@@ -14,8 +14,15 @@ data/
 dataset/
 archive/
 
+# Prompt
+prompts/
+
+# Models
+models/
+
 *.zip
 *.gz
+*.tar
 
 # Virtual Environments
 *-env/
