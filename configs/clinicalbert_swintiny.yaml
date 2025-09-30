@@ -1,0 +1,29 @@
+# data
+data_root: /data/MIMIC-CXR-JPG/files
+pairs_csv: /data/Medical-Diff-VQA/mimic_pair_questions.csv
+meta_csv:  /data/Medical-Diff-VQA/mimic_all.csv
+keyinfo_json: /data/Medical-Diff-VQA/all_diseases.json
+ckpt: /models/swint_mcc.tar
+
+# model
+backbone: swin_tiny_patch4_window7_224
+head: decoder
+text_encoder: clinicalbert
+text_model_name: emilyalsentzer/Bio_ClinicalBERT
+text_finetune: false
+text_dim: 768
+text_proj_dim: 256
+dec_vocab: 8000
+
+# training
+bs: 8
+lr: 5.0e-5
+epochs_mrm: 2
+epochs_warmup: 2
+epochs_vqa: 5
+topk: 64
+
+lambda_mrm: 0.1
+lambda_align: 0.05
+lambda_cf: 0.05
+seed: 69

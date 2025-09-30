@@ -2,7 +2,7 @@ import os
 from google.cloud import storage
 from pathlib import Path
 from logging import Logger
-from lib.config import (
+from lib.utils import (
     setup_logging,
     BLUE,
     YELLOW,

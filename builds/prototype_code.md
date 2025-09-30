@@ -94,59 +94,23 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class TinyText(nn.Module):
-    """Toy text encoder (hash-based bag with learned embeddings). Swap later for BERT/ClinicalBERT."""
-    def __init__(self, vocab_size=4096, d_txt=256):
-        super().__init__()
-        self.emb = nn.Embedding(vocab_size, d_txt)
-        nn.init.normal_(self.emb.weight, std=0.02)
-        self.pad = 0
-
-    def tokenize(self, questions, max_len=32):
-        toks = []
-        for q in questions:
-            ws = q.strip().lower().split()[:max_len]
-            ids = [ (hash(w) % (self.emb.num_embeddings-1)) + 1 for w in ws ]
-            if not ids: ids = [1]
-            ids = ids + [0]*(max_len - len(ids))
-            toks.append(ids)
-        return torch.tensor(toks, dtype=torch.long)
-
-    def forward(self, token_ids):
-        emb = self.emb(token_ids)              # (B,L,d)
-        mask = (token_ids != self.pad)
-        denom = mask.sum(dim=1, keepdim=True).clamp(min=1)
-        return (emb * mask.unsqueeze(-1)).sum(dim=1) / denom  # (B,d)
-
-def make_zone_masks(h, w, num_rows=3, num_cols=2):
-    """
-    Simple grid-based lung zones: (num_rows x num_cols).
-    Returns a tensor (Z, H, W) with binary masks.
-    """
-    masks = []
-    row_edges = torch.linspace(0, h, steps=num_rows+1).long()
-    col_edges = torch.linspace(0, w, steps=num_cols+1).long()
-    for i in range(num_rows):
-        for j in range(num_cols):
-            m = torch.zeros(h, w, dtype=torch.float32)
-            m[row_edges[i]:row_edges[i+1], col_edges[j]:col_edges[j+1]] = 1.0
-            masks.append(m)
-    return torch.stack(masks, dim=0)  # (Z,H,W)
-
-class QDTPlus(nn.Module):
+class QuestionGuidedDifferenceTokenizer(nn.Module):
     """
     Concatenate residual maps (R+, R-, Rabs, optional signed conv) -> tokens.
     Add zone tokens (pooled by precomputed masks).
     Cross-attend tiny text embedding to visual tokens, produce gated top-k and heatmap.
     """
-    def __init__(self, c_img, d_txt=256, k=64, num_rows=3, num_cols=2, use_zone_bias=True):
+
+    def __init__(
+        self, c_img, d_txt=256, k=64, num_rows=3, num_cols=2, use_zone_bias=True
+    ):
         super().__init__()
         self.k = k
         self.use_zone_bias = use_zone_bias
 
-        self.txt_to_img = nn.Linear(d_txt, c_img)     # project q to img-dim
-        self.tok_proj   = nn.Linear(c_img, c_img)     # residual token projection
-        self.scale = c_img ** -0.5
+        self.txt_to_img = nn.Linear(d_txt, c_img)  # project q to img-dim
+        self.tok_proj = nn.Linear(c_img, c_img)  # residual token projection
+        self.scale = c_img**-0.5
 
         # tiny gate over attention scores (per token)
         self.gate = nn.Sequential(nn.Linear(1, 1), nn.Sigmoid())
@@ -157,12 +121,12 @@ class QDTPlus(nn.Module):
         adj = torch.zeros(Z, Z)
         for r in range(num_rows):
             for c in range(num_cols):
-                i = r*num_cols + c
-                for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
-                    rr, cc = r+dr, c+dc
+                i = r * num_cols + c
+                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    rr, cc = r + dr, c + dc
                     if 0 <= rr < num_rows and 0 <= cc < num_cols:
-                        j = rr*num_cols + cc
-                        adj[i,j] = 1.0
+                        j = rr * num_cols + cc
+                        adj[i, j] = 1.0
         self.register_buffer("zone_adj", adj)
 
         self.cached_masks = None  # filled on first forward
@@ -177,50 +141,131 @@ class QDTPlus(nn.Module):
 
         B, C, H, W = r_pos.shape
         if self.cached_masks is None:
-            self.cached_masks = make_zone_masks(H, W, self.num_rows, self.num_cols).to(r_pos.device)  # (Z,H,W)
+            self.cached_masks = self.make_zone_masks(
+                H, W, self.num_rows, self.num_cols
+            ).to(
+                r_pos.device
+            )  # (Z,H,W)
 
-        feats = torch.cat([r_pos, r_neg, r_abs], dim=1)           # (B,3C,H,W)
+        feats = torch.cat([r_pos, r_neg, r_abs], dim=1)  # (B,3C,H,W)
         if signed is not None:
-            feats = torch.cat([feats, signed], dim=1)             # (B,4C,H,W)
+            feats = torch.cat([feats, signed], dim=1)  # (B,4C,H,W)
         C_all = feats.shape[1]
 
-        tokens = feats.flatten(2).transpose(1,2)                  # (B,HW,C_all)
-        tokens = self.tok_proj(tokens)                            # (B,HW,C_all)
+        tokens = feats.flatten(2).transpose(1, 2)  # (B,HW,C_all)
+        tokens = self.tok_proj(tokens)  # (B,HW,C_all)
 
-        # Zone tokens: pool per zone mask
+        # zone tokens: pool per zone mask
         Z = self.cached_masks.shape[0]
         zone_tokens = []
         for z in range(Z):
-            m = self.cached_masks[z]                              # (H,W)
-            m = m.view(1,1,H,W)
-            pooled = (feats * m).sum(dim=(2,3)) / (m.sum()+1e-6)  # (B,C_all)
+            m = self.cached_masks[z]  # (H,W)
+            m = m.view(1, 1, H, W)
+            pooled = (feats * m).sum(dim=(2, 3)) / (m.sum() + 1e-6)  # (B,C_all)
             zone_tokens.append(pooled)
-        zone_tokens = torch.stack(zone_tokens, dim=1)             # (B,Z,C_all)
+        zone_tokens = torch.stack(zone_tokens, dim=1)  # (B,Z,C_all)
 
-        # Concatenate tokens + zone tokens
-        mem = torch.cat([tokens, zone_tokens], dim=1)             # (B,HW+Z,C_all)
+        # concatenate tokens + zone tokens
+        mem = torch.cat([tokens, zone_tokens], dim=1)  # (B,HW+Z,C_all)
 
-        # Attention from question to memory
-        q = self.txt_to_img(q_vec).unsqueeze(1)                   # (B,1,C_all)
-        att = (q @ mem.transpose(1,2)) * self.scale               # (B,1,HW+Z)
-        att = att.transpose(1,2)                                  # (B,HW+Z,1)
-        gated = self.gate(att) * att                              # gate ∈ (0,1) elementwise
-        att_scores = gated.squeeze(-1)                            # (B,HW+Z)
-        att_weights = F.softmax(att_scores, dim=-1)               # (B,HW+Z)
+        # attention from question to memory
+        q = self.txt_to_img(q_vec).unsqueeze(1)  # (B,1,C_all)
+        att = (q @ mem.transpose(1, 2)) * self.scale  # (B,1,HW+Z)
+        att = att.transpose(1, 2)  # (B,HW+Z,1)
+        gated = self.gate(att) * att  # gate is between 0 and 1 elementwise
+        att_scores = gated.squeeze(-1)  # (B,HW+Z)
+        att_weights = F.softmax(att_scores, dim=-1)  # (B,HW+Z)
 
-        # Evidence heatmap over spatial tokens only
-        heat_spatial = att_weights[:, :H*W].reshape(B, H, W)
+        # evidence heatmap over spatial tokens only
+        heat_spatial = att_weights[:, : H * W].reshape(B, H, W)
 
         # top-k selection over all tokens (spatial + zones)
         k = min(self.k, mem.shape[1])
         topk_vals, topk_idx = att_weights.topk(k, dim=-1)
         batch = torch.arange(B, device=mem.device)[:, None]
-        sel_tokens = mem[batch, topk_idx]                         # (B,k,C_all)
+        sel_tokens = mem[batch, topk_idx]  # (B,k,C_all)
 
         # small sparsity regularizer (encourage the gate to actually reject)
         gate_l1 = gated.abs().mean()
 
         return sel_tokens, heat_spatial, gate_l1
+
+    def make_zone_masks(self, h, w, num_rows=3, num_cols=2):
+        """
+        Simple grid-based lung zones: (num_rows x num_cols).
+        Returns a tensor (Z, H, W) with binary masks.
+        """
+        masks = []
+        row_edges = torch.linspace(0, h, steps=num_rows + 1).long()
+        col_edges = torch.linspace(0, w, steps=num_cols + 1).long()
+        for i in range(num_rows):
+            for j in range(num_cols):
+                m = torch.zeros(h, w, dtype=torch.float32)
+                m[row_edges[i] : row_edges[i + 1], col_edges[j] : col_edges[j + 1]] = (
+                    1.0
+                )
+                masks.append(m)
+        return torch.stack(masks, dim=0)  # (Z,H,W)
+
+
+class TinyText(nn.Module):
+    # keep this for ablations / classifier baseline
+    def __init__(self, vocab_size=4096, d_txt=256):
+        super().__init__()
+        self.emb = nn.Embedding(vocab_size, d_txt)
+        nn.init.normal_(self.emb.weight, std=0.02)
+        self.pad = 0
+
+    def tokenize(self, questions, max_len=32):
+        toks = []
+        for q in questions:
+            ws = q.strip().lower().split()[:max_len]
+            ids = [ (hash(w) % (self.emb.num_embeddings-1)) + 1 for w in ws ] or [1]
+            ids += [0]*(max_len-len(ids))
+            toks.append(ids)
+        return torch.tensor(toks, dtype=torch.long)
+
+    def forward(self, token_ids):
+        emb = self.emb(token_ids)
+        mask = (token_ids != self.pad)
+        denom = mask.sum(dim=1, keepdim=True).clamp(min=1)
+        return (emb * mask.unsqueeze(-1)).sum(dim=1) / denom
+
+class ClinicalBERTText(nn.Module):
+    """
+    Bio_ClinicalBERT pooled encoder.
+    Default: freeze parameters; set fine_tune=True to unfreeze top layers.
+    """
+    def __init__(self, model_name="emilyalsentzer/Bio_ClinicalBERT", d_txt=768,
+                 proj_dim=256, fine_tune=False):
+        super().__init__()
+        self.tok = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+        self.bert = AutoModel.from_pretrained(model_name)
+        self.out_dim = d_txt  # usually 768 for BERT-base
+        self.proj = nn.Linear(self.out_dim, proj_dim) if proj_dim and proj_dim != self.out_dim else nn.Identity()
+
+        if not fine_tune:
+            for p in self.bert.parameters():
+                p.requires_grad = False
+
+    def tokenize(self, questions, max_len=48):
+        # returns a dict of tensors
+        enc = self.tok(
+            list(questions),
+            padding=True,
+            truncation=True,
+            max_length=max_len,
+            return_tensors="pt"
+        )
+        return enc  # {'input_ids','attention_mask','token_type_ids'(maybe)}
+
+    def forward(self, token_batch):
+        # token_batch is the dict returned by tokenize(...), already on device
+        out = self.bert(**token_batch)
+        # Use CLS pooling (or mean pooling of last hidden state)
+        cls = out.last_hidden_state[:, 0]  # (B, hidden)
+        q = self.proj(cls)                 # (B, proj_dim)
+        return q
 
 ```
 
@@ -536,252 +581,7 @@ from .heads import IDEClassifier, TinyTransformerDecoder
 
 ___
 
-## Full Three-stage Trainer (MRM -> Pseudo Report Warm Up -> Diff-VQA)
-
-`train.py`
-
-```python
-# train.py
-import os, argparse, math, random
-from pathlib import Path
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-from dataset import DiffVQADataset
-from utils import make_loader
-from models import DirectionalResidualStack, QDTPlus, TinyText, MRM, IDEClassifier, TinyTransformerDecoder
-from losses import heatmap_kl, info_nce_token_sets
-
-def seed_all(s=42):
-    random.seed(s); torch.manual_seed(s); torch.cuda.manual_seed_all(s)
-    torch.backends.cudnn.benchmark = True
-
-class DiffVQAModel(nn.Module):
-    def __init__(self, backbone="resnet50", txt_dim=256, topk=64, num_rows=3, num_cols=2, num_classes=1000,
-                 head="classifier"):
-        super().__init__()
-        self.drs = DirectionalResidualStack(backbone_name=backbone)
-        C = self.drs.out_channels
-        # residual bundle has 3C (+ optional signed counted via QDTPlus concat)
-        self.text = TinyText(d_txt=txt_dim)
-        self.qdt  = QDTPlus(c_img= (C*4), d_txt=txt_dim, k=topk, num_rows=num_rows, num_cols=num_cols)
-        self.mrm  = MRM(c_all=(C*4), mask_ratio=0.6)
-        if head == "classifier":
-            self.head = IDEClassifier(dim=(C*4), num_classes=num_classes)
-            self.is_classifier = True
-        else:
-            self.head = TinyTransformerDecoder(dim=(C*4), vocab_size=num_classes, nlayer=3, nhead=8, max_len=16)
-            self.is_classifier = False
-
-    def forward(self, img_ref, img_cur, token_ids):
-        r = self.drs(img_ref, img_cur)                         # dict
-        q_vec = self.text(token_ids)                           # (B,d_txt)
-
-        sel_tokens, heatmap, gate_l1 = self.qdt(q_vec, r)      # (B,k,4C), (B,H,W), scalar
-        feats_for_mrm = torch.cat([r["r_pos"], r["r_neg"], r["r_abs"], r["signed"]], dim=1)
-        mrm_out = self.mrm(feats_for_mrm)                      # dict with loss_mrm
-
-        if self.is_classifier:
-            logits = self.head(sel_tokens, token_kinds=None)
-            return {"logits": logits, "heatmap": heatmap, "gate_l1": gate_l1, **mrm_out, **r}
-        else:
-            # seq decoder path expects tokenized targets, handled in train loop
-            return {"sel_tokens": sel_tokens, "heatmap": heatmap, "gate_l1": gate_l1, **mrm_out, **r}
-
-def tokenize_questions(text_model, batch_questions):
-    with torch.no_grad():
-        return text_model.tokenize(batch_questions)
-
-def run_epoch(stage, model, loader, optimizer, scaler, device,
-              lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.05, lambda_gate=1e-3,
-              classifier=True, vocab_size=None):
-    model.train()
-    total_steps = len(loader)
-    running = {"loss": 0.0, "acc": 0, "n": 0}
-
-    for i, batch in enumerate(loader):
-        img_cur = batch["img_cur"].to(device)
-        img_ref = batch["img_ref"].to(device)
-        y = batch["answer_id"].to(device)
-        qs = [q for q in batch["question"]]
-
-        token_ids = tokenize_questions(model.text, qs).to(device)
-
-        # build counterfactual pair by swapping
-        img_cur_cf, img_ref_cf = img_ref, img_cur
-        token_ids_cf = token_ids  # for negated questions you’d flip here; simple swap baseline
-
-        with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=(device.type=="cuda")):
-            out = model(img_ref, img_cur, token_ids)
-            out_cf = model(img_ref_cf, img_cur_cf, token_ids_cf)
-
-            # base losses
-            loss = 0.0
-
-            # stage A & B & C always keep MRM as aux
-            loss_mrm = out["loss_mrm"]
-
-            # alignment loss (DRS)
-            loss_align = model.drs.alignment_loss(out["r_pos"], out["r_neg"], out["r_abs"], out["signed"])
-
-            # counterfactual evidence losses
-            loss_hkl = heatmap_kl(out["heatmap"], out_cf["heatmap"])
-            loss_nce = info_nce_token_sets(out["patches"] if "patches" in out else out["r_abs"].flatten(2).transpose(1,2),
-                                           out_cf["patches"] if "patches" in out_cf else out_cf["r_abs"].flatten(2).transpose(1,2))
-
-            # gate sparsity (encourage rejecting irrelevant tokens)
-            loss_gate = out["gate_l1"]
-
-            if stage == "mrm":
-                loss = loss_mrm
-            elif stage == "warmup":
-                # pseudo-report warm-up (self-contained): supervise with answers as soft proxy
-                # simple closed-vocab CE here; you can replace with phrase targets if you build them.
-                if model.is_classifier:
-                    logits = out["logits"]
-                    ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = ce + lambda_mrm*loss_mrm + lambda_align*loss_align + lambda_gate*loss_gate
-                else:
-                    # example: decode targets identical to answers mapped to word ids (toy)
-                    targets = y.unsqueeze(1).repeat(1, 4)  # silly short target; replace with real pseudo-phrases
-                    logits, loss_dec = model.head(out["sel_tokens"], targets=targets, token_kinds=None)
-                    loss = loss_dec + lambda_mrm*loss_mrm + lambda_align*loss_align + lambda_gate*loss_gate
-            else:  # "vqa"
-                if model.is_classifier:
-                    logits = out["logits"]
-                    ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = ce + lambda_mrm*loss_mrm + lambda_align*loss_align \
-                           + lambda_cf*(loss_hkl + loss_nce) + lambda_gate*loss_gate
-                else:
-                    targets = y.unsqueeze(1).repeat(1, 4)
-                    logits, loss_dec = model.head(out["sel_tokens"], targets=targets, token_kinds=None)
-                    loss = loss_dec + lambda_mrm*loss_mrm + lambda_align*loss_align \
-                           + lambda_cf*(loss_hkl + loss_nce) + lambda_gate*loss_gate
-
-        optimizer.zero_grad(set_to_none=True)
-        scaler.scale(loss).backward()
-        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        scaler.step(optimizer); scaler.update()
-
-        running["loss"] += loss.item()
-
-        if model.is_classifier:
-            with torch.no_grad():
-                pred = out["logits"].argmax(dim=-1)
-                mask = (y != 0)
-                running["acc"] += (pred[mask] == y[mask]).sum().item()
-                running["n"] += mask.sum().item()
-
-        if (i+1) % 50 == 0:
-            if model.is_classifier and running["n"]>0:
-                print(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f} acc={running['acc']/max(1,running['n']):.3f}")
-            else:
-                print(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}")
-
-def main(args):
-    seed_all(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # datasets
-    train_ds = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="train")
-    vocab = (train_ds.stoi, train_ds.itos)
-    val_ds   = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="val", vocab=vocab)
-
-    num_classes = len(train_ds.itos)
-    print(f"Answer classes: {num_classes}")
-
-    train_loader = make_loader(train_ds, args.bs, shuffle=True)
-    val_loader   = make_loader(val_ds,  args.bs, shuffle=False)
-
-    model = DiffVQAModel(backbone=args.backbone, txt_dim=256, topk=args.topk,
-                         num_rows=3, num_cols=2, num_classes=num_classes,
-                         head=args.head).to(device)
-
-    # optional: load CXR-CLIP/SwinTiny weights into model.drs.backbone
-    if args.ckpt and Path(args.ckpt).exists():
-        sd = torch.load(args.ckpt, map_location="cpu")
-        missing, unexpected = model.drs.backbone.load_state_dict(sd, strict=False)
-        print(f"Loaded backbone weights: missing={len(missing)} unexpected={len(unexpected)}")
-
-    trainable = [p for p in model.parameters() if p.requires_grad]
-    opt = torch.optim.AdamW(trainable, lr=args.lr, weight_decay=1e-4)
-    scaler = torch.cuda.amp.GradScaler(enabled=(device.type=="cuda"))
-
-    # Stage A: MRM warm-up
-    for ep in range(args.epochs_mrm):
-        print(f"\n=== Stage A: MRM epoch {ep+1}/{args.epochs_mrm} ===")
-        run_epoch("mrm", model, train_loader, opt, scaler, device,
-                  lambda_mrm=1.0, lambda_align=0.0, lambda_cf=0.0, lambda_gate=0.0,
-                  classifier=(args.head=="classifier"))
-
-    # Stage B: pseudo-report warm-up (self-contained; still closed-vocab proxy)
-    for ep in range(args.epochs_warmup):
-        print(f"\n=== Stage B: Warm-up epoch {ep+1}/{args.epochs_warmup} ===")
-        run_epoch("warmup", model, train_loader, opt, scaler, device,
-                  lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.0, lambda_gate=1e-3,
-                  classifier=(args.head=="classifier"))
-
-    # Stage C: Diff-VQA finetune with counterfactual evidence losses
-    for ep in range(args.epochs_vqa):
-        print(f"\n=== Stage C: VQA epoch {ep+1}/{args.epochs_vqa} ===")
-        run_epoch("vqa", model, train_loader, opt, scaler, device,
-                  lambda_mrm=args.lambda_mrm, lambda_align=args.lambda_align,
-                  lambda_cf=args.lambda_cf, lambda_gate=1e-3,
-                  classifier=(args.head=="classifier"))
-
-if __name__ == "__main__":
-    p = argparse.ArgumentParser()
-    p.add_argument("--data_root", type=str, required=True, help="root of MIMIC-CXR-JPG files/")
-    p.add_argument("--pairs_csv", type=str, required=True, help="path to mimic_pair_questions.csv")
-    p.add_argument("--meta_csv",  type=str, required=True, help="path to mimic_all.csv")
-    p.add_argument("--ckpt", type=str, default="", help="pretrained backbone weights (optional)")
-    p.add_argument("--backbone", type=str, default="resnet50")
-    p.add_argument("--head", type=str, default="classifier", choices=["classifier","decoder"])
-    p.add_argument("--bs", type=int, default=16)
-    p.add_argument("--lr", type=float, default=1e-4)
-    p.add_argument("--epochs_mrm", type=int, default=1)
-    p.add_argument("--epochs_warmup", type=int, default=1)
-    p.add_argument("--epochs_vqa", type=int, default=3)
-    p.add_argument("--topk", type=int, default=64)
-    p.add_argument("--lambda_mrm", type=float, default=0.1)
-    p.add_argument("--lambda_align", type=float, default=0.05)
-    p.add_argument("--lambda_cf", type=float, default=0.05)
-    p.add_argument("--seed", type=int, default=42)
-    args = p.parse_args()
-    main(args)
-```
-
-___
-
-## How to run
-
-### Data
-
-- `--data_root` points to MIMIC-CXR-JPG `files/` directory (with `pXX/pXXXX.../sYYYY.../*.jpg`).
-
-- `--pairs_csv` is `mimic_pair_questions.csv`.
-
-- `--meta_csv` is `mimic_all.csv`.
-
-### Train
-
-```bash
-python -u train.py \
-  --data_root /path/to/MIMIC-CXR-JPG/files \
-  --pairs_csv /path/to/mimic_pair_questions.csv \
-  --meta_csv  /path/to/mimic_all.csv \
-  --ckpt /path/to/r50_mcc.tar \
-  --backbone resnet50 \
-  --head classifier \
-  --bs 16 --lr 1e-4 \
-  --epochs_mrm 1 --epochs_warmup 1 --epochs_vqa 3 \
-  --topk 64 --lambda_mrm 0.1 --lambda_align 0.05 --lambda_cf 0.05
-
-```
-
-### Notes
+## Notes
 
 - The classifier head is a strong baseline for dataset-style answers.
 
@@ -957,73 +757,180 @@ def negate_question(q: str) -> str:
     return s
 ```
 
-### Wire both into training loop
+## Full Three-stage Trainer (MRM -> Pseudo Report Warm Up -> Diff-VQA)
 
-Patch `train.py`
+`train.py`
 
 ```python
 # train.py
-import os, argparse, math, random
+import os, argparse, random
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import yaml
 
 from dataset import DiffVQADataset
 from utils import make_loader
-from models import DirectionalResidualStack, QDTPlus, TinyText, MRM, IDEClassifier, TinyTransformerDecoder
+from models import (
+    DirectionalResidualStack, QDTPlus, MRM, IDEClassifier, TinyTransformerDecoder
+)
+from models.text_encoders import TinyText, ClinicalBERTText
 from losses import heatmap_kl, info_nce_token_sets
-
 from phrases import load_keyinfo, build_diff_phrase
 from negate import negate_question
 
+
+# --------------------------
+# Argparse + YAML
+# --------------------------
+def parse_args():
+    p = argparse.ArgumentParser()
+    p.add_argument("--config", type=str, default="", help="YAML config path")
+
+    # Fallback CLI (overridden by YAML if provided)
+    p.add_argument("--data_root", type=str, default="")
+    p.add_argument("--pairs_csv", type=str, default="")
+    p.add_argument("--meta_csv", type=str, default="")
+    p.add_argument("--keyinfo_json", type=str, default="")
+    p.add_argument("--ckpt", type=str, default="")
+
+    p.add_argument("--backbone", type=str, default="resnet50")
+    p.add_argument("--head", type=str, default="classifier", choices=["classifier", "decoder"])
+
+    # text encoder settings
+    p.add_argument("--text_encoder", type=str, default="tiny", choices=["tiny", "clinicalbert"])
+    p.add_argument("--text_model_name", type=str, default="emilyalsentzer/Bio_ClinicalBERT")
+    p.add_argument("--text_finetune", action="store_true")
+    p.add_argument("--text_dim", type=int, default=768)        # ClinicalBERT hidden size
+    p.add_argument("--text_proj_dim", type=int, default=256)   # projected dim into QDT
+
+    p.add_argument("--dec_vocab", type=int, default=6000)
+    p.add_argument("--bs", type=int, default=16)
+    p.add_argument("--lr", type=float, default=1e-4)
+    p.add_argument("--epochs_mrm", type=int, default=1)
+    p.add_argument("--epochs_warmup", type=int, default=1)
+    p.add_argument("--epochs_vqa", type=int, default=3)
+    p.add_argument("--topk", type=int, default=64)
+
+    p.add_argument("--lambda_mrm", type=float, default=0.1)
+    p.add_argument("--lambda_align", type=float, default=0.05)
+    p.add_argument("--lambda_cf", type=float, default=0.05)
+    p.add_argument("--seed", type=int, default=42)
+
+    args = p.parse_args()
+
+    # YAML overrides CLI defaults
+    if args.config and Path(args.config).exists():
+        with open(args.config, "r") as f:
+            cfg = yaml.safe_load(f) or {}
+        for k, v in cfg.items():
+            setattr(args, k, v)
+
+    return args
+
+
+# --------------------------
+# Small helpers
+# --------------------------
 def seed_all(s=42):
-    random.seed(s); torch.manual_seed(s); torch.cuda.manual_seed_all(s)
+    random.seed(s)
+    torch.manual_seed(s)
+    torch.cuda.manual_seed_all(s)
     torch.backends.cudnn.benchmark = True
 
+
+def text_to_ids(texts, vocab_size=6000, max_len=16):
+    """Hash-based toy tokenizer for decoder targets; 0 reserved for PAD."""
+    ids = []
+    for t in texts:
+        words = t.strip().lower().split()[:max_len]
+        if not words:
+            words = ["<blank>"]
+        row = [ (hash(w) % (vocab_size - 1)) + 1 for w in words ]
+        row += [0] * (max_len - len(row))
+        ids.append(row)
+    return torch.tensor(ids, dtype=torch.long)
+
+
+def tokenize_questions(text_model, batch_questions, use_hf=False, device=None):
+    """Return token ids (TinyText) or dict of tensors (HF ClinicalBERT)."""
+    if use_hf:
+        enc = text_model.tokenize(batch_questions)
+        if device is not None:
+            enc = {k: v.to(device) for k, v in enc.items()}
+        return enc
+    else:
+        return text_model.tokenize(batch_questions)
+
+
+# --------------------------
+# Full model wrapper
+# --------------------------
 class DiffVQAModel(nn.Module):
-    def __init__(self, backbone="resnet50", txt_dim=256, topk=64, num_rows=3, num_cols=2, num_classes=1000,
-                 head="classifier"):
+    def __init__(self,
+                 backbone="resnet50",
+                 text_encoder="tiny",
+                 text_model_name="emilyalsentzer/Bio_ClinicalBERT",
+                 text_dim=768,
+                 text_proj_dim=256,
+                 text_finetune=False,
+                 topk=64, num_rows=3, num_cols=2,
+                 num_classes=1000, head="classifier"):
         super().__init__()
+
+        # Vision
         self.drs = DirectionalResidualStack(backbone_name=backbone)
-        C = self.drs.out_channels
-        self.text = TinyText(d_txt=txt_dim)
-        self.qdt  = QDTPlus(c_img=(C*4), d_txt=txt_dim, k=topk, num_rows=num_rows, num_cols=num_cols)
-        self.mrm  = MRM(c_all=(C*4), mask_ratio=0.6)
+        C = self.drs.out_channels  # channels at selected stage
+        c_all = C * 4              # [R+, R-, Rabs, signed]
+
+        # Text
+        if text_encoder == "clinicalbert":
+            self.text = ClinicalBERTText(
+                model_name=text_model_name,
+                d_txt=text_dim,
+                proj_dim=text_proj_dim,
+                fine_tune=text_finetune,
+            )
+            self.uses_hf = True
+            q_dim = text_proj_dim
+        else:
+            self.text = TinyText(d_txt=text_proj_dim)
+            self.uses_hf = False
+            q_dim = text_proj_dim
+
+        # QDT+ & MRM
+        self.qdt = QDTPlus(c_img=c_all, d_txt=q_dim, k=topk, num_rows=num_rows, num_cols=num_cols)
+        self.mrm = MRM(c_all=c_all, mask_ratio=0.6)
+
+        # Head
         if head == "classifier":
-            self.head = IDEClassifier(dim=(C*4), num_classes=num_classes)
+            self.head = IDEClassifier(dim=c_all, num_classes=num_classes)
             self.is_classifier = True
         else:
-            self.head = TinyTransformerDecoder(dim=(C*4), vocab_size=num_classes, nlayer=3, nhead=8, max_len=16)
+            self.head = TinyTransformerDecoder(dim=c_all, vocab_size=num_classes, nlayer=3, nhead=8, max_len=16)
             self.is_classifier = False
 
-    def forward(self, img_ref, img_cur, token_ids):
-        r = self.drs(img_ref, img_cur)
-        q_vec = self.text(token_ids)
-        sel_tokens, heatmap, gate_l1 = self.qdt(q_vec, r)
+    def forward(self, img_ref, img_cur, token_batch):
+        # token_batch: TinyText ids tensor OR HF dict
+        r = self.drs(img_ref, img_cur)                   # dict: r_pos, r_neg, r_abs, signed
+        q_vec = self.text(token_batch)                   # (B, q_dim)
+
+        sel_tokens, heatmap, gate_l1 = self.qdt(q_vec, r)             # (B,k,c_all), (B,H,W), scalar
         feats_for_mrm = torch.cat([r["r_pos"], r["r_neg"], r["r_abs"], r["signed"]], dim=1)
-        mrm_out = self.mrm(feats_for_mrm)
+        mrm_out = self.mrm(feats_for_mrm)                              # has "loss_mrm", "patches", ...
+
         if self.is_classifier:
             logits = self.head(sel_tokens, token_kinds=None)
             return {"logits": logits, "heatmap": heatmap, "gate_l1": gate_l1, **mrm_out, **r}
         else:
             return {"sel_tokens": sel_tokens, "heatmap": heatmap, "gate_l1": gate_l1, **mrm_out, **r}
 
-def tokenize_questions(text_model, batch_questions):
-    with torch.no_grad():
-        return text_model.tokenize(batch_questions)
 
-def text_to_ids(texts, vocab_size=6000, max_len=16):
-    ids = []
-    for t in texts:
-        words = t.strip().lower().split()[:max_len]
-        if not words: words = ["<blank>"]
-        row = [ (hash(w) % (vocab_size-1)) + 1 for w in words ]  # 0=pad
-        row += [0]*(max_len - len(row))
-        ids.append(row)
-    return torch.tensor(ids, dtype=torch.long)
-
+# --------------------------
+# Training loop
+# --------------------------
 def run_epoch(stage, model, loader, optimizer, scaler, device,
               lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.05, lambda_gate=1e-3,
               classifier=True, vocab_size=None, keyinfo_idx=None):
@@ -1034,19 +941,21 @@ def run_epoch(stage, model, loader, optimizer, scaler, device,
     for i, batch in enumerate(loader):
         img_cur = batch["img_cur"].to(device)
         img_ref = batch["img_ref"].to(device)
-        y = batch["answer_id"].to(device)
+        y = batch["answer_id"].to(device)        # for classifier path
         qs = [q for q in batch["question"]]
         qs_cf = [negate_question(q) for q in qs]
 
-        token_ids = tokenize_questions(model.text, qs).to(device)
-        token_ids_cf = tokenize_questions(model.text, qs_cf).to(device)
+        tokens = tokenize_questions(model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device)
+        tokens_cf = tokenize_questions(model.text, qs_cf, use_hf=getattr(model, "uses_hf", False), device=device)
 
+        # counterfactual pair by swapping ref/cur
         img_cur_cf, img_ref_cf = img_ref, img_cur
 
-        with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=(device.type=="cuda")):
-            out = model(img_ref, img_cur, token_ids)
-            out_cf = model(img_ref_cf, img_cur_cf, token_ids_cf)
+        with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=(device.type == "cuda")):
+            out = model(img_ref, img_cur, tokens)
+            out_cf = model(img_ref_cf, img_cur_cf, tokens_cf)
 
+            # base losses
             loss_mrm = out["loss_mrm"]
             loss_align = model.drs.alignment_loss(out["r_pos"], out["r_neg"], out["r_abs"], out["signed"])
             loss_hkl = heatmap_kl(out["heatmap"], out_cf["heatmap"])
@@ -1055,42 +964,46 @@ def run_epoch(stage, model, loader, optimizer, scaler, device,
 
             if stage == "mrm":
                 loss = loss_mrm
+
             elif stage == "warmup":
                 if classifier:
                     logits = out["logits"]
                     ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = ce + lambda_mrm*loss_mrm + lambda_align*loss_align + lambda_gate*loss_gate
+                    loss = ce + lambda_mrm * loss_mrm + lambda_align * loss_align + lambda_gate * loss_gate
                 else:
+                    # true generative targets from KeyInfo deltas (if provided)
                     phrases = []
                     for m in batch["meta"]:
                         _, sid_cur, sid_ref = m
-                        phrases.append(build_diff_phrase(sid_cur, sid_ref, keyinfo_idx) if keyinfo_idx else "no change")
+                        phrases.append(build_diff_phrase(sid_cur, sid_ref, keyinfo_idx) if keyinfo_idx else "no significant change")
                     targets = text_to_ids(phrases, vocab_size=vocab_size, max_len=16).to(device)
                     logits, loss_dec = model.head(out["sel_tokens"], targets=targets, token_kinds=None)
-                    loss = loss_dec + lambda_mrm*loss_mrm + lambda_align*loss_align + lambda_gate*loss_gate
-            else:  # vqa
+                    loss = loss_dec + lambda_mrm * loss_mrm + lambda_align * loss_align + lambda_gate * loss_gate
+
+            else:  # stage == "vqa"
                 if classifier:
                     logits = out["logits"]
                     ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = ce + lambda_mrm*loss_mrm + lambda_align*loss_align \
-                           + lambda_cf*(loss_hkl + loss_nce) + lambda_gate*loss_gate
+                    loss = ce + lambda_mrm * loss_mrm + lambda_align * loss_align \
+                           + lambda_cf * (loss_hkl + loss_nce) + lambda_gate * loss_gate
                 else:
+                    # Option: still use KeyInfo phrases for supervision
                     phrases = []
                     for m in batch["meta"]:
                         _, sid_cur, sid_ref = m
-                        phrases.append(build_diff_phrase(sid_cur, sid_ref, keyinfo_idx) if keyinfo_idx else "no change")
+                        phrases.append(build_diff_phrase(sid_cur, sid_ref, keyinfo_idx) if keyinfo_idx else "no significant change")
                     targets = text_to_ids(phrases, vocab_size=vocab_size, max_len=16).to(device)
                     logits, loss_dec = model.head(out["sel_tokens"], targets=targets, token_kinds=None)
-                    loss = loss_dec + lambda_mrm*loss_mrm + lambda_align*loss_align \
-                           + lambda_cf*(loss_hkl + loss_nce) + lambda_gate*loss_gate
+                    loss = loss_dec + lambda_mrm * loss_mrm + lambda_align * loss_align \
+                           + lambda_cf * (loss_hkl + loss_nce) + lambda_gate * loss_gate
 
         optimizer.zero_grad(set_to_none=True)
         scaler.scale(loss).backward()
         nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        scaler.step(optimizer); scaler.update()
+        scaler.step(optimizer)
+        scaler.update()
 
         running["loss"] += loss.item()
-
         if classifier:
             with torch.no_grad():
                 pred = out["logits"].argmax(dim=-1)
@@ -1098,100 +1011,110 @@ def run_epoch(stage, model, loader, optimizer, scaler, device,
                 running["acc"] += (pred[mask] == y[mask]).sum().item()
                 running["n"] += mask.sum().item()
 
-        if (i+1) % 50 == 0:
-            if classifier and running["n"]>0:
+        if (i + 1) % 50 == 0:
+            if classifier and running["n"] > 0:
                 print(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f} acc={running['acc']/max(1,running['n']):.3f}")
             else:
                 print(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}")
 
+
+# --------------------------
+# Main
+# --------------------------
 def main(args):
     seed_all(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    # Datasets
     train_ds = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="train")
     vocab = (train_ds.stoi, train_ds.itos)
-    val_ds   = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="val", vocab=vocab)
+    val_ds = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="val", vocab=vocab)
 
-    num_classes = len(train_ds.itos) if args.head=="classifier" else args.dec_vocab
-    print(f"Answer classes: {num_classes}")
+    num_classes = len(train_ds.itos) if args.head == "classifier" else args.dec_vocab
+    print(f"Answer classes / Dec vocab: {num_classes}")
 
     train_loader = make_loader(train_ds, args.bs, shuffle=True)
-    val_loader   = make_loader(val_ds,  args.bs, shuffle=False)
+    val_loader = make_loader(val_ds, args.bs, shuffle=False)  # not used yet; wire in eval later
 
-    model = DiffVQAModel(backbone=args.backbone, txt_dim=256, topk=args.topk,
-                         num_rows=3, num_cols=2, num_classes=num_classes,
-                         head=args.head).to(device)
+    # Model
+    model = DiffVQAModel(
+        backbone=args.backbone,
+        text_encoder=args.text_encoder,
+        text_model_name=args.text_model_name,
+        text_dim=args.text_dim,
+        text_proj_dim=args.text_proj_dim,
+        text_finetune=args.text_finetune,
+        topk=args.topk, num_rows=3, num_cols=2,
+        num_classes=num_classes, head=args.head
+    ).to(device)
 
+    # Optional backbone checkpoint (CXR-CLIP ResNet50 / SwinTiny)
     if args.ckpt and Path(args.ckpt).exists():
         sd = torch.load(args.ckpt, map_location="cpu")
         missing, unexpected = model.drs.backbone.load_state_dict(sd, strict=False)
         print(f"Loaded backbone weights: missing={len(missing)} unexpected={len(unexpected)}")
 
-    opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad],
-                            lr=args.lr, weight_decay=1e-4)
-    scaler = torch.cuda.amp.GradScaler(enabled=(device.type=="cuda"))
+    opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=float(args.lr), weight_decay=1e-4)
+    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
 
     keyinfo_idx = load_keyinfo(args.keyinfo_json) if args.keyinfo_json and Path(args.keyinfo_json).exists() else None
 
-    for ep in range(args.epochs_mrm):
+    # Stage A: MRM warm-up
+    for ep in range(int(args.epochs_mrm)):
         print(f"\n=== Stage A: MRM epoch {ep+1}/{args.epochs_mrm} ===")
-        run_epoch("mrm", model, train_loader, opt, scaler, device,
-                  lambda_mrm=1.0, lambda_align=0.0, lambda_cf=0.0, lambda_gate=0.0,
-                  classifier=(args.head=="classifier"))
+        run_epoch(
+            "mrm", model, train_loader, opt, scaler, device,
+            lambda_mrm=1.0, lambda_align=0.0, lambda_cf=0.0, lambda_gate=0.0,
+            classifier=(args.head == "classifier")
+        )
 
-    for ep in range(args.epochs_warmup):
+    # Stage B: warm-up with KeyInfo phrases (self-contained)
+    for ep in range(int(args.epochs_warmup)):
         print(f"\n=== Stage B: Warm-up epoch {ep+1}/{args.epochs_warmup} ===")
-        run_epoch("warmup", model, train_loader, opt, scaler, device,
-                  lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.0, lambda_gate=1e-3,
-                  classifier=(args.head=="classifier"),
-                  vocab_size=(args.dec_vocab if args.head=="decoder" else None),
-                  keyinfo_idx=keyinfo_idx)
+        run_epoch(
+            "warmup", model, train_loader, opt, scaler, device,
+            lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.0, lambda_gate=1e-3,
+            classifier=(args.head == "classifier"),
+            vocab_size=(args.dec_vocab if args.head == "decoder" else None),
+            keyinfo_idx=keyinfo_idx
+        )
 
-    for ep in range(args.epochs_vqa):
+    # Stage C: Diff-VQA finetune with counterfactual evidence losses
+    for ep in range(int(args.epochs_vqa)):
         print(f"\n=== Stage C: VQA epoch {ep+1}/{args.epochs_vqa} ===")
-        run_epoch("vqa", model, train_loader, opt, scaler, device,
-                  lambda_mrm=args.lambda_mrm, lambda_align=args.lambda_align,
-                  lambda_cf=args.lambda_cf, lambda_gate=1e-3,
-                  classifier=(args.head=="classifier"),
-                  vocab_size=(args.dec_vocab if args.head=="decoder" else None),
-                  keyinfo_idx=keyinfo_idx)
+        run_epoch(
+            "vqa", model, train_loader, opt, scaler, device,
+            lambda_mrm=args.lambda_mrm, lambda_align=args.lambda_align,
+            lambda_cf=args.lambda_cf, lambda_gate=1e-3,
+            classifier=(args.head == "classifier"),
+            vocab_size=(args.dec_vocab if args.head == "decoder" else None),
+            keyinfo_idx=keyinfo_idx
+        )
+
 
 if __name__ == "__main__":
-    p = argparse.ArgumentParser()
-    p.add_argument("--data_root", type=str, required=True)
-    p.add_argument("--pairs_csv", type=str, required=True)
-    p.add_argument("--meta_csv",  type=str, required=True)
-    p.add_argument("--keyinfo_json", type=str, default="")
-    p.add_argument("--ckpt", type=str, default="")
-    p.add_argument("--backbone", type=str, default="resnet50")
-    p.add_argument("--head", type=str, default="classifier", choices=["classifier","decoder"])
-    p.add_argument("--dec_vocab", type=int, default=6000)
-    p.add_argument("--bs", type=int, default=16)
-    p.add_argument("--lr", type=float, default=1e-4)
-    p.add_argument("--epochs_mrm", type=int, default=1)
-    p.add_argument("--epochs_warmup", type=int, default=1)
-    p.add_argument("--epochs_vqa", type=int, default=3)
-    p.add_argument("--topk", type=int, default=64)
-    p.add_argument("--lambda_mrm", type=float, default=0.1)
-    p.add_argument("--lambda_align", type=float, default=0.05)
-    p.add_argument("--lambda_cf", type=float, default=0.05)
-    p.add_argument("--seed", type=int, default=42)
-    args = p.parse_args()
+    args = parse_args()
     main(args)
 
 ```
 
-### How to run patched `train.py`
+### How to run?
 
-```bash
-python -u train.py \
-  --data_root /path/to/MIMIC-CXR-JPG/files \
-  --pairs_csv /path/to/mimic_pair_questions.csv \
-  --meta_csv  /path/to/mimic_all.csv \
-  --keyinfo_json /path/to/all_diseases.json \
-  --backbone swin_tiny_patch4_window7_224 \
-  --ckpt /path/to/swint_mcc.tar \
-  --head decoder \
-  --dec_vocab 8000 \
-  --epochs_mrm 1 --epochs_warmup 1 --epochs_vqa 3
-```
+- Resnet50 + ClinicalBERT
+
+    ```bash
+    python train.py --config configs/clinicalbert_resnet.yaml
+    ```
+
+- Swin-Tiny + ClinicalBERT (decoder head, generative training with KeyInfo phrases):4
+
+    ```bash
+    python train.py --config configs/clinicalbert_swin_decoder.yaml
+    ```
+
+- Switch back to the tiny text stub (fast ablations) by setting:
+
+    ```bash
+    text_encoder: tiny
+    text_proj_dim: 256
+    ```
