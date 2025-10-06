@@ -1,14 +1,21 @@
 # data
-data_root: /data/MIMIC-CXR-JPG/files
-pairs_csv: /data/Medical-Diff-VQA/mimic_pair_questions.csv
-meta_csv:  /data/Medical-Diff-VQA/mimic_all.csv
-keyinfo_json: /data/Medical-Diff-VQA/all_diseases.json
-ckpt: /models/r50_mcc.tar
+data_root: D:/MIMIC-CXR-JPG/
+
+# pairs_csv: D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_train.csv
+# meta_csv:  D:/MIMIC-CXR-JPG/mimic_all_p10_train.csv
+# keyinfo_json: D:/MIMIC-CXR-JPG/all_diseases_p10.json
+
+pairs_csv: D:/MIMIC-CXR-JPG/mimic_pair_questions_1p.csv
+meta_csv:  D:/MIMIC-CXR-JPG/mimic_all_1p.csv
+keyinfo_json: D:/MIMIC-CXR-JPG/all_diseases_1p.json
+
+ckpt: ./models/r50_mcc.tar
 
 # model
 backbone: resnet50
 head: classifier           # or "decoder"
-text_encoder: clinicalbert
+# text_encoder: clinicalbert
+text_encoder: tiny
 text_model_name: emilyalsentzer/Bio_ClinicalBERT
 text_finetune: false
 text_dim: 768
@@ -20,11 +27,10 @@ bs: 12
 lr: 1.0e-4
 epochs_mrm: 1
 epochs_warmup: 1
-epochs_vqa: 3
+epochs_vqa: 1
 topk: 64
 
 lambda_mrm: 0.1
 lambda_align: 0.05
 lambda_cf: 0.05
 seed: 69
-

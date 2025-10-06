@@ -1,0 +1,756 @@
+2025-09-21 04:51:51,071 - MIMIC-CXR-JPG-DOWNLOADER - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 12:54:26,886 - MIMIC-CXR-JPG-DOWNLOADER - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 12:54:39,558 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with resnet50 ...
+2025-09-21 12:54:39,639 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 12:54:39,640 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 12:54:40,019 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 12:54:40,020 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 12:54:40,102 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 12:54:41,385 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-21 12:54:41,584 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 12:54:41,585 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 12:54:42,399 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 12:54:42,401 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 12:54:42,507 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 12:57:22,072 - MIMIC-CXR-JPG-DOWNLOADER - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 12:57:26,952 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with resnet50 ...
+2025-09-21 12:57:26,952 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 2048
+2025-09-21 12:57:27,020 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 12:57:27,021 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 12:57:27,330 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-21 12:57:27,332 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-21 12:57:27,333 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 12:57:27,334 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-21 12:57:27,335 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 12:57:27,336 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-21 12:57:27,337 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 12:57:27,338 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 12:57:27,340 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-21 12:57:27,360 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 12:57:28,338 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-21 12:57:28,338 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 768
+2025-09-21 12:57:28,542 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 12:57:28,542 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 12:57:28,768 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-21 12:57:28,771 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-21 12:57:28,772 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 12:57:28,773 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-21 12:57:28,774 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 12:57:28,775 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-21 12:57:28,776 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 12:57:28,777 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 12:57:28,778 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-21 12:57:28,812 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 12:59:53,125 - MIMIC-CXR-JPG-DOWNLOADER - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 12:59:53,812 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with resnet50 ...
+2025-09-21 12:59:53,813 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 2048
+2025-09-21 12:59:53,899 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 12:59:53,900 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 12:59:54,199 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-21 12:59:54,200 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-21 12:59:54,202 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 12:59:54,203 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-21 12:59:54,204 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 12:59:54,205 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-21 12:59:54,206 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 12:59:54,207 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 12:59:54,208 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-21 12:59:54,220 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 12:59:55,094 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-21 12:59:55,095 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 768
+2025-09-21 12:59:55,313 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 12:59:55,314 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 12:59:55,368 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-21 12:59:55,369 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-21 12:59:55,369 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 12:59:55,371 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-21 12:59:55,372 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 12:59:55,373 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-21 12:59:55,374 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 12:59:55,375 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 12:59:55,377 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-21 12:59:55,379 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:00:04,023 - MIMIC-CXR-JPG-DOWNLOADER - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 13:00:08,934 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with resnet50 ...
+2025-09-21 13:00:08,935 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 2048
+2025-09-21 13:00:09,005 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 13:00:09,006 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 13:00:09,313 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:00:09,314 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:00:09,315 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 13:00:09,316 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:00:09,318 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 13:00:09,320 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-21 13:00:09,321 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 13:00:09,322 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 13:00:09,323 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-21 13:00:09,341 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:00:10,244 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-21 13:00:10,245 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 768
+2025-09-21 13:00:10,456 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 13:00:10,457 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 13:00:10,688 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-21 13:00:10,691 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-21 13:00:10,691 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 13:00:10,692 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-21 13:00:10,694 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 13:00:10,695 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-21 13:00:10,696 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 13:00:10,697 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 13:00:10,697 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-21 13:00:10,730 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:06:10,435 - MIMIC-CXR-JPG-DOWNLOADER - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 13:06:16,844 - MIMIC-CXR-JPG-DOWNLOADER - INFO - --- Testing ResNet50 ---
+2025-09-21 13:06:18,099 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with resnet50 ...
+2025-09-21 13:06:18,100 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 2048
+2025-09-21 13:06:18,353 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 13:06:18,353 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 13:06:18,639 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:06:18,644 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:06:18,644 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 13:06:18,646 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:06:18,647 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 13:06:18,648 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-21 13:06:18,648 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 13:06:18,649 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 13:06:18,650 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-21 13:06:18,700 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:06:18,701 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-21 13:06:18,703 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Reconstruction Loss: 0.4969938397407532
+2025-09-21 13:06:18,704 - MIMIC-CXR-JPG-DOWNLOADER - SUCCESS - ResNet50 test PASSED
+2025-09-21 13:06:18,713 - MIMIC-CXR-JPG-DOWNLOADER - INFO - --- Testing Swin-T ---
+2025-09-21 13:06:19,563 - MIMIC-CXR-JPG-DOWNLOADER - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-21 13:06:19,564 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Feature dimension set to: 768
+2025-09-21 13:06:19,631 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Entering forward pass...
+2025-09-21 13:06:19,632 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Entering forward pass...
+2025-09-21 13:06:19,711 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-21 13:06:19,712 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-21 13:06:19,713 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [DRS] Exiting forward pass.
+2025-09-21 13:06:19,714 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-21 13:06:19,714 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 13:06:19,715 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-21 13:06:19,715 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 13:06:19,716 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 13:06:19,717 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-21 13:06:19,719 - MIMIC-CXR-JPG-DOWNLOADER - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:06:19,719 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-21 13:06:19,721 - MIMIC-CXR-JPG-DOWNLOADER - DEBUG - Reconstruction Loss: 13.17614459991455
+2025-09-21 13:06:19,721 - MIMIC-CXR-JPG-DOWNLOADER - SUCCESS - Swin-T test PASSED
+2025-09-21 13:40:20,464 - DRIFT - INFO - This log message will correctly go to cxr-diff-vqa/logs/MRM.log
+2025-09-21 13:40:27,070 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-21 13:40:28,251 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-21 13:40:28,252 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-21 13:40:28,518 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-21 13:40:28,519 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-21 13:40:28,730 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:40:28,734 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:40:28,735 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-21 13:40:28,736 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-21 13:40:28,737 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 13:40:28,738 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-21 13:40:28,739 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 13:40:28,739 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-21 13:40:28,740 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-21 13:40:28,797 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:40:28,798 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-21 13:40:28,799 - DRIFT - DEBUG - Reconstruction Loss: 0.4929872751235962
+2025-09-21 13:40:28,800 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-21 13:40:28,810 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-21 13:40:29,746 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-21 13:40:29,747 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-21 13:40:29,816 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-21 13:40:29,817 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-21 13:40:29,900 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-21 13:40:29,901 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-21 13:40:29,902 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-21 13:40:29,903 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-21 13:40:29,903 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-21 13:40:29,904 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-21 13:40:29,905 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 13:40:29,905 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-21 13:40:29,906 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-21 13:40:29,908 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-21 13:40:29,908 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-21 13:40:29,909 - DRIFT - DEBUG - Reconstruction Loss: 7.312313556671143
+2025-09-21 13:40:29,910 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-23 04:15:13,326 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-23 04:15:20,578 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-23 04:15:23,742 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-23 04:15:25,382 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 04:15:25,383 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 04:15:25,642 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-23 04:15:25,643 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-23 04:15:26,365 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-23 04:15:26,380 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-23 04:15:26,380 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-23 04:15:26,381 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-23 04:15:26,382 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-23 04:15:26,386 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-23 04:15:26,387 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-23 04:15:26,388 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-23 04:15:26,389 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-23 04:15:26,573 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-23 04:15:26,574 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-23 04:15:26,575 - DRIFT - DEBUG - Reconstruction Loss: 0.4737999439239502
+2025-09-23 04:15:26,576 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-23 04:15:26,584 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-23 04:15:27,848 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-23 04:15:27,849 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-23 04:15:27,907 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-23 04:15:27,909 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-23 04:15:28,106 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-23 04:15:28,107 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-23 04:15:28,107 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-23 04:15:28,109 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-23 04:15:28,111 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-23 04:15:28,111 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-23 04:15:28,112 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-23 04:15:28,113 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-23 04:15:28,114 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-23 04:15:28,117 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-23 04:15:28,118 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-23 04:15:28,118 - DRIFT - DEBUG - Reconstruction Loss: 5.355103015899658
+2025-09-23 04:15:28,119 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-23 04:15:30,389 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 04:15:30,390 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 04:15:32,346 - DRIFT - ERROR - error occured: No module named 'omegaconf'
+2025-09-23 04:16:36,864 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 04:16:36,865 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 04:16:38,100 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-23 04:16:38,194 - DRIFT - ERROR - error occured: Unexpected type <class 'str'>
+2025-09-23 04:17:17,096 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 04:17:17,097 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 04:17:18,231 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-23 04:17:18,316 - DRIFT - ERROR - error occured: Unexpected type <class 'str'>
+2025-09-23 04:17:38,314 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 04:17:38,315 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 04:17:39,381 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-23 04:18:45,397 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 04:18:45,398 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 04:18:46,431 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-23 04:18:46,677 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-23 04:18:46,679 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-23 04:18:46,750 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-23 04:18:46,751 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-23 04:18:46,752 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-23 04:18:46,753 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-23 04:18:46,754 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-23 04:18:46,755 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-23 04:18:46,756 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-23 04:18:46,757 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-23 04:18:46,758 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-23 04:18:46,761 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-23 04:18:46,762 - DRIFT - INFO - Successfully processed real images!
+2025-09-23 04:18:46,764 - DRIFT - DEBUG - calculated loss: 0.5264562964439392
+2025-09-23 15:15:55,614 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-23 15:16:03,711 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-23 15:16:06,884 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-23 15:16:08,538 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 15:16:08,540 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 15:16:08,847 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-23 15:16:08,847 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-23 15:16:09,739 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-23 15:16:09,756 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-23 15:16:09,757 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-23 15:16:09,757 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-23 15:16:09,758 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-23 15:16:09,766 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-23 15:16:09,767 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-23 15:16:09,767 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-23 15:16:09,768 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-23 15:16:10,092 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-23 15:16:10,093 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-23 15:16:10,094 - DRIFT - DEBUG - Reconstruction Loss: 0.5339261889457703
+2025-09-23 15:16:10,095 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-23 15:16:10,104 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-23 15:16:11,428 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-23 15:16:11,429 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-23 15:16:11,485 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-23 15:16:11,486 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-23 15:16:11,680 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-23 15:16:11,681 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-23 15:16:11,681 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-23 15:16:11,682 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-23 15:16:11,683 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-23 15:16:11,684 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-23 15:16:11,684 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-23 15:16:11,685 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-23 15:16:11,686 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-23 15:16:11,687 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-23 15:16:11,688 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-23 15:16:11,689 - DRIFT - DEBUG - Reconstruction Loss: 1.2073174715042114
+2025-09-23 15:16:11,689 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-23 15:16:13,919 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-23 15:16:13,920 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-23 15:16:16,021 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-23 15:16:16,310 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-23 15:16:16,312 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-23 15:16:16,396 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-23 15:16:16,397 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-23 15:16:16,398 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-23 15:16:16,399 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-23 15:16:16,400 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-23 15:16:16,402 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-23 15:16:16,402 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-23 15:16:16,404 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-23 15:16:16,405 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-23 15:16:16,408 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-23 15:16:16,409 - DRIFT - INFO - Successfully processed real images!
+2025-09-23 15:16:16,476 - DRIFT - DEBUG - calculated loss: 0.5060384273529053
+2025-09-24 08:55:13,489 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-24 08:55:26,538 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-24 08:55:31,626 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-24 08:55:33,508 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 08:55:33,509 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 08:55:34,013 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 08:55:34,014 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 08:55:35,373 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-24 08:55:35,417 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-24 08:55:35,420 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 08:55:35,421 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-24 08:55:35,421 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 08:55:35,432 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-24 08:55:35,434 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 08:55:35,434 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 08:55:35,436 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 08:55:35,751 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 08:55:35,753 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-24 08:55:35,755 - DRIFT - DEBUG - Reconstruction Loss: 0.527729332447052
+2025-09-24 08:55:35,757 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-24 08:55:35,769 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-24 08:55:37,424 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-24 08:55:37,426 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-24 08:55:37,543 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 08:55:37,545 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 08:55:37,846 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-24 08:55:37,847 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-24 08:55:37,848 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 08:55:37,849 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-24 08:55:37,850 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 08:55:37,852 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-24 08:55:37,853 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 08:55:37,855 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 08:55:37,856 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-24 08:55:37,859 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 08:55:37,860 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-24 08:55:37,892 - DRIFT - DEBUG - Reconstruction Loss: 6.252500534057617
+2025-09-24 08:55:37,893 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-24 09:00:32,041 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 09:00:32,046 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 09:00:36,580 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-24 09:00:37,551 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:00:37,554 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:00:37,667 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:00:37,669 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:00:37,671 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:00:37,671 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:00:37,672 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:00:37,675 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-24 09:00:37,675 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 09:00:37,676 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 09:00:37,677 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 09:00:37,682 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:00:37,683 - DRIFT - INFO - Successfully processed real images!
+2025-09-24 09:00:37,703 - DRIFT - DEBUG - calculated loss: 0.5805616974830627
+2025-09-24 09:04:16,422 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-24 09:04:21,079 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-24 09:04:26,043 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-24 09:04:28,105 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 09:04:28,107 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 09:04:28,660 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:04:28,661 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:04:29,045 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-24 09:04:29,099 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-24 09:04:29,100 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:04:29,103 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-24 09:04:29,104 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:04:29,106 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-24 09:04:29,107 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 09:04:29,110 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 09:04:29,111 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 09:04:29,241 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:04:29,244 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-24 09:04:29,247 - DRIFT - DEBUG - Reconstruction Loss: 0.49191585183143616
+2025-09-24 09:04:29,249 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-24 09:04:29,272 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-24 09:04:30,697 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-24 09:04:30,699 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-24 09:04:30,825 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:04:30,826 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:04:31,068 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-24 09:04:31,072 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-24 09:04:31,075 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:04:31,080 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-24 09:04:31,083 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:04:31,086 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-24 09:04:31,092 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 09:04:31,096 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 09:04:31,100 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-24 09:04:31,109 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:04:31,112 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-24 09:04:31,120 - DRIFT - DEBUG - Reconstruction Loss: 1.693632960319519
+2025-09-24 09:04:31,125 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-24 09:04:37,412 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 09:04:37,417 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 09:04:39,925 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-24 09:04:40,482 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:04:40,486 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:04:40,608 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:04:40,610 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:04:40,611 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:04:40,612 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:04:40,613 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:04:40,614 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-24 09:04:40,615 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 09:04:40,616 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 09:04:40,618 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 09:04:40,621 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:04:40,622 - DRIFT - INFO - Successfully processed real images!
+2025-09-24 09:04:40,647 - DRIFT - DEBUG - calculated loss: 0.5183764696121216
+2025-09-24 09:07:23,898 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-24 09:07:27,953 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-24 09:07:32,430 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-24 09:07:34,621 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 09:07:34,623 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 09:07:35,157 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:07:35,158 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:07:35,554 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-24 09:07:35,583 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-24 09:07:35,585 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:07:35,587 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-24 09:07:35,589 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:07:35,592 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-24 09:07:35,594 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 09:07:35,596 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 09:07:35,599 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 09:07:35,723 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:07:35,724 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-24 09:07:35,726 - DRIFT - DEBUG - Reconstruction Loss: 0.4890788793563843
+2025-09-24 09:07:35,727 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-24 09:07:35,741 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-24 09:07:37,144 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-24 09:07:37,148 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-24 09:07:37,246 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:07:37,248 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:07:37,425 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-24 09:07:37,428 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-24 09:07:37,430 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:07:37,432 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-24 09:07:37,435 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:07:37,437 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-24 09:07:37,440 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 09:07:37,442 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 09:07:37,444 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-24 09:07:37,448 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:07:37,450 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-24 09:07:37,453 - DRIFT - DEBUG - Reconstruction Loss: 2.8411121368408203
+2025-09-24 09:07:37,455 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-24 09:07:43,094 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 09:07:43,098 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 09:07:45,177 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-24 09:07:45,698 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 09:07:45,700 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 09:07:45,814 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:07:45,815 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:07:45,816 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 09:07:45,818 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-24 09:07:45,819 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 09:07:45,820 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-24 09:07:45,821 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 09:07:45,822 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 09:07:45,823 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 09:07:45,827 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 09:07:45,828 - DRIFT - INFO - Successfully processed real images!
+2025-09-24 09:07:45,901 - DRIFT - DEBUG - calculated loss: 0.5318508744239807
+2025-09-24 10:20:57,843 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-24 10:20:59,945 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-24 10:21:01,759 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-24 10:21:02,990 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 10:21:02,992 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 10:21:03,237 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 10:21:03,237 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 10:21:03,443 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-24 10:21:03,447 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-24 10:21:03,448 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 10:21:03,448 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-24 10:21:03,449 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 10:21:03,450 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-24 10:21:03,451 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 10:21:03,452 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 10:21:03,452 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 10:21:03,500 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 10:21:03,501 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-24 10:21:03,502 - DRIFT - DEBUG - Reconstruction Loss: 0.5383911728858948
+2025-09-24 10:21:03,504 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-24 10:21:03,512 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-24 10:21:04,477 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-24 10:21:04,478 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-24 10:21:04,534 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 10:21:04,535 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 10:21:04,620 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-24 10:21:04,622 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-24 10:21:04,622 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 10:21:04,623 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-24 10:21:04,624 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 10:21:04,625 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-24 10:21:04,626 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 10:21:04,627 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 10:21:04,628 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-24 10:21:04,630 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 10:21:04,631 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-24 10:21:04,632 - DRIFT - DEBUG - Reconstruction Loss: 14.698992729187012
+2025-09-24 10:21:04,634 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-24 10:21:06,122 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 10:21:06,123 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 10:21:07,190 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-24 10:21:07,391 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 10:21:07,391 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 10:21:07,440 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-24 10:21:07,442 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-24 10:21:07,442 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 10:21:07,444 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-24 10:21:07,445 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 10:21:07,447 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-24 10:21:07,449 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 10:21:07,449 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 10:21:07,451 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 10:21:07,454 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 10:21:07,456 - DRIFT - INFO - Successfully processed real images!
+2025-09-24 10:21:07,457 - DRIFT - DEBUG - calculated loss: 0.5232923626899719
+2025-09-24 11:01:26,428 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-24 11:01:28,481 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-24 11:01:30,424 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-24 11:01:31,671 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 11:01:31,672 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 11:01:31,934 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 11:01:31,935 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 11:01:32,155 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-24 11:01:32,160 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-24 11:01:32,161 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 11:01:32,162 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-24 11:01:32,163 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 11:01:32,163 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-24 11:01:32,164 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 11:01:32,165 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-24 11:01:32,165 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 11:01:32,224 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 11:01:32,224 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-24 11:01:32,225 - DRIFT - DEBUG - Reconstruction Loss: 0.4586811065673828
+2025-09-24 11:01:32,226 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-24 11:01:32,237 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-24 11:01:33,164 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-24 11:01:33,164 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-24 11:01:33,234 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 11:01:33,236 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 11:01:33,331 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-24 11:01:33,332 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-24 11:01:33,332 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 11:01:33,333 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-24 11:01:33,334 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 11:01:33,335 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-24 11:01:33,336 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 11:01:33,336 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-24 11:01:33,337 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-24 11:01:33,339 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 11:01:33,340 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-24 11:01:33,341 - DRIFT - DEBUG - Reconstruction Loss: 7.946283340454102
+2025-09-24 11:01:33,342 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-24 11:01:34,856 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-24 11:01:34,857 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-24 11:01:35,969 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-24 11:01:36,184 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-24 11:01:36,184 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-24 11:01:36,235 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-24 11:01:36,236 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-24 11:01:36,237 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-24 11:01:36,239 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-24 11:01:36,241 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-24 11:01:36,242 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-24 11:01:36,243 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 11:01:36,243 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-24 11:01:36,244 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-24 11:01:36,247 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-24 11:01:36,248 - DRIFT - INFO - Successfully processed real images!
+2025-09-24 11:01:36,249 - DRIFT - DEBUG - calculated loss: 0.526651918888092
+2025-09-25 16:31:19,225 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-25 16:31:32,699 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-25 16:31:38,377 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-25 16:31:40,378 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-25 16:31:40,380 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-25 16:31:40,743 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:31:40,743 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:31:41,663 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:31:41,683 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:31:41,684 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:31:41,685 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:31:41,687 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:31:41,692 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-25 16:31:41,693 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-25 16:31:41,695 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-25 16:31:41,696 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-25 16:31:41,944 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:31:41,945 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-25 16:31:41,947 - DRIFT - DEBUG - Reconstruction Loss: 0.45340636372566223
+2025-09-25 16:31:41,948 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-25 16:31:41,978 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-25 16:31:43,738 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-25 16:31:43,741 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-25 16:31:43,883 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:31:43,885 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:31:44,163 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-25 16:31:44,164 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-25 16:31:44,164 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:31:44,165 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-25 16:31:44,166 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:31:44,167 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-25 16:31:44,169 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-25 16:31:44,170 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-25 16:31:44,172 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-25 16:31:44,175 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:31:44,177 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-25 16:31:44,189 - DRIFT - DEBUG - Reconstruction Loss: 4.876986980438232
+2025-09-25 16:31:44,190 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-25 16:31:47,434 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-25 16:31:47,435 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-25 16:31:50,671 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-25 16:31:51,053 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:31:51,054 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:31:51,143 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:31:51,144 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:31:51,146 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:31:51,148 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:31:51,149 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:31:51,151 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-25 16:31:51,153 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-25 16:31:51,155 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-25 16:31:51,157 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-25 16:31:51,161 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:31:51,162 - DRIFT - INFO - Successfully processed real images!
+2025-09-25 16:31:51,202 - DRIFT - DEBUG - calculated loss: 0.5530603528022766
+2025-09-25 16:33:13,398 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-25 16:33:16,184 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-25 16:33:18,465 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-25 16:33:19,969 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-25 16:33:19,972 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-25 16:33:20,550 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:33:20,553 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:33:21,148 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:33:21,165 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:33:21,167 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:33:21,169 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:33:21,173 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:33:21,176 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-25 16:33:21,180 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-25 16:33:21,181 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-25 16:33:21,183 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-25 16:33:21,283 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:33:21,284 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-25 16:33:21,287 - DRIFT - DEBUG - Reconstruction Loss: 0.46953216195106506
+2025-09-25 16:33:21,288 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-25 16:33:21,303 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-25 16:33:22,959 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-25 16:33:22,962 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-25 16:33:23,102 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:33:23,104 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:33:23,284 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-25 16:33:23,287 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-25 16:33:23,291 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:33:23,294 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-25 16:33:23,297 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:33:23,299 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-25 16:33:23,301 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-25 16:33:23,303 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-25 16:33:23,305 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-25 16:33:23,311 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:33:23,313 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-25 16:33:23,316 - DRIFT - DEBUG - Reconstruction Loss: 3.2297675609588623
+2025-09-25 16:33:23,317 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-25 16:33:26,493 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-25 16:33:26,495 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-25 16:33:28,496 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-25 16:33:28,984 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:33:28,987 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:33:29,114 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:33:29,117 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:33:29,119 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:33:29,122 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:33:29,124 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:33:29,126 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-25 16:33:29,128 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-25 16:33:29,130 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-25 16:33:29,132 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-25 16:33:29,137 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:33:29,139 - DRIFT - INFO - Successfully processed real images!
+2025-09-25 16:33:29,143 - DRIFT - DEBUG - calculated loss: 0.5095486640930176
+2025-09-25 16:39:36,552 - DRIFT - INFO - This log message will correctly go to {LOG_FILE}}
+2025-09-25 16:39:39,312 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060
+2025-09-25 16:39:41,914 - DRIFT - INFO - --- Testing ResNet50 ---
+2025-09-25 16:39:43,371 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-25 16:39:43,373 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-25 16:39:43,756 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:39:43,757 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:39:44,057 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:39:44,094 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:39:44,096 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:39:44,097 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 2048, 7, 7])
+2025-09-25 16:39:44,098 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:39:44,100 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 2048])
+2025-09-25 16:39:44,101 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-25 16:39:44,102 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 2048])
+2025-09-25 16:39:44,104 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-25 16:39:44,177 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:39:44,178 - DRIFT - DEBUG - ResNet50 Backbone Feature Dimension: 2048
+2025-09-25 16:39:44,180 - DRIFT - DEBUG - Reconstruction Loss: 0.5009844303131104
+2025-09-25 16:39:44,181 - DRIFT - SUCCESS - ResNet50 test PASSED
+2025-09-25 16:39:44,194 - DRIFT - INFO - --- Testing Swin-T ---
+2025-09-25 16:39:45,602 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-25 16:39:45,603 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-25 16:39:45,703 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:39:45,704 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:39:45,834 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([2, 7, 7, 768])
+2025-09-25 16:39:45,835 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([2, 7, 7, 768])
+2025-09-25 16:39:45,837 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:39:45,838 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([2, 7, 7, 768])
+2025-09-25 16:39:45,840 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:39:45,842 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([2, 49, 768])
+2025-09-25 16:39:45,843 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-25 16:39:45,844 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([2, 49, 768])
+2025-09-25 16:39:45,846 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-25 16:39:45,849 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:39:45,851 - DRIFT - DEBUG - SwinTiny Backbone Feature Dimension: 768
+2025-09-25 16:39:45,870 - DRIFT - DEBUG - Reconstruction Loss: 2.4628846645355225
+2025-09-25 16:39:45,871 - DRIFT - SUCCESS - Swin-T test PASSED
+2025-09-25 16:39:48,036 - DRIFT - INFO - DRS initialized with resnet50 ...
+2025-09-25 16:39:48,038 - DRIFT - DEBUG - Feature dimension set to: 2048
+2025-09-25 16:39:49,490 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\r50_mcc.tar
+2025-09-25 16:39:49,612 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:39:49,613 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:39:49,665 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:39:49,667 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:39:49,668 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:39:49,669 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 2048, 7, 7])
+2025-09-25 16:39:49,670 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:39:49,671 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 2048])
+2025-09-25 16:39:49,672 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-25 16:39:49,674 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 2048])
+2025-09-25 16:39:49,676 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 2048
+2025-09-25 16:39:49,678 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:39:49,680 - DRIFT - INFO - Successfully processed real images!
+2025-09-25 16:39:49,685 - DRIFT - DEBUG - calculated loss: 0.5356191992759705
+2025-09-25 16:39:51,031 - DRIFT - INFO - DRS initialized with swin_tiny_patch4_window7_224 ...
+2025-09-25 16:39:51,033 - DRIFT - DEBUG - Feature dimension set to: 768
+2025-09-25 16:39:53,970 - DRIFT - INFO - Successfully loaded custom weights from: c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\models\swint_mcc.tar
+2025-09-25 16:39:54,047 - DRIFT - INFO - [MRM] Entering forward pass...
+2025-09-25 16:39:54,048 - DRIFT - INFO - [DRS] Entering forward pass...
+2025-09-25 16:39:54,085 - DRIFT - DEBUG - [DRS] Shape of feature tensor from backbone: torch.Size([1, 7, 7, 768])
+2025-09-25 16:39:54,086 - DRIFT - DEBUG - [DRS] Shape of calculated r_abs: torch.Size([1, 7, 7, 768])
+2025-09-25 16:39:54,087 - DRIFT - INFO - [DRS] Exiting forward pass.
+2025-09-25 16:39:54,089 - DRIFT - DEBUG - [MRM] Received r_abs with shape: torch.Size([1, 7, 7, 768])
+2025-09-25 16:39:54,091 - DRIFT - INFO - [MRM] r_abs is 4D. Reshaping to patch format.
+2025-09-25 16:39:54,093 - DRIFT - DEBUG - [MRM] Reshaped to patches with shape: torch.Size([1, 49, 768])
+2025-09-25 16:39:54,094 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 768])
+2025-09-25 16:39:54,095 - DRIFT - DEBUG - [MRM] Final 'patches' tensor shape before encoder: torch.Size([1, 49, 768])
+2025-09-25 16:39:54,097 - DRIFT - DEBUG - [MRM] Encoder expects input features of size: 768
+2025-09-25 16:39:54,099 - DRIFT - INFO - [MRM] Loss calculated successfully
+2025-09-25 16:39:54,101 - DRIFT - INFO - Successfully processed real images!
+2025-09-25 16:39:54,110 - DRIFT - DEBUG - calculated loss: 8.901468276977539

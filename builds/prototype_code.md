@@ -1,23 +1,187 @@
 # Protoype
 
-An awesome and clean PyTorch implementation of the full stack: DRS+ (directional residuals w/ calibration + alignment), QDT+ (zone priors + gated top-k), MRM (masked residual modeling), tiny IDE-aware decoder head (or a simpler classifier head), counterfactual losses, and a full three-stage training loop. It’s organized as a tiny repo.
+Here is the code for DRIFT VQA including the sample of the dataset files.
+
+## Dataset
+
+### Medical-Diff-VQA
+
+There are one JSON file and two CSV files in Medical Diff VQA dataset
+
+#### all_diseases.json
+
+The KeyInfo intermediate dataset, which comprises key information such as abnormalities, location, type, and level needed for the extraction of the final VQA difference dataset. For "view" questions, this information will be directly retrieved from the mimic_all.csv. For "difference" questions, answers are acquired by comparing the KeyInfo of two studies (visits). The columns include the following:
+
+study_id: study id in MIMIC-CXR
+subject_id: subject id in MIMIC-CXR
+entity: The identified disease name.
+Disease name: a string represents the disease name
+entity_name: same as the disease name
+Location: The word indicating the location of the disease.
+Type: The word describing the type or category of the disease.
+Level: The word indicating the level or severity of the disease.
+post_location: The word indicating the location of the disease that appears after the disease name.
+Location2: Same as "Location". Provided as a backup in case there are multiple locations.
+Type2: Same as "Type". Provided as a backup in case there are multiple types or categories.
+Level2: Same as "Level". Provided as a backup in case there are multiple levels or severities.
+post_location2: Same as "post_location". Provided as a backup in case there are multiple location words that appear after the disease name.
+no_entity: a list containing the names of all diseases that are identified as not existing.
+
+A sample of the JSON file looks like this
+
+```json
+[
+    {
+        "study_id": "55088298",
+        "subject_id": "18936629",
+        "entity": {
+            "pneumothorax": {
+                "entity_name": "pneumothorax",
+                "location": [
+                    "left"
+                ],
+                "type": null,
+                "level": [
+                    "minimal"
+                ],
+                "post_location": null,
+                "location2": null,
+                "type2": null,
+                "level2": null,
+                "post_location2": null
+            },
+            "atelectasis": {
+                "entity_name": "atelectasis",
+                "location": [
+                    "left",
+                    "basal"
+                ],
+                "type": null,
+                "level": [
+                    "mild"
+                ],
+                "post_location": "the soft tissues",
+                "location2": null,
+                "type2": null,
+                "level2": null,
+                "post_location2": null
+            }
+        },
+        "no_entity": [
+            "edema"
+        ]
+    }
+]
+```
+
+#### mimic_pair_questions.csv
+
+This is the final generated question-answer pairs of the difference VQA dataset. The columns include the following:
+
+study_id: main study_id in MIMIC-CXR.
+subject_id: subject id in MIMIC-CXR.
+ref_id: reference study_id in MIMIC-CXR.
+question_type: abnormality/location/level/view/type/presence/difference.
+question
+answer
+split: train/val/test split.
+
+10 rows of the csv file looks like this
+
+|    |   study_id |   subject_id |   ref_id | question_type   | question                                                   | answer                                                                                                                                                                                                               | split   |
+|---:|-----------:|-------------:|---------:|:----------------|:-----------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------|
+|  0 |   55088298 |     18936629 | 54989200 | abnormality     | what abnormalities are seen in the soft tissues?           | atelectasis                                                                                                                                                                                                          | train   |
+|  1 |   55088298 |     18936629 | 54989200 | presence        | is there edema?                                            | no                                                                                                                                                                                                                   | train   |
+|  2 |   55088298 |     18936629 | 54989200 | location        | is the atelectasis located on the left side or right side? | left side                                                                                                                                                                                                            | train   |
+|  3 |   55088298 |     18936629 | 54989200 | level           | what level is the pneumothorax?                            | minimal                                                                                                                                                                                                              | train   |
+|  4 |   55088298 |     18936629 | 54989200 | difference      | what has changed compared to the reference image?          | the main image has an additional finding of pneumothorax than the reference image. the main image is missing the findings of fracture, lung opacity, and pleural effusion than the reference image.                  | train   |
+|  5 |   51480826 |     18936629 | 50632107 | abnormality     | what abnormalities are seen in this image?                 | pleural effusion, pneumothorax, atelectasis, lung opacity                                                                                                                                                            | train   |
+|  6 |   51480826 |     18936629 | 50632107 | presence        | is there pneumothorax in the right apical area?            | no                                                                                                                                                                                                                   | train   |
+|  7 |   51480826 |     18936629 | 50632107 | location        | where is the pneumothorax?                                 | left apical area                                                                                                                                                                                                     | train   |
+|  8 |   51480826 |     18936629 | 50632107 | level           | what level is the pleural effusion?                        | small                                                                                                                                                                                                                | train   |
+|  9 |   50632107 |     18936629 | 51480826 | difference      | what has changed compared to the reference image?          | the main image has additional findings of consolidation, and pneumonia than the reference image. the main image is missing the findings of pleural effusion, pneumothorax, and atelectasis than the reference image. | train   |
+
+#### mimic_all.csv
+
+This file includes the metadata from MIMIC-CXR and labels from MIMIC-CXR-JPG. The labels are for reference purposes only. The columns are:
+
+subject_id: subject id in MIMIC-CXR
+study_id: study_id in MIMIC-CXR
+labels: This section contains the labels that were extracted from MIMIC-CXR-JPG, but they are only for reference purposes.
+Atelectasis
+Cardiomegaly
+Consolidation
+Edema
+Enlarged Cardiomediastinum
+Fracture
+Lung Lesion
+Lung Opacity
+Pleural Effusion
+Pneumonia
+Pneumothorax
+Pleural Other
+Support Devices
+No Finding
+dicom_id: dicom_id in MIMIC-CXR
+view: "PA" or "AP" view of the image
+split: train/val/test split used in MIMIC-CXR-JPG. It is only for reference purposes.
+study_date: StudyDate in MIMIC-CXR-JPG
+study_order: an integer that indicates the order number of a patient's entire visit history. Each patient may have multiple visits, but we select only two visits for pair comparison in order to create the final difference VQA dataset.
+
+10 rows of the csv file looks like this
+
+|    |   subject_id |   study_id |   Atelectasis |   Cardiomegaly |   Consolidation |   Edema |   Enlarged Cardiomediastinum |   Fracture |   Lung Lesion |   Lung Opacity |   No Finding |   Pleural Effusion |   Pleural Other |   Pneumonia |   Pneumothorax |   Support Devices | dicom_id                                     | view             | split   |   study_date |   study_order |
+|---:|-------------:|-----------:|--------------:|---------------:|----------------:|--------:|-----------------------------:|-----------:|--------------:|---------------:|-------------:|-------------------:|----------------:|------------:|---------------:|------------------:|:---------------------------------------------|:-----------------|:--------|-------------:|--------------:|
+|  0 |     10000032 |   50414267 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | 02aa804e-bde0afdd-112c0b34-7bc16630-4e384014 | postero-anterior | train   |     21800506 |             1 |
+|  1 |     10000032 |   53189527 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | 2a2277a9-b0ded155-c0de8eb9-c124d10e-82c5caab | postero-anterior | train   |     21800626 |             2 |
+|  2 |     10000032 |   53911762 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | 68b5c4b1-227d0485-9cc38c3f-7b84ab51-4b472714 | antero-posterior | train   |     21800723 |             3 |
+|  3 |     10000032 |   56699142 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | ea030e7a-2e3b1346-bc518786-7a8fd698-f673b44c | antero-posterior | train   |     21800805 |             4 |
+|  4 |     10000764 |   57375967 |           nan |            nan |               1 |     nan |                          nan |        nan |           nan |            nan |          nan |                nan |             nan |          -1 |            nan |               nan | 096052b7-d256dc40-453a102b-fa7d01c6-1b22c6b4 | antero-posterior | train   |     21321015 |             1 |
+|  5 |     10000898 |   50771383 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | 2a280266-c8bae121-54d75383-cac046f4-ca37aa16 | postero-anterior | train   |     21880312 |             2 |
+|  6 |     10000898 |   54205396 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | b75df1bd-0f22d631-52d73526-2ae7b85a-d843b39d | postero-anterior | train   |     21880113 |             1 |
+|  7 |     10000935 |   50578979 |           nan |            nan |             nan |      -1 |                          nan |        nan |           nan |             -1 |          nan |                  1 |             nan |           1 |            nan |               nan | d0b71acc-b5a62046-bbb5f6b8-7b173b85-65cdf738 | antero-posterior | train   |     21871016 |             6 |
+|  8 |     10000935 |   51178377 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |              1 |          nan |                nan |             nan |          -1 |            nan |               nan | 9b314ad7-fbcb0422-6db62dfc-732858d0-a5527d8b | antero-posterior | train   |     21870823 |             4 |
+|  9 |     10000935 |   55697293 |           nan |            nan |             nan |     nan |                          nan |        nan |           nan |            nan |            1 |                nan |             nan |         nan |            nan |               nan | c50494f1-90e2bff5-e9189550-1a4562fd-6ab5204c | postero-anterior | train   |     21870226 |             2 |
+
+### MIMIC-CXR-JPG
+
+Images are provided in individual folders. An example of the folder structure for a single patient's images is as follows:
+
+```bash
+files/
+  p10/
+    p10000032/
+      s50414267/
+        02aa804e-bde0afdd-112c0b34-7bc16630-4e384014.jpg
+        174413ec-4ec4c1f7-34ea26b7-c5f994f8-79ef1962.jpg
+      s53189527/
+        2a2277a9-b0ded155-c0de8eb9-c124d10e-82c5caab.jpg
+        e084de3b-be89b11e-20fe3f9f-9c8d8dfe-4cfd202c.jpg
+      s53911762/
+        68b5c4b1-227d0485-9cc38c3f-7b84ab51-4b472714.jpg
+        fffabebf-74fd3a1f-673b6b41-96ec0ac9-2ab69818.jpg
+      s56699142/
+        ea030e7a-2e3b1346-bc518786-7a8fd698-f673b44c.jpg
+```
 
 ## File Layout
 
 ```bash
-drift_vqa/
-  train.py
-  dataset.py
-  models/
-    __init__.py
-    drs.py
-    qdt_plus.py
-    mrm.py
+lib/
+    dataset.py
+    models/
+        __init__.py
+        drs.py
+        qdt.py
+        mrm.py
+    losses.py
+    utils.py
     heads.py
-  losses.py
-  utils.py
-  README.md
-
+    negate.py
+    phrases.py
+    utils.py
+src/
+    train.py
 ```
 
 ___
@@ -86,7 +250,7 @@ ___
 
 ## Question-Guided Tokenizer (QDT+) with zones & gated top-k
 
-`models/qts_plus.py`
+`models/qts.py`
 
 ```python
 # models/qdt_plus.py
@@ -281,7 +445,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class MRM(nn.Module):
+class MaskedResidualModel(nn.Module):
     def __init__(self, c_all, mask_ratio=0.6):
         super().__init__()
         self.mask_ratio = mask_ratio
@@ -547,9 +711,19 @@ ___
 `utils.py`
 
 ```python
-# utils.py
-import torch
+import logging, colorlog
+from logging.handlers import RotatingFileHandler
 from torch.utils.data import DataLoader
+import torch
+
+
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+CYAN = "\033[96m"
+COLOR_END = "\033[0m"
+
 
 def collate(batch):
     # simple default collator (images are same size from transforms)
@@ -565,18 +739,60 @@ def collate(batch):
 def make_loader(ds, bs, shuffle):
     return DataLoader(ds, batch_size=bs, shuffle=shuffle, num_workers=4, pin_memory=True, collate_fn=collate)
 
-```
 
-___
+def setup_logging(log_file: str, logger_name: str = "MIMIC-CXR-JPG-DOWNLOADER"):
+    # add a custom 'SUCCESS' log level
+    SUCCESS_LEVEL_NUM = 25
+    logging.addLevelName(SUCCESS_LEVEL_NUM, "SUCCESS")
 
-`models/__init__.py`
+    def success(self, message, *args, **kws):
+        if self.isEnabledFor(SUCCESS_LEVEL_NUM):
+            self._log(SUCCESS_LEVEL_NUM, message, args, **kws)
 
-```python
-# models/__init__.py
-from .drs import DirectionalResidualStack
-from .qdt_plus import QDTPlus, TinyText
-from .mrm import MRM
-from .heads import IDEClassifier, TinyTransformerDecoder
+    logging.Logger.success = success
+
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.DEBUG)
+    logger.propagate = False
+
+    # avoid adding handlers if they already exist
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    # formatter for the console with colors
+    console_formatter = colorlog.ColoredFormatter(
+        "%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        log_colors={
+            "DEBUG": "white",
+            "INFO": "cyan",
+            "SUCCESS": "green",
+            "WARNING": "yellow",
+            "ERROR": "red",
+            "CRITICAL": "bold_white, bg_red",
+        },
+    )
+
+    # formatter for the file (plain text)
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+
+    # console handler
+    console_handler = colorlog.StreamHandler()
+    console_handler.setFormatter(console_formatter)
+    logger.addHandler(console_handler)
+
+    # this will create up to 5 backup files, each 10MB in size.
+    file_handler = RotatingFileHandler(
+        log_file,
+        maxBytes=10485760,  # 10 * 1024 * 1024 bytes = 10MB
+        backupCount=5,
+        mode="a",
+    )
+    file_handler.setFormatter(file_formatter)
+    logger.addHandler(file_handler)
+
+    return logger
 ```
 
 ___
@@ -763,7 +979,8 @@ def negate_question(q: str) -> str:
 
 ```python
 # train.py
-import os, argparse, random
+import argparse
+import random
 from pathlib import Path
 
 import torch
@@ -771,55 +988,75 @@ import torch.nn as nn
 import torch.nn.functional as F
 import yaml
 
-from dataset import DiffVQADataset
-from utils import make_loader
-from models import (
-    DirectionalResidualStack, QDTPlus, MRM, IDEClassifier, TinyTransformerDecoder
+from lib.dataset import DiffVQADataset
+from lib.utils import make_loader
+from lib.models import (
+    DirectionalResidualStack,
+    QuestionGuidedDifferenceTokenizer,
+    MaskedResidualModel,
+    IDEClassifier,
+    TinyTransformerDecoder,
+    TinyText,
+    ClinicalBERTText
 )
-from models.text_encoders import TinyText, ClinicalBERTText
-from losses import heatmap_kl, info_nce_token_sets
-from phrases import load_keyinfo, build_diff_phrase
-from negate import negate_question
+from lib.losses import heatmap_kl, info_nce_token_sets
+from lib.phrases import load_keyinfo, build_diff_phrase
+from lib.negate import negate_question
 
 
 # --------------------------
-# Argparse + YAML
+# Args + YAML config
 # --------------------------
 def parse_args():
-    p = argparse.ArgumentParser()
-    p.add_argument("--config", type=str, default="", help="YAML config path")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, default="", help="Path to YAML config")
 
-    # Fallback CLI (overridden by YAML if provided)
-    p.add_argument("--data_root", type=str, default="")
-    p.add_argument("--pairs_csv", type=str, default="")
-    p.add_argument("--meta_csv", type=str, default="")
-    p.add_argument("--keyinfo_json", type=str, default="")
-    p.add_argument("--ckpt", type=str, default="")
+    # All CLI args are OPTIONAL; YAML can override them
+    # Data
+    parser.add_argument("--data_root", type=str, default="")
+    parser.add_argument("--pairs_csv", type=str, default="")
+    parser.add_argument("--meta_csv", type=str, default="")
+    parser.add_argument("--keyinfo_json", type=str, default="")
+    parser.add_argument("--ckpt", type=str, default="")
 
-    p.add_argument("--backbone", type=str, default="resnet50")
-    p.add_argument("--head", type=str, default="classifier", choices=["classifier", "decoder"])
+    # Model
+    parser.add_argument("--backbone", type=str, default="resnet50")
+    parser.add_argument(
+        "--head", type=str, default="classifier", choices=["classifier", "decoder"]
+    )
 
-    # text encoder settings
-    p.add_argument("--text_encoder", type=str, default="tiny", choices=["tiny", "clinicalbert"])
-    p.add_argument("--text_model_name", type=str, default="emilyalsentzer/Bio_ClinicalBERT")
-    p.add_argument("--text_finetune", action="store_true")
-    p.add_argument("--text_dim", type=int, default=768)        # ClinicalBERT hidden size
-    p.add_argument("--text_proj_dim", type=int, default=256)   # projected dim into QDT
+    # Text encoder
+    parser.add_argument(
+        "--text_encoder", type=str, default="tiny", choices=["tiny", "clinicalbert"]
+    )
+    parser.add_argument(
+        "--text_model_name", type=str, default="emilyalsentzer/Bio_ClinicalBERT"
+    )
+    parser.add_argument("--text_finetune", action="store_true")
+    parser.add_argument("--text_dim", type=int, default=768)  # ClinicalBERT hidden size
+    parser.add_argument(
+        "--text_proj_dim", type=int, default=256
+    )  # projected dim into QDT
 
-    p.add_argument("--dec_vocab", type=int, default=6000)
-    p.add_argument("--bs", type=int, default=16)
-    p.add_argument("--lr", type=float, default=1e-4)
-    p.add_argument("--epochs_mrm", type=int, default=1)
-    p.add_argument("--epochs_warmup", type=int, default=1)
-    p.add_argument("--epochs_vqa", type=int, default=3)
-    p.add_argument("--topk", type=int, default=64)
+    # Decoder vocab (when head=decoder)
+    parser.add_argument("--dec_vocab", type=int, default=6000)
 
-    p.add_argument("--lambda_mrm", type=float, default=0.1)
-    p.add_argument("--lambda_align", type=float, default=0.05)
-    p.add_argument("--lambda_cf", type=float, default=0.05)
-    p.add_argument("--seed", type=int, default=42)
+    # Train hyperparams
+    parser.add_argument("--bs", type=int, default=16)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--epochs_mrm", type=int, default=1)
+    parser.add_argument("--epochs_warmup", type=int, default=1)
+    parser.add_argument("--epochs_vqa", type=int, default=3)
+    parser.add_argument("--topk", type=int, default=64)
 
-    args = p.parse_args()
+    # Loss weights
+    parser.add_argument("--lambda_mrm", type=float, default=0.1)
+    parser.add_argument("--lambda_align", type=float, default=0.05)
+    parser.add_argument("--lambda_cf", type=float, default=0.05)
+
+    parser.add_argument("--seed", type=int, default=42)
+
+    args = parser.parse_args()
 
     # YAML overrides CLI defaults
     if args.config and Path(args.config).exists():
@@ -828,11 +1065,20 @@ def parse_args():
         for k, v in cfg.items():
             setattr(args, k, v)
 
+    # Basic sanity: these should be set by YAML or CLI
+    needed = ["data_root", "pairs_csv", "meta_csv"]
+    missing = [k for k in needed if not getattr(args, k, None)]
+    if missing:
+        raise SystemExit(
+            f"Missing required settings ({', '.join(missing)}). "
+            f"Provide them in the YAML passed by --config or as CLI flags."
+        )
+
     return args
 
 
 # --------------------------
-# Small helpers
+# Utils
 # --------------------------
 def seed_all(s=42):
     random.seed(s)
@@ -842,13 +1088,11 @@ def seed_all(s=42):
 
 
 def text_to_ids(texts, vocab_size=6000, max_len=16):
-    """Hash-based toy tokenizer for decoder targets; 0 reserved for PAD."""
+    """Hash-based toy tokenizer for decoder targets; 0=PAD."""
     ids = []
     for t in texts:
-        words = t.strip().lower().split()[:max_len]
-        if not words:
-            words = ["<blank>"]
-        row = [ (hash(w) % (vocab_size - 1)) + 1 for w in words ]
+        words = t.strip().lower().split()[:max_len] or ["<blank>"]
+        row = [(hash(w) % (vocab_size - 1)) + 1 for w in words]
         row += [0] * (max_len - len(row))
         ids.append(row)
     return torch.tensor(ids, dtype=torch.long)
@@ -866,26 +1110,31 @@ def tokenize_questions(text_model, batch_questions, use_hf=False, device=None):
 
 
 # --------------------------
-# Full model wrapper
+# Model wrapper
 # --------------------------
 class DiffVQAModel(nn.Module):
-    def __init__(self,
-                 backbone="resnet50",
-                 text_encoder="tiny",
-                 text_model_name="emilyalsentzer/Bio_ClinicalBERT",
-                 text_dim=768,
-                 text_proj_dim=256,
-                 text_finetune=False,
-                 topk=64, num_rows=3, num_cols=2,
-                 num_classes=1000, head="classifier"):
+    def __init__(
+        self,
+        backbone="resnet50",
+        text_encoder="tiny",
+        text_model_name="emilyalsentzer/Bio_ClinicalBERT",
+        text_dim=768,
+        text_proj_dim=256,
+        text_finetune=False,
+        topk=64,
+        num_rows=3,
+        num_cols=2,
+        num_classes=1000,
+        head="classifier",
+    ):
         super().__init__()
 
-        # Vision
+        # Vision encoder (DRS+)
         self.drs = DirectionalResidualStack(backbone_name=backbone)
-        C = self.drs.out_channels  # channels at selected stage
-        c_all = C * 4              # [R+, R-, Rabs, signed]
+        C = self.drs.out_channels
+        c_all = C * 4  # [R+, R-, Rabs, signed]
 
-        # Text
+        # Text encoder
         if text_encoder == "clinicalbert":
             self.text = ClinicalBERTText(
                 model_name=text_model_name,
@@ -900,40 +1149,77 @@ class DiffVQAModel(nn.Module):
             self.uses_hf = False
             q_dim = text_proj_dim
 
-        # QDT+ & MRM
-        self.qdt = QDTPlus(c_img=c_all, d_txt=q_dim, k=topk, num_rows=num_rows, num_cols=num_cols)
-        self.mrm = MRM(c_all=c_all, mask_ratio=0.6)
+        # QDT+ and MaskedResidualModel
+        self.qdt = QuestionGuidedDifferenceTokenizer(
+            c_img=c_all, d_txt=q_dim, k=topk, num_rows=num_rows, num_cols=num_cols
+        )
+        self.mrm = MaskedResidualModel(c_all=c_all, mask_ratio=0.6)
 
         # Head
         if head == "classifier":
             self.head = IDEClassifier(dim=c_all, num_classes=num_classes)
             self.is_classifier = True
         else:
-            self.head = TinyTransformerDecoder(dim=c_all, vocab_size=num_classes, nlayer=3, nhead=8, max_len=16)
+            self.head = TinyTransformerDecoder(
+                dim=c_all, vocab_size=num_classes, nlayer=3, nhead=8, max_len=16
+            )
             self.is_classifier = False
 
     def forward(self, img_ref, img_cur, token_batch):
-        # token_batch: TinyText ids tensor OR HF dict
-        r = self.drs(img_ref, img_cur)                   # dict: r_pos, r_neg, r_abs, signed
-        q_vec = self.text(token_batch)                   # (B, q_dim)
+        # Visual residuals
+        r = self.drs(img_ref, img_cur)  # dict: r_pos, r_neg, r_abs, signed
 
-        sel_tokens, heatmap, gate_l1 = self.qdt(q_vec, r)             # (B,k,c_all), (B,H,W), scalar
-        feats_for_mrm = torch.cat([r["r_pos"], r["r_neg"], r["r_abs"], r["signed"]], dim=1)
-        mrm_out = self.mrm(feats_for_mrm)                              # has "loss_mrm", "patches", ...
+        # Question vector
+        q_vec = self.text(token_batch)  # (B, q_dim)
+
+        # Token selection + heatmap + gate sparsity
+        sel_tokens, heatmap, gate_l1 = self.qdt(
+            q_vec, r
+        )  # (B,k,c_all), (B,H,W), scalar
+
+        # MaskedResidualModel on residual token maps
+        feats_for_mrm = torch.cat(
+            [r["r_pos"], r["r_neg"], r["r_abs"], r["signed"]], dim=1
+        )
+        mrm_out = self.mrm(feats_for_mrm)
 
         if self.is_classifier:
             logits = self.head(sel_tokens, token_kinds=None)
-            return {"logits": logits, "heatmap": heatmap, "gate_l1": gate_l1, **mrm_out, **r}
+            return {
+                "logits": logits,
+                "heatmap": heatmap,
+                "gate_l1": gate_l1,
+                **mrm_out,
+                **r,
+            }
         else:
-            return {"sel_tokens": sel_tokens, "heatmap": heatmap, "gate_l1": gate_l1, **mrm_out, **r}
+            return {
+                "sel_tokens": sel_tokens,
+                "heatmap": heatmap,
+                "gate_l1": gate_l1,
+                **mrm_out,
+                **r,
+            }
 
 
 # --------------------------
-# Training loop
+# One epoch
 # --------------------------
-def run_epoch(stage, model, loader, optimizer, scaler, device,
-              lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.05, lambda_gate=1e-3,
-              classifier=True, vocab_size=None, keyinfo_idx=None):
+def run_epoch(
+    stage,
+    model,
+    loader,
+    optimizer,
+    scaler,
+    device,
+    lambda_mrm=0.1,
+    lambda_align=0.05,
+    lambda_cf=0.05,
+    lambda_gate=1e-3,
+    classifier=True,
+    vocab_size=None,
+    keyinfo_idx=None,
+):
     model.train()
     total_steps = len(loader)
     running = {"loss": 0.0, "acc": 0, "n": 0}
@@ -941,23 +1227,37 @@ def run_epoch(stage, model, loader, optimizer, scaler, device,
     for i, batch in enumerate(loader):
         img_cur = batch["img_cur"].to(device)
         img_ref = batch["img_ref"].to(device)
-        y = batch["answer_id"].to(device)        # for classifier path
+        y = batch["answer_id"].to(device)  # classifier path
         qs = [q for q in batch["question"]]
         qs_cf = [negate_question(q) for q in qs]
 
-        tokens = tokenize_questions(model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device)
-        tokens_cf = tokenize_questions(model.text, qs_cf, use_hf=getattr(model, "uses_hf", False), device=device)
+        tokens = tokenize_questions(
+            model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device
+        )
 
-        # counterfactual pair by swapping ref/cur
+        # if isinstance(tokens, torch.Tensor):
+        #     tokens = tokens.to(device=device, dtype=torch.long)
+
+        tokens_cf = tokenize_questions(
+            model.text, qs_cf, use_hf=getattr(model, "uses_hf", False), device=device
+        )
+
+        # Counterfactual image swap
         img_cur_cf, img_ref_cf = img_ref, img_cur
 
-        with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=(device.type == "cuda")):
+        with torch.autocast(
+            device_type=device.type,
+            dtype=torch.float16,
+            enabled=(device.type == "cuda"),
+        ):
             out = model(img_ref, img_cur, tokens)
             out_cf = model(img_ref_cf, img_cur_cf, tokens_cf)
 
-            # base losses
+            # Base components
             loss_mrm = out["loss_mrm"]
-            loss_align = model.drs.alignment_loss(out["r_pos"], out["r_neg"], out["r_abs"], out["signed"])
+            loss_align = model.drs.alignment_loss(
+                out["r_pos"], out["r_neg"], out["r_abs"], out["signed"]
+            )
             loss_hkl = heatmap_kl(out["heatmap"], out_cf["heatmap"])
             loss_nce = info_nce_token_sets(out["patches"], out_cf["patches"])
             loss_gate = out["gate_l1"]
@@ -969,33 +1269,69 @@ def run_epoch(stage, model, loader, optimizer, scaler, device,
                 if classifier:
                     logits = out["logits"]
                     ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = ce + lambda_mrm * loss_mrm + lambda_align * loss_align + lambda_gate * loss_gate
+                    loss = (
+                        ce
+                        + lambda_mrm * loss_mrm
+                        + lambda_align * loss_align
+                        + lambda_gate * loss_gate
+                    )
                 else:
-                    # true generative targets from KeyInfo deltas (if provided)
+                    # Generative warm-up via KeyInfo deltas (if available)
                     phrases = []
                     for m in batch["meta"]:
                         _, sid_cur, sid_ref = m
-                        phrases.append(build_diff_phrase(sid_cur, sid_ref, keyinfo_idx) if keyinfo_idx else "no significant change")
-                    targets = text_to_ids(phrases, vocab_size=vocab_size, max_len=16).to(device)
-                    logits, loss_dec = model.head(out["sel_tokens"], targets=targets, token_kinds=None)
-                    loss = loss_dec + lambda_mrm * loss_mrm + lambda_align * loss_align + lambda_gate * loss_gate
+                        phrases.append(
+                            build_diff_phrase(sid_cur, sid_ref, keyinfo_idx)
+                            if keyinfo_idx
+                            else "no significant change"
+                        )
+                    targets = text_to_ids(
+                        phrases, vocab_size=vocab_size, max_len=16
+                    ).to(device)
+                    _, loss_dec = model.head(
+                        out["sel_tokens"], targets=targets, token_kinds=None
+                    )
+                    loss = (
+                        loss_dec
+                        + lambda_mrm * loss_mrm
+                        + lambda_align * loss_align
+                        + lambda_gate * loss_gate
+                    )
 
             else:  # stage == "vqa"
                 if classifier:
                     logits = out["logits"]
                     ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = ce + lambda_mrm * loss_mrm + lambda_align * loss_align \
-                           + lambda_cf * (loss_hkl + loss_nce) + lambda_gate * loss_gate
+                    loss = (
+                        ce
+                        + lambda_mrm * loss_mrm
+                        + lambda_align * loss_align
+                        + lambda_cf * (loss_hkl + loss_nce)
+                        + lambda_gate * loss_gate
+                    )
                 else:
-                    # Option: still use KeyInfo phrases for supervision
+                    # Optionally continue supervising with KeyInfo phrases
                     phrases = []
                     for m in batch["meta"]:
                         _, sid_cur, sid_ref = m
-                        phrases.append(build_diff_phrase(sid_cur, sid_ref, keyinfo_idx) if keyinfo_idx else "no significant change")
-                    targets = text_to_ids(phrases, vocab_size=vocab_size, max_len=16).to(device)
-                    logits, loss_dec = model.head(out["sel_tokens"], targets=targets, token_kinds=None)
-                    loss = loss_dec + lambda_mrm * loss_mrm + lambda_align * loss_align \
-                           + lambda_cf * (loss_hkl + loss_nce) + lambda_gate * loss_gate
+                        phrases.append(
+                            build_diff_phrase(sid_cur, sid_ref, keyinfo_idx)
+                            if keyinfo_idx
+                            else "no significant change"
+                        )
+                    targets = text_to_ids(
+                        phrases, vocab_size=vocab_size, max_len=16
+                    ).to(device)
+                    _, loss_dec = model.head(
+                        out["sel_tokens"], targets=targets, token_kinds=None
+                    )
+                    loss = (
+                        loss_dec
+                        + lambda_mrm * loss_mrm
+                        + lambda_align * loss_align
+                        + lambda_cf * (loss_hkl + loss_nce)
+                        + lambda_gate * loss_gate
+                    )
 
         optimizer.zero_grad(set_to_none=True)
         scaler.scale(loss).backward()
@@ -1007,13 +1343,16 @@ def run_epoch(stage, model, loader, optimizer, scaler, device,
         if classifier:
             with torch.no_grad():
                 pred = out["logits"].argmax(dim=-1)
-                mask = (y != 0)
+                mask = y != 0
                 running["acc"] += (pred[mask] == y[mask]).sum().item()
                 running["n"] += mask.sum().item()
 
         if (i + 1) % 50 == 0:
             if classifier and running["n"] > 0:
-                print(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f} acc={running['acc']/max(1,running['n']):.3f}")
+                print(
+                    f"[{stage}] {i+1}/{total_steps} "
+                    f"loss={running['loss']/(i+1):.4f} acc={running['acc']/max(1,running['n']):.3f}"
+                )
             else:
                 print(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}")
 
@@ -1025,16 +1364,22 @@ def main(args):
     seed_all(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Datasets
-    train_ds = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="train")
+    # Datasets (ensure your DiffVQADataset filters by split internally)
+    train_ds = DiffVQADataset(
+        args.data_root, args.pairs_csv, args.meta_csv, split="train"
+    )
     vocab = (train_ds.stoi, train_ds.itos)
-    val_ds = DiffVQADataset(args.data_root, args.pairs_csv, args.meta_csv, split="val", vocab=vocab)
+    val_ds = DiffVQADataset(
+        args.data_root, args.pairs_csv, args.meta_csv, split="val", vocab=vocab
+    )
 
     num_classes = len(train_ds.itos) if args.head == "classifier" else args.dec_vocab
-    print(f"Answer classes / Dec vocab: {num_classes}")
+    print(f"Answer classes / Decoder vocab: {num_classes}")
 
     train_loader = make_loader(train_ds, args.bs, shuffle=True)
-    val_loader = make_loader(val_ds, args.bs, shuffle=False)  # not used yet; wire in eval later
+    val_loader = make_loader(
+        val_ds, args.bs, shuffle=False
+    )  # TODO: wire evaluation if needed
 
     # Model
     model = DiffVQAModel(
@@ -1044,58 +1389,94 @@ def main(args):
         text_dim=args.text_dim,
         text_proj_dim=args.text_proj_dim,
         text_finetune=args.text_finetune,
-        topk=args.topk, num_rows=3, num_cols=2,
-        num_classes=num_classes, head=args.head
+        topk=args.topk,
+        num_rows=3,
+        num_cols=2,
+        num_classes=num_classes,
+        head=args.head,
     ).to(device)
 
-    # Optional backbone checkpoint (CXR-CLIP ResNet50 / SwinTiny)
+    # Optional: load CXR-CLIP / SwinTiny weights
     if args.ckpt and Path(args.ckpt).exists():
         sd = torch.load(args.ckpt, map_location="cpu")
         missing, unexpected = model.drs.backbone.load_state_dict(sd, strict=False)
-        print(f"Loaded backbone weights: missing={len(missing)} unexpected={len(unexpected)}")
-
-    opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=float(args.lr), weight_decay=1e-4)
-    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
-
-    keyinfo_idx = load_keyinfo(args.keyinfo_json) if args.keyinfo_json and Path(args.keyinfo_json).exists() else None
-
-    # Stage A: MRM warm-up
-    for ep in range(int(args.epochs_mrm)):
-        print(f"\n=== Stage A: MRM epoch {ep+1}/{args.epochs_mrm} ===")
-        run_epoch(
-            "mrm", model, train_loader, opt, scaler, device,
-            lambda_mrm=1.0, lambda_align=0.0, lambda_cf=0.0, lambda_gate=0.0,
-            classifier=(args.head == "classifier")
+        print(
+            f"Loaded backbone weights: missing={len(missing)} unexpected={len(unexpected)}"
         )
 
-    # Stage B: warm-up with KeyInfo phrases (self-contained)
+    opt = torch.optim.AdamW(
+        [p for p in model.parameters() if p.requires_grad],
+        lr=float(args.lr),
+        weight_decay=1e-4,
+    )
+    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
+
+    # KeyInfo index for phrase supervision
+    keyinfo_idx = (
+        load_keyinfo(args.keyinfo_json)
+        if args.keyinfo_json and Path(args.keyinfo_json).exists()
+        else None
+    )
+
+    # Stage A — MaskedResidualModel warm-up
+    for ep in range(int(args.epochs_mrm)):
+        print(f"\n=== Stage A: MaskedResidualModel epoch {ep+1}/{args.epochs_mrm} ===")
+        run_epoch(
+            "mrm",
+            model,
+            train_loader,
+            opt,
+            scaler,
+            device,
+            lambda_mrm=1.0,
+            lambda_align=0.0,
+            lambda_cf=0.0,
+            lambda_gate=0.0,
+            classifier=(args.head == "classifier"),
+        )
+
+    # Stage B — warm-up with KeyInfo phrases
     for ep in range(int(args.epochs_warmup)):
         print(f"\n=== Stage B: Warm-up epoch {ep+1}/{args.epochs_warmup} ===")
         run_epoch(
-            "warmup", model, train_loader, opt, scaler, device,
-            lambda_mrm=0.1, lambda_align=0.05, lambda_cf=0.0, lambda_gate=1e-3,
+            "warmup",
+            model,
+            train_loader,
+            opt,
+            scaler,
+            device,
+            lambda_mrm=0.1,
+            lambda_align=0.05,
+            lambda_cf=0.0,
+            lambda_gate=1e-3,
             classifier=(args.head == "classifier"),
             vocab_size=(args.dec_vocab if args.head == "decoder" else None),
-            keyinfo_idx=keyinfo_idx
+            keyinfo_idx=keyinfo_idx,
         )
 
-    # Stage C: Diff-VQA finetune with counterfactual evidence losses
+    # Stage C — Diff-VQA finetune with counterfactual evidence losses
     for ep in range(int(args.epochs_vqa)):
         print(f"\n=== Stage C: VQA epoch {ep+1}/{args.epochs_vqa} ===")
         run_epoch(
-            "vqa", model, train_loader, opt, scaler, device,
-            lambda_mrm=args.lambda_mrm, lambda_align=args.lambda_align,
-            lambda_cf=args.lambda_cf, lambda_gate=1e-3,
+            "vqa",
+            model,
+            train_loader,
+            opt,
+            scaler,
+            device,
+            lambda_mrm=args.lambda_mrm,
+            lambda_align=args.lambda_align,
+            lambda_cf=args.lambda_cf,
+            lambda_gate=1e-3,
             classifier=(args.head == "classifier"),
             vocab_size=(args.dec_vocab if args.head == "decoder" else None),
-            keyinfo_idx=keyinfo_idx
+            keyinfo_idx=keyinfo_idx,
         )
 
 
 if __name__ == "__main__":
     args = parse_args()
     main(args)
-
 ```
 
 ### How to run?
@@ -1118,3 +1499,104 @@ if __name__ == "__main__":
     text_encoder: tiny
     text_proj_dim: 256
     ```
+
+## Inference
+
+`src/inference.py`
+
+```python
+import torch
+import argparse
+import yaml
+from pathlib import Path
+from PIL import Image
+
+# Import necessary classes from your project
+from lib.models import DiffVQAModel
+from lib.dataset import img_tf  # Use the same image transforms
+
+def main(args):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # 1. Load the training configuration
+    with open(args.config, "r") as f:
+        cfg = yaml.safe_load(f)
+
+    # 2. Re-create the model architecture with the same config
+    # We need the vocab from the training set to map output IDs to answers
+    # This is a bit of a shortcut; ideally, you'd save the vocab with the model
+    from lib.dataset import DiffVQADataset
+    train_ds = DiffVQADataset(cfg['data_root'], cfg['pairs_csv'], cfg['meta_csv'], split="train")
+    vocab = train_ds.itos # list of answer strings, index is the class id
+
+    model = DiffVQAModel(
+        backbone=cfg.get('backbone', 'resnet50'),
+        text_encoder=cfg.get('text_encoder', 'tiny'),
+        text_proj_dim=cfg.get('text_proj_dim', 256),
+        topk=cfg.get('topk', 64),
+        num_classes=len(vocab),
+        head=cfg.get('head', 'classifier')
+    ).to(device)
+
+    # 3. Load the saved model weights
+    model.load_state_dict(torch.load(args.model_path, map_location=device))
+    model.eval()
+    print("Model loaded and set to evaluation mode.")
+
+    # 4. Prepare the inputs
+    # Load and transform images
+    img_ref = img_tf(Image.open(args.ref_image)).unsqueeze(0).to(device)
+    img_cur = img_tf(Image.open(args.cur_image)).unsqueeze(0).to(device)
+    
+    # Prepare the question
+    question = [args.question.strip().lower()]
+    
+    # Tokenize the question using the model's text encoder
+    from train import tokenize_questions # We can reuse this helper
+    token_batch = tokenize_questions(
+        model.text, question, use_hf=getattr(model, "uses_hf", False), device=device
+    )
+
+    # 5. Run inference
+    with torch.no_grad():
+        output = model(img_ref, img_cur, token_batch)
+
+    # 6. Interpret the output
+    if model.is_classifier:
+        logits = output['logits']
+        predicted_id = logits.argmax(-1).item()
+        predicted_answer = vocab[predicted_id]
+        print("\n--- Inference Results ---")
+        print(f"Question: {args.question}")
+        print(f"Predicted Answer: {predicted_answer}")
+    else:
+        # Inference for a decoder model
+        _, predicted_ids = model.head(output['sel_tokens'])
+        # You would need a tokenizer to convert these IDs back to words
+        print("\nDecoder output IDs:", predicted_ids.cpu().numpy())
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run inference with a trained DRIFT-VQA model.")
+    parser.add_argument("--config", type=str, required=True, help="Path to the training YAML config file.")
+    parser.add_argument("--model_path", type=str, default="drift_vqa_final.pth", help="Path to the trained model weights (.pth).")
+    parser.add_argument("--ref_image", type=str, required=True, help="Path to the reference (past) image.")
+    parser.add_argument("--cur_image", type=str, required=True, help="Path to the current image.")
+    parser.add_argument("--question", type=str, default="what has changed compared to the reference image?", help="The question to ask.")
+    
+    args = parser.parse_args()
+    main(args)
+```
+
+### How to run inference
+
+`src/inference.py`
+
+```bash
+python src/inference.py \
+    --config configs/clinicalbert_resnet.yaml \
+    --model_path drift_vqa_final.pth \
+    --ref_image /path/to/your/past_image.jpg \
+    --cur_image /path/to/your/current_image.jpg \
+    --question "is there evidence of new lung opacity"
+```
