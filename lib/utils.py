@@ -24,10 +24,10 @@ def collate(batch):
     return out
 
 def make_loader(ds, bs, shuffle):
-    return DataLoader(ds, batch_size=bs, shuffle=shuffle, num_workers=4, pin_memory=True, collate_fn=collate)
+    return DataLoader(ds, batch_size=bs, shuffle=shuffle, num_workers=0, pin_memory=True, collate_fn=collate)
 
 
-def setup_logging(log_file: str, logger_name: str = "MIMIC-CXR-JPG-DOWNLOADER"):
+def setup_logging(log_file: str):
     # add a custom 'SUCCESS' log level
     SUCCESS_LEVEL_NUM = 25
     logging.addLevelName(SUCCESS_LEVEL_NUM, "SUCCESS")
@@ -38,9 +38,9 @@ def setup_logging(log_file: str, logger_name: str = "MIMIC-CXR-JPG-DOWNLOADER"):
 
     logging.Logger.success = success
 
-    logger = logging.getLogger(logger_name)
+    logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
-    logger.propagate = False
+    logger.propagate = True
 
     # avoid adding handlers if they already exist
     if logger.hasHandlers():

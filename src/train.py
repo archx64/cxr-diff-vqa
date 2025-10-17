@@ -10,7 +10,7 @@ import yaml
 
 from lib.dataset import DiffVQADataset
 from lib.utils import make_loader
-from lib.models import (
+from lib.model import (
     DirectionalResidualStack,
     QuestionGuidedDifferenceTokenizer,
     MaskedResidualModel,
@@ -26,8 +26,10 @@ from lib.utils import setup_logging
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-log_file = 'logs/train.log'
-logger = setup_logging(log_file=log_file, logger_name=__name__)
+log_file = "logs/train.log"
+# logger = setup_logging(log_file=log_file, logger_name=__name__)
+logger = setup_logging(log_file=log_file)
+
 
 # --------------------------
 # Args + YAML config
@@ -136,7 +138,7 @@ def tokenize_questions(text_model, batch_questions, use_hf=False, device=None):
         if device is not None:
             token_ids = token_ids.to(device)
         return token_ids
-    
+
         # return text_model.tokenize(batch_questions)
 
 
@@ -255,6 +257,10 @@ def run_epoch(
     total_steps = len(loader)
     running = {"loss": 0.0, "acc": 0, "n": 0}
 
+    # add gradient accumulation
+    accumulation_steps = 4  # effective batch size will be bs * accumulation_steps
+    optimizer.zero_grad()  # zero gradients at the start of the epoch
+
     for i, batch in enumerate(loader):
         img_cur = batch["img_cur"].to(device)
         img_ref = batch["img_ref"].to(device)
@@ -295,7 +301,9 @@ def run_epoch(
 
             if stage == "mrm":
                 loss = loss_mrm
-                logger.info(f"  [Step {i+1}/{total_steps}] MRM Loss: {loss_mrm.item():.4f}")
+                logger.info(
+                    f"  [Step {i+1}/{total_steps}] MRM Loss: {loss_mrm.item():.4f}"
+                )
 
             elif stage == "warmup":
                 if classifier:
@@ -374,11 +382,19 @@ def run_epoch(
                         + lambda_gate * loss_gate
                     )
 
+                    loss = loss / accumulation_steps
+
         optimizer.zero_grad(set_to_none=True)
+
+        # backpropagate normalized loss
         scaler.scale(loss).backward()
-        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        scaler.step(optimizer)
-        scaler.update()
+
+        # step the optimizer only after enough steps have accumulatetd
+        if (i + 1) % accumulation_steps == 0:
+            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            scaler.step(optimizer)
+            scaler.update()
+            optimizer.zero_grad()
 
         running["loss"] += loss.item()
         if classifier:
@@ -395,7 +411,9 @@ def run_epoch(
                     f"loss={running['loss']/(i+1):.4f} acc={running['acc']/max(1,running['n']):.3f}"
                 )
             else:
-                logger.info(f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}")
+                logger.info(
+                    f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}"
+                )
 
 
 def evaluate(model, loader, device, classifier=True):
@@ -443,15 +461,15 @@ def main(args):
 
     seed_all(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Using device: {torch.get_di}")
+    logger.info(f"Using device: {torch.cuda.get_device_name()}")
 
     # Datasets (ensure your DiffVQADataset filters by split internally)
     train_ds = DiffVQADataset(
-        args.data_root, args.pairs_csv, args.meta_csv, split="train"
+        args.data_root, args.train_pairs_csv, args.train_meta_csv, split="train"
     )
     vocab = (train_ds.stoi, train_ds.itos)
     val_ds = DiffVQADataset(
-        args.data_root, args.pairs_csv, args.meta_csv, split="val", vocab=vocab
+        args.data_root, args.val_pairs_csv, args.val_meta_csv, split="val", vocab=vocab
     )
 
     num_classes = len(train_ds.itos) if args.head == "classifier" else args.dec_vocab
@@ -553,10 +571,9 @@ def main(args):
             vocab_size=(args.dec_vocab if args.head == "decoder" else None),
             keyinfo_idx=keyinfo_idx,
         )
-        
+
         print("Running validation...")
         evaluate(model, val_loader, device, classifier=(args.head == "classifier"))
-
 
     # --- SAVE THE FINAL MODEL ---
     print("\nTraining complete. Saving final model...")

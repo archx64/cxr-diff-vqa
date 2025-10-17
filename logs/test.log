@@ -1,0 +1,255 @@
+2025-10-16 16:46:03,995 - root - INFO - Using device: cuda
+2025-10-16 16:46:03,998 - root - INFO - Loaded configuration from configs/clinicalbert_resnet50.yaml
+2025-10-16 16:46:03,999 - root - INFO - Rebuilding vocabulary from the training set...
+2025-10-16 16:46:04,000 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_cache.pt...
+2025-10-16 16:46:04,397 - lib.dataset - INFO - [train split] Building new vocabulary...
+2025-10-16 16:46:04,398 - root - INFO - Vocabulary built. Number of answer classes: 20
+2025-10-16 16:46:04,399 - root - INFO - Loading the test dataset...
+2025-10-16 16:46:04,400 - lib.dataset - INFO - No cache found for 'test' split. Building manifest from CSVs...
+2025-10-16 16:46:04,401 - lib.dataset - INFO - [test split] Building study_to_path map from D:/MIMIC-CXR-JPG/mimic_all_p10_test.csv...
+2025-10-16 16:46:04,521 - lib.dataset - INFO - Map built. Found paths for 28 studies.
+2025-10-16 16:46:04,522 - lib.dataset - INFO - [test split] Loading all question pairs from pre-split file: D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_test.csv...
+2025-10-16 16:46:04,548 - lib.dataset - INFO - [test split] Loaded 116 question pairs.
+2025-10-16 16:46:04,549 - lib.dataset - INFO - Saving dataset manifest to D:\MIMIC-CXR-JPG\mimic_diff_vqa_test_cache.pt for future runs...
+2025-10-16 16:46:04,568 - root - INFO - Test dataset loaded with 116 samples.
+2025-10-16 16:46:14,214 - root - INFO - Loading trained model weights from models/drift_vqa_final.pth
+2025-10-16 16:46:25,779 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:46:27,127 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:46:28,163 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:46:29,376 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:46:56,054 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:46:56,106 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:46:56,108 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:46:56,112 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:47:22,203 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:47:22,233 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:47:22,235 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:47:22,239 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:47:49,406 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:47:49,443 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:47:49,445 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:47:49,449 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:48:15,672 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:48:15,707 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:48:15,709 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:48:15,715 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:48:42,701 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:48:42,723 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:48:42,724 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:48:42,730 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:49:14,689 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:49:14,719 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:49:14,722 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:49:14,726 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:49:37,802 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:49:37,821 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:49:37,823 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:49:37,828 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:50:15,499 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 16:50:15,533 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 16:50:15,536 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 16:50:15,540 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 16:51:01,458 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([8, 3, 224, 224]), img_cur=torch.Size([8, 3, 224, 224])
+2025-10-16 16:51:01,718 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([8, 2048, 7, 7]), f_cur=torch.Size([8, 2048, 7, 7])
+2025-10-16 16:51:01,719 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([8, 256]), concatenated feature map=torch.Size([8, 8192, 7, 7])
+2025-10-16 16:51:02,556 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([8, 55, 8192]), heatmap=torch.Size([8, 7, 7])
+2025-10-16 17:11:21,484 - root - INFO - Using device: cuda
+2025-10-16 17:11:21,488 - root - INFO - Loaded configuration from configs/clinicalbert_resnet50.yaml
+2025-10-16 17:11:21,488 - root - INFO - Rebuilding vocabulary from the training set...
+2025-10-16 17:11:21,489 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_cache.pt...
+2025-10-16 17:11:21,819 - lib.dataset - INFO - [train split] Building new vocabulary...
+2025-10-16 17:11:21,820 - root - INFO - Vocabulary built. Number of answer classes: 20
+2025-10-16 17:11:21,821 - root - INFO - Loading the test dataset...
+2025-10-16 17:11:21,822 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_test_cache.pt...
+2025-10-16 17:11:21,847 - root - INFO - Test dataset loaded with 116 samples.
+2025-10-16 17:11:33,000 - root - INFO - Loading trained model weights from models/drift_vqa_final.pth
+2025-10-16 17:11:42,273 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:11:44,005 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:11:44,354 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:11:44,659 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:12:06,901 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:12:08,506 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:12:08,807 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:12:09,758 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:12:31,957 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:12:34,284 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:12:34,286 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:12:34,288 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:12:58,333 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:12:59,055 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:12:59,056 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:13:01,922 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:13:26,695 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:13:28,090 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:13:28,091 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:13:33,080 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:14:09,107 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:14:19,888 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:14:19,889 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:14:19,891 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:14:52,668 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:14:56,686 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:14:56,687 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:14:56,690 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:15:42,795 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:15:43,826 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:15:43,828 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:15:44,664 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:16:02,812 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:16:02,830 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:16:02,833 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:16:02,836 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:17:26,019 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([8, 3, 224, 224]), img_cur=torch.Size([8, 3, 224, 224])
+2025-10-16 17:17:27,131 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([8, 2048, 7, 7]), f_cur=torch.Size([8, 2048, 7, 7])
+2025-10-16 17:17:27,132 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([8, 256]), concatenated feature map=torch.Size([8, 8192, 7, 7])
+2025-10-16 17:17:28,359 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([8, 55, 8192]), heatmap=torch.Size([8, 7, 7])
+2025-10-16 17:20:48,776 - root - INFO - Using device: cuda
+2025-10-16 17:20:48,780 - root - INFO - Loaded configuration from configs/clinicalbert_resnet50.yaml
+2025-10-16 17:20:48,781 - root - INFO - Rebuilding vocabulary from the training set...
+2025-10-16 17:20:48,782 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_cache.pt...
+2025-10-16 17:20:48,785 - lib.dataset - INFO - [train split] Building new vocabulary...
+2025-10-16 17:20:48,786 - root - INFO - Vocabulary built. Number of answer classes: 20
+2025-10-16 17:20:48,786 - root - INFO - Loading the test dataset...
+2025-10-16 17:20:48,788 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_test_cache.pt...
+2025-10-16 17:20:48,794 - root - INFO - Test dataset loaded with 116 samples.
+2025-10-16 17:20:59,957 - root - INFO - Loading trained model weights from models/drift_vqa_final.pth
+2025-10-16 17:21:07,584 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:21:08,991 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:21:09,390 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:21:09,648 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:21:30,760 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:21:31,343 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:21:31,344 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:21:33,836 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:21:51,739 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:21:53,042 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:21:53,043 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:21:53,045 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:22:09,574 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:22:09,590 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:22:09,591 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:22:09,595 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:22:28,799 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:22:30,792 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:22:30,793 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:22:30,795 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:22:54,928 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:23:00,488 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:23:00,489 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:23:00,492 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:23:23,905 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:23:25,619 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:23:25,621 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:23:25,623 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:23:51,016 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:23:55,973 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:23:55,974 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:23:55,976 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:24:19,965 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 17:24:22,136 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 17:24:22,138 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 17:24:22,140 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 17:24:47,949 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([8, 3, 224, 224]), img_cur=torch.Size([8, 3, 224, 224])
+2025-10-16 17:24:48,661 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([8, 2048, 7, 7]), f_cur=torch.Size([8, 2048, 7, 7])
+2025-10-16 17:24:48,663 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([8, 256]), concatenated feature map=torch.Size([8, 8192, 7, 7])
+2025-10-16 17:24:49,580 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([8, 55, 8192]), heatmap=torch.Size([8, 7, 7])
+2025-10-16 18:26:24,624 - root - INFO - Using device: cuda
+2025-10-16 18:26:24,627 - root - INFO - Loaded configuration from configs/clinicalbert_resnet50.yaml
+2025-10-16 18:26:24,628 - root - INFO - Rebuilding vocabulary from the training set...
+2025-10-16 18:26:24,630 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_cache.pt...
+2025-10-16 18:26:24,633 - lib.dataset - INFO - [train split] Building new vocabulary...
+2025-10-16 18:26:24,634 - root - INFO - Vocabulary built. Number of answer classes: 20
+2025-10-16 18:26:24,635 - root - INFO - Loading the test dataset...
+2025-10-16 18:26:24,636 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_test_cache.pt...
+2025-10-16 18:26:24,642 - root - INFO - Test dataset loaded with 116 samples.
+2025-10-16 18:26:37,548 - root - INFO - Loading trained model weights from models/drift_vqa_final.pth
+2025-10-16 18:26:46,881 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:26:48,296 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:26:49,643 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:26:50,957 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:27:19,371 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:27:22,059 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:27:22,061 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:27:23,427 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:27:49,600 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:27:50,793 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:27:50,794 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:27:50,796 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:29:51,794 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:29:56,149 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:29:59,030 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:30:03,844 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:30:32,091 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:30:32,120 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:30:32,123 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:30:32,127 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:30:59,732 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:30:59,752 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:30:59,753 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:30:59,756 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:31:31,116 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:31:31,138 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:31:31,140 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:31:31,143 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:31:59,699 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:31:59,723 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:31:59,725 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:31:59,728 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:32:28,090 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-16 18:32:28,109 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-16 18:32:28,111 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-16 18:32:28,114 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-16 18:32:53,516 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([8, 3, 224, 224]), img_cur=torch.Size([8, 3, 224, 224])
+2025-10-16 18:32:54,065 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([8, 2048, 7, 7]), f_cur=torch.Size([8, 2048, 7, 7])
+2025-10-16 18:32:54,067 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([8, 256]), concatenated feature map=torch.Size([8, 8192, 7, 7])
+2025-10-16 18:32:56,606 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([8, 55, 8192]), heatmap=torch.Size([8, 7, 7])
+2025-10-17 03:23:13,215 - root - INFO - Using device: cuda
+2025-10-17 03:23:13,225 - root - INFO - Loaded configuration from configs/clinicalbert_resnet50.yaml
+2025-10-17 03:23:13,226 - root - INFO - Rebuilding vocabulary from the training set...
+2025-10-17 03:23:13,571 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_cache.pt...
+2025-10-17 03:23:13,615 - lib.dataset - INFO - [train split] Building new vocabulary...
+2025-10-17 03:23:13,616 - root - INFO - Vocabulary built. Number of answer classes: 20
+2025-10-17 03:23:13,617 - root - INFO - Loading the test dataset...
+2025-10-17 03:23:13,660 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_test_cache.pt...
+2025-10-17 03:23:13,687 - root - INFO - Test dataset loaded with 116 samples.
+2025-10-17 03:23:25,143 - root - INFO - Loading trained model weights from models/drift_vqa_final.pth
+2025-10-17 03:23:51,015 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:23:53,144 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:23:54,755 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:23:55,574 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:24:29,729 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:24:29,753 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:24:29,755 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:24:29,759 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:25:18,962 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:25:18,982 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:25:18,984 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:25:18,988 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:25:49,551 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:25:49,571 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:25:49,574 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:25:49,577 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:26:23,302 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:26:23,321 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:26:23,322 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:26:23,327 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:27:01,101 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:27:01,128 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:27:01,130 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:27:01,134 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:27:45,520 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:27:45,536 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:27:45,538 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:27:45,543 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:28:36,005 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:28:36,028 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:28:36,031 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:28:36,035 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:29:12,968 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([12, 3, 224, 224]), img_cur=torch.Size([12, 3, 224, 224])
+2025-10-17 03:29:12,991 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([12, 2048, 7, 7]), f_cur=torch.Size([12, 2048, 7, 7])
+2025-10-17 03:29:12,993 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([12, 256]), concatenated feature map=torch.Size([12, 8192, 7, 7])
+2025-10-17 03:29:12,997 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([12, 55, 8192]), heatmap=torch.Size([12, 7, 7])
+2025-10-17 03:29:46,409 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([8, 3, 224, 224]), img_cur=torch.Size([8, 3, 224, 224])
+2025-10-17 03:29:46,685 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([8, 2048, 7, 7]), f_cur=torch.Size([8, 2048, 7, 7])
+2025-10-17 03:29:46,686 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([8, 256]), concatenated feature map=torch.Size([8, 8192, 7, 7])
+2025-10-17 03:29:47,424 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([8, 55, 8192]), heatmap=torch.Size([8, 7, 7])

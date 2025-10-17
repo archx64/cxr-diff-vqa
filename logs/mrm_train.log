@@ -1,3 +1,0 @@
-2025-09-22 14:57:36,771 - DRIFT - INFO - This log message will correctly go to c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\logs\mrm_train.log
-2025-09-22 14:59:33,608 - DRIFT - INFO - This log message will correctly go to c:\Users\neucl\Dev\Thesis\cxr-diff-vqa\logs\mrm_train.log
-2025-09-22 14:59:57,502 - DRIFT - INFO - Using device: cuda - NVIDIA GeForce RTX 2060

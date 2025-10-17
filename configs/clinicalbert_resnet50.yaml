@@ -5,9 +5,16 @@ data_root: D:/MIMIC-CXR-JPG/
 # meta_csv:  D:/MIMIC-CXR-JPG/mimic_all_p10_train.csv
 # keyinfo_json: D:/MIMIC-CXR-JPG/all_diseases_p10.json
 
-pairs_csv: D:/MIMIC-CXR-JPG/mimic_pair_questions_1p.csv
-meta_csv:  D:/MIMIC-CXR-JPG/mimic_all_1p.csv
-keyinfo_json: D:/MIMIC-CXR-JPG/all_diseases_1p.json
+train_pairs_csv: 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_train.csv'
+train_meta_csv: 'D:/MIMIC-CXR-JPG/mimic_all_p10_train.csv'
+
+val_pairs_csv: 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_val.csv'
+val_meta_csv: 'D:/MIMIC-CXR-JPG/mimic_all_p10_val.csv'
+
+test_pairs_csv: 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_test.csv'
+test_meta_csv: 'D:/MIMIC-CXR-JPG/mimic_all_p10_test.csv'
+
+keyinfo_json: D:/MIMIC-CXR-JPG/all_diseases_p10.json
 
 ckpt: ./models/r50_mcc.tar
 
@@ -23,11 +30,24 @@ text_proj_dim: 256
 dec_vocab: 6000
 
 # training
-bs: 12
+# bs: 12
+bs: 4
 lr: 1.0e-4
+
+# epochs_mrm: 1
+# epochs_warmup: 1
+# epochs_vqa: 3
+
 epochs_mrm: 1
 epochs_warmup: 1
 epochs_vqa: 1
+topk: 64
+
+bs: 12                    # slightly smaller batch vs TinyText
+lr: 1.0e-4
+epochs_mrm: 1
+epochs_warmup: 1
+epochs_vqa: 3
 topk: 64
 
 lambda_mrm: 0.1

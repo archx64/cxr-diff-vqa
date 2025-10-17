@@ -4,7 +4,7 @@ import yaml
 from PIL import Image
 
 # Import necessary classes from your project
-from lib.models import DiffVQAModel
+from lib.model import DiffVQAModel
 from lib.dataset import img_tf  # Use the same image transforms
 
 def main(args):
