@@ -16,41 +16,45 @@ test_meta_csv: 'D:/MIMIC-CXR-JPG/mimic_all_p10_test.csv'
 
 keyinfo_json: D:/MIMIC-CXR-JPG/all_diseases_p10.json
 
-ckpt: ./models/r50_mcc.tar
+# ckpt: ./models/r50_mcc.tar
 
 # model
-backbone: resnet50
-head: classifier           # or "decoder"
+# backbone: resnet50
+backbone: resnet18
+head: decoder        # or "classifier"
 # text_encoder: clinicalbert
+max_ans_len: 8
+
 text_encoder: tiny
 text_model_name: emilyalsentzer/Bio_ClinicalBERT
 text_finetune: false
 text_dim: 768
 text_proj_dim: 256
-dec_vocab: 6000
+dec_vocab: 64
 
 # training
 # bs: 12
-bs: 4
+bs: 1
 lr: 1.0e-4
-
-# epochs_mrm: 1
-# epochs_warmup: 1
-# epochs_vqa: 3
 
 epochs_mrm: 1
 epochs_warmup: 1
 epochs_vqa: 1
 topk: 64
 
-bs: 12                    # slightly smaller batch vs TinyText
-lr: 1.0e-4
-epochs_mrm: 1
-epochs_warmup: 1
-epochs_vqa: 3
-topk: 64
-
 lambda_mrm: 0.1
 lambda_align: 0.05
 lambda_cf: 0.05
 seed: 69
+
+# bs: 12
+# lr: 1.0e-4
+# epochs_mrm: 1
+# epochs_warmup: 1
+# epochs_vqa: 3
+# topk: 64
+
+
+# epochs_mrm: 1
+# epochs_warmup: 1
+# epochs_vqa: 3

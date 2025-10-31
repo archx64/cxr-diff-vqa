@@ -12,7 +12,7 @@ from lib.utils import (
 )
 
 LOG_DIR = "logs"
-CHILD_DIR = "p11"
+CHILD_DIR = "p19"
 GCS_PARENT_DIR = "files"
 LOCAL_PARENT_DIR = "D:/MIMIC-CXR-JPG"
 

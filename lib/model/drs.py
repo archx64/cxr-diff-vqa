@@ -13,7 +13,7 @@ class DirectionalResidualStack(nn.Module):
     Returns R+ (cur-ref, relu), R- (ref-cur, relu), R_abs, and signed residual.
     """
 
-    def __init__(self, backbone_name="resnet50", out_index=-1, freeze_backbone=True):
+    def __init__(self, backbone_name="resnet18", out_index=-1, freeze_backbone=True):
         super(DirectionalResidualStack, self).__init__()
         self.backbone = timm.create_model(
             backbone_name, pretrained=False, features_only=True, out_indices=[out_index]

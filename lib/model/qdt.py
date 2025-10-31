@@ -163,7 +163,7 @@ class ClinicalBERTText(nn.Module):
     ):
         super().__init__()
         self.tok = AutoTokenizer.from_pretrained(model_name, use_fast=True)
-        self.bert = AutoModel.from_pretrained(model_name)
+        self.bert = AutoModel.from_pretrained(model_name, use_safetensors=True)
         self.out_dim = d_txt  # usually 768 for BERT-base
         self.proj = (
             nn.Linear(self.out_dim, proj_dim)

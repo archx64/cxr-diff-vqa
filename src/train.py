@@ -1,33 +1,23 @@
 # train.py
-import argparse
-import random
+import argparse, random, json, yaml
 from pathlib import Path
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import yaml
+from torch import nn
+from torch.nn import functional as F
+from torch.cuda.amp import GradScaler
+from torch.optim import AdamW
 
 from lib.dataset import DiffVQADataset
-from lib.utils import make_loader
-from lib.model import (
-    DirectionalResidualStack,
-    QuestionGuidedDifferenceTokenizer,
-    MaskedResidualModel,
-    IDEClassifier,
-    TinyTransformerDecoder,
-    TinyText,
-    ClinicalBERTText,
-)
+from lib.utils import make_loader, setup_logging, run_nlg_evaluation
+from lib.model import DiffVQAModel
 from lib.losses import heatmap_kl, info_nce_token_sets
-from lib.phrases import load_keyinfo, build_diff_phrase
+from lib.phrases import load_keyinfo
 from lib.negate import negate_question
-from lib.utils import setup_logging
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 log_file = "logs/train.log"
-# logger = setup_logging(log_file=log_file, logger_name=__name__)
 logger = setup_logging(log_file=log_file)
 
 
@@ -47,10 +37,10 @@ def parse_args():
     parser.add_argument("--ckpt", type=str, default="")
 
     # Model
-    parser.add_argument("--backbone", type=str, default="resnet50")
-    parser.add_argument(
-        "--head", type=str, default="classifier", choices=["classifier", "decoder"]
-    )
+    parser.add_argument("--backbone", type=str, default="")
+    # parser.add_argument(
+    #     "--head", type=str, default="classifier", choices=["classifier", "decoder"]
+    # )
 
     # Text encoder
     parser.add_argument(
@@ -143,143 +133,38 @@ def tokenize_questions(text_model, batch_questions, use_hf=False, device=None):
 
 
 # --------------------------
-# Model wrapper
-# --------------------------
-class DiffVQAModel(nn.Module):
-    def __init__(
-        self,
-        backbone="resnet50",
-        text_encoder="tiny",
-        text_model_name="emilyalsentzer/Bio_ClinicalBERT",
-        text_dim=768,
-        text_proj_dim=256,
-        text_finetune=False,
-        topk=64,
-        num_rows=3,
-        num_cols=2,
-        num_classes=1000,
-        head="classifier",
-    ):
-        super().__init__()
-
-        # Vision encoder (DRS+)
-        self.drs = DirectionalResidualStack(backbone_name=backbone)
-        C = self.drs.out_channels
-        c_all = C * 4  # [R+, R-, Rabs, signed]
-
-        # Text encoder
-        if text_encoder == "clinicalbert":
-            self.text = ClinicalBERTText(
-                model_name=text_model_name,
-                d_txt=text_dim,
-                proj_dim=text_proj_dim,
-                fine_tune=text_finetune,
-            )
-            self.uses_hf = True
-            q_dim = text_proj_dim
-        else:
-            self.text = TinyText(d_txt=text_proj_dim)
-            self.uses_hf = False
-            q_dim = text_proj_dim
-
-        # QDT+ and MaskedResidualModel
-        self.qdt = QuestionGuidedDifferenceTokenizer(
-            c_img=c_all, d_txt=q_dim, k=topk, num_rows=num_rows, num_cols=num_cols
-        )
-        self.mrm = MaskedResidualModel(c_all=c_all, mask_ratio=0.6)
-
-        # Head
-        if head == "classifier":
-            self.head = IDEClassifier(dim=c_all, num_classes=num_classes)
-            self.is_classifier = True
-        else:
-            self.head = TinyTransformerDecoder(
-                dim=c_all, vocab_size=num_classes, nlayer=3, nhead=8, max_len=16
-            )
-            self.is_classifier = False
-
-    def forward(self, img_ref, img_cur, token_batch):
-        # Visual residuals
-        r = self.drs(img_ref, img_cur)  # dict: r_pos, r_neg, r_abs, signed
-
-        # Question vector
-        q_vec = self.text(token_batch)  # (B, q_dim)
-
-        # Token selection + heatmap + gate sparsity
-        sel_tokens, heatmap, gate_l1 = self.qdt(
-            q_vec, r
-        )  # (B,k,c_all), (B,H,W), scalar
-
-        # MaskedResidualModel on residual token maps
-        feats_for_mrm = torch.cat(
-            [r["r_pos"], r["r_neg"], r["r_abs"], r["signed"]], dim=1
-        )
-        mrm_out = self.mrm(feats_for_mrm)
-
-        if self.is_classifier:
-            logits = self.head(sel_tokens, token_kinds=None)
-            return {
-                "logits": logits,
-                "heatmap": heatmap,
-                "gate_l1": gate_l1,
-                **mrm_out,
-                **r,
-            }
-        else:
-            return {
-                "sel_tokens": sel_tokens,
-                "heatmap": heatmap,
-                "gate_l1": gate_l1,
-                **mrm_out,
-                **r,
-            }
-
-
-# --------------------------
 # One epoch
 # --------------------------
 def run_epoch(
     stage,
-    model,
+    model: DiffVQAModel,
     loader,
-    optimizer,
-    scaler,
+    optimizer: AdamW,
+    scaler: GradScaler,
     device,
     lambda_mrm=0.1,
     lambda_align=0.05,
     lambda_cf=0.05,
     lambda_gate=1e-3,
-    classifier=True,
-    vocab_size=None,
-    keyinfo_idx=None,
 ):
     model.train()
     total_steps = len(loader)
     running = {"loss": 0.0, "acc": 0, "n": 0}
 
-    # add gradient accumulation
-    accumulation_steps = 4  # effective batch size will be bs * accumulation_steps
-    optimizer.zero_grad()  # zero gradients at the start of the epoch
-
     for i, batch in enumerate(loader):
         img_cur = batch["img_cur"].to(device)
         img_ref = batch["img_ref"].to(device)
-        y = batch["answer_id"].to(device)  # classifier path
-        qs = [q for q in batch["question"]]
+        qs = batch["question"]
         qs_cf = [negate_question(q) for q in qs]
+
+        y_seq = batch["answer_ids"].to(device)
 
         tokens = tokenize_questions(
             model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device
         )
-
-        if isinstance(tokens, torch.Tensor):
-            tokens = tokens.to(device=device, dtype=torch.long)
-
         tokens_cf = tokenize_questions(
             model.text, qs_cf, use_hf=getattr(model, "uses_hf", False), device=device
         )
-
-        # Counterfactual image swap
         img_cur_cf, img_ref_cf = img_ref, img_cur
 
         with torch.autocast(
@@ -290,7 +175,6 @@ def run_epoch(
             out = model(img_ref, img_cur, tokens)
             out_cf = model(img_ref_cf, img_cur_cf, tokens_cf)
 
-            # Base components
             loss_mrm = out["loss_mrm"]
             loss_align = model.drs.alignment_loss(
                 out["r_pos"], out["r_neg"], out["r_abs"], out["signed"]
@@ -299,6 +183,10 @@ def run_epoch(
             loss_nce = info_nce_token_sets(out["patches"], out_cf["patches"])
             loss_gate = out["gate_l1"]
 
+            main_loss = 0
+
+            _, main_loss = model.head(out["sel_tokens"], targets=y_seq)
+
             if stage == "mrm":
                 loss = loss_mrm
                 logger.info(
@@ -306,149 +194,106 @@ def run_epoch(
                 )
 
             elif stage == "warmup":
-                if classifier:
-                    logits = out["logits"]
-                    ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss = (
-                        ce
-                        + lambda_mrm * loss_mrm
-                        + lambda_align * loss_align
-                        + lambda_gate * loss_gate
-                    )
-                else:
-                    # Generative warm-up via KeyInfo deltas (if available)
-                    phrases = []
-                    for m in batch["meta"]:
-                        _, sid_cur, sid_ref = m
-                        phrases.append(
-                            build_diff_phrase(sid_cur, sid_ref, keyinfo_idx)
-                            if keyinfo_idx
-                            else "no significant change"
-                        )
-                    targets = text_to_ids(
-                        phrases, vocab_size=vocab_size, max_len=16
-                    ).to(device)
-                    _, loss_dec = model.head(
-                        out["sel_tokens"], targets=targets, token_kinds=None
-                    )
-                    loss = (
-                        loss_dec
-                        + lambda_mrm * loss_mrm
-                        + lambda_align * loss_align
-                        + lambda_gate * loss_gate
-                    )
-                    logger.debug(
-                        f"  [Step {i+1}/{total_steps}] Warmup Losses -> "
-                        f"CE: {ce.item():.4f}, MRM: {loss_mrm.item():.4f}, Align: {loss_align.item():.4f}"
-                    )
+                loss = (
+                    main_loss
+                    + lambda_mrm * loss_mrm
+                    + lambda_align * loss_align
+                    + lambda_gate * loss_gate
+                )
+                logger.debug(
+                    f"  [Step {i+1}/{total_steps}] Warmup Losses -> "
+                    f"Main: {main_loss.item():.4f}, MRM: {loss_mrm.item():.4f}, Align: {loss_align.item():.4f}"
+                )
 
             else:  # stage == "vqa"
-                if classifier:
-                    logits = out["logits"]
-                    ce = F.cross_entropy(logits, y, ignore_index=0)
-                    loss_cf_combined = loss_hkl + loss_nce
-                    loss = (
-                        ce
-                        + lambda_mrm * loss_mrm
-                        + lambda_align * loss_align
-                        + lambda_cf * (loss_hkl + loss_nce)
-                        + lambda_gate * loss_gate
-                    )
-                    logger.debug(
-                        f"  [Step {i+1}/{total_steps}] VQA Losses -> "
-                        f"CE: {ce.item():.4f}, MRM: {loss_mrm.item():.4f}, Align: {loss_align.item():.4f}, CF: {loss_cf_combined.item():.4f}"
-                    )
-                else:
-                    # Optionally continue supervising with KeyInfo phrases
-                    phrases = []
-                    for m in batch["meta"]:
-                        _, sid_cur, sid_ref = m
-                        phrases.append(
-                            build_diff_phrase(sid_cur, sid_ref, keyinfo_idx)
-                            if keyinfo_idx
-                            else "no significant change"
-                        )
-                    targets = text_to_ids(
-                        phrases, vocab_size=vocab_size, max_len=16
-                    ).to(device)
-                    _, loss_dec = model.head(
-                        out["sel_tokens"], targets=targets, token_kinds=None
-                    )
-                    loss = (
-                        loss_dec
-                        + lambda_mrm * loss_mrm
-                        + lambda_align * loss_align
-                        + lambda_cf * (loss_hkl + loss_nce)
-                        + lambda_gate * loss_gate
-                    )
-
-                    loss = loss / accumulation_steps
+                loss_cf_combined = loss_hkl + loss_nce
+                loss = (
+                    main_loss
+                    + lambda_mrm * loss_mrm
+                    + lambda_align * loss_align
+                    + lambda_cf * loss_cf_combined
+                    + lambda_gate * loss_gate
+                )
+                logger.debug(
+                    f"  [Step {i+1}/{total_steps}] VQA Losses -> "
+                    f"Main: {main_loss.item():.4f}, MRM: {loss_mrm.item():.4f}, Align: {loss_align.item():.4f}, CF: {loss_cf_combined.item():.4f}"
+                )
 
         optimizer.zero_grad(set_to_none=True)
-
-        # backpropagate normalized loss
         scaler.scale(loss).backward()
-
-        # step the optimizer only after enough steps have accumulatetd
-        if (i + 1) % accumulation_steps == 0:
-            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            scaler.step(optimizer)
-            scaler.update()
-            optimizer.zero_grad()
+        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        scaler.step(optimizer)
+        scaler.update()
 
         running["loss"] += loss.item()
-        if classifier:
-            with torch.no_grad():
-                pred = out["logits"].argmax(dim=-1)
-                mask = y != 0
-                running["acc"] += (pred[mask] == y[mask]).sum().item()
-                running["n"] += mask.sum().item()
 
         if (i + 1) % 50 == 0:
-            if classifier and running["n"] > 0:
-                logger.info(
-                    f"[{stage}] {i+1}/{total_steps} "
-                    f"loss={running['loss']/(i+1):.4f} acc={running['acc']/max(1,running['n']):.3f}"
-                )
-            else:
-                logger.info(
-                    f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}"
-                )
+            logger.info(
+                f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}"
+            )
 
 
-def evaluate(model, loader, device, classifier=True):
+def evaluate(model, loader, device, vocab):
     model.eval()  # Set the model to evaluation mode
-    running = {"acc": 0, "n": 0}
+
+    # --- Decoder Evaluation Logic ---
+    gts = {"info": {}, "images": [], "annotations": []}
+    res = []
+    sample_id_counter = 0
 
     with torch.no_grad():  # Disable gradient calculation
-        for i, batch in enumerate(loader):
+        for batch in loader:
             img_cur = batch["img_cur"].to(device)
             img_ref = batch["img_ref"].to(device)
-            y = batch["answer_id"].to(device)
-            qs = [q for q in batch["question"]]
+            qs = batch["question"]
+            ground_truth_ids = batch["answer_ids"].cpu()  # Get ground truth sequences
 
             tokens = tokenize_questions(
                 model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device
             )
-
-            # Only need a forward pass, no counterfactuals needed for evaluation
             out = model(img_ref, img_cur, tokens)
 
-            if classifier:
-                pred = out["logits"].argmax(dim=-1)
-                mask = y != 0  # Ignore padding/unknown answers
-                running["acc"] += (pred[mask] == y[mask]).sum().item()
-                running["n"] += mask.sum().item()
-            else:
-                # Evaluation for a decoder is more complex (BLEU, CIDEr etc.)
-                # For now, we'll just report accuracy on the classifier head
-                pass
+            # Generate predictions
+            _, preds_ids = model.head(out["sel_tokens"])
+            preds_ids = preds_ids.cpu().tolist()
 
-    if classifier and running["n"] > 0:
-        accuracy = running["acc"] / running["n"]
-        print(f"\nValidation Accuracy: {accuracy:.4f}\n")
-        return accuracy
-    return 0.0
+            # Collect ground truths and predictions
+            for i in range(len(qs)):
+                # Convert ground truth IDs to string
+                gt_tokens = [
+                    vocab[1][token_id]
+                    for token_id in ground_truth_ids[i].tolist()
+                    if token_id > 2
+                ]
+                gt_answer_string = " ".join(gt_tokens)
+
+                # Convert predicted IDs to string
+                pred_tokens = []
+                for token_id in preds_ids[i]:
+                    if token_id == 2:
+                        break  # Stop at <end> token
+                    if token_id > 2:
+                        pred_tokens.append(vocab[1][token_id])
+                pred_answer_string = " ".join(pred_tokens)
+
+                # Populate COCO-style dictionaries
+                gts["images"].append({"id": sample_id_counter})
+                gts["annotations"].append(
+                    {
+                        "image_id": sample_id_counter,
+                        "id": sample_id_counter,
+                        "caption": gt_answer_string,
+                    }
+                )
+                res.append(
+                    {"image_id": sample_id_counter, "caption": pred_answer_string}
+                )
+                sample_id_counter += 1
+
+    # Run the NLG evaluation
+    if res:
+        print("\n--- Validation Metrics ---")
+        run_nlg_evaluation(gts, res)
 
 
 # --------------------------
@@ -463,16 +308,34 @@ def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {torch.cuda.get_device_name()}")
 
-    # Datasets (ensure your DiffVQADataset filters by split internally)
+    # datasets (ensure your DiffVQADataset filters by split internally)
     train_ds = DiffVQADataset(
-        args.data_root, args.train_pairs_csv, args.train_meta_csv, split="train"
+        args.data_root,
+        args.train_pairs_csv,
+        args.train_meta_csv,
+        split="train",
+        max_ans_len=args.max_ans_len,
     )
     vocab = (train_ds.stoi, train_ds.itos)
+    # num_classes = len(train_ds.itos) if args.head == "classifier" else args.dec_vocab
+    num_classes = len(train_ds.itos)
+
+    vocab_save_path = Path("models/vocab.json")
+    vocab_save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(vocab_save_path, "w") as f:
+        json.dump({"stoi": train_ds.stoi, "itos": train_ds.itos}, f, indent=4)
+    logger.info(f"vocabulary saved to {vocab_save_path}")
+
     val_ds = DiffVQADataset(
-        args.data_root, args.val_pairs_csv, args.val_meta_csv, split="val", vocab=vocab
+        args.data_root,
+        args.val_pairs_csv,
+        args.val_meta_csv,
+        split="val",
+        vocab=vocab,
+        max_ans_len=args.max_ans_len,
     )
 
-    num_classes = len(train_ds.itos) if args.head == "classifier" else args.dec_vocab
     print(f"Answer classes / Decoder vocab: {num_classes}")
 
     train_loader = make_loader(train_ds, args.bs, shuffle=True)
@@ -492,30 +355,16 @@ def main(args):
         num_rows=3,
         num_cols=2,
         num_classes=num_classes,
-        head=args.head,
+        max_ans_len=args.max_ans_len,
     ).to(device)
 
-    # Optional: load CXR-CLIP / SwinTiny weights
-    if args.ckpt and Path(args.ckpt).exists():
-        sd = torch.load(args.ckpt, map_location="cpu")
-        missing, unexpected = model.drs.backbone.load_state_dict(sd, strict=False)
-        print(
-            f"Loaded backbone weights: missing={len(missing)} unexpected={len(unexpected)}"
-        )
-
-    opt = torch.optim.AdamW(
+    opt = AdamW(
         [p for p in model.parameters() if p.requires_grad],
         lr=float(args.lr),
         weight_decay=1e-4,
     )
-    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
 
-    # keyInfo index for phrase supervision
-    keyinfo_idx = (
-        load_keyinfo(args.keyinfo_json)
-        if args.keyinfo_json and Path(args.keyinfo_json).exists()
-        else None
-    )
+    scaler = GradScaler(enabled=(device.type == "cuda"))
 
     # stage A — MaskedResidualModel warm-up
     for ep in range(int(args.epochs_mrm)):
@@ -531,7 +380,6 @@ def main(args):
             lambda_align=0.0,
             lambda_cf=0.0,
             lambda_gate=0.0,
-            classifier=(args.head == "classifier"),
         )
 
     # stage B — warm-up with KeyInfo phrases
@@ -548,9 +396,6 @@ def main(args):
             lambda_align=0.05,
             lambda_cf=0.0,
             lambda_gate=1e-3,
-            classifier=(args.head == "classifier"),
-            vocab_size=(args.dec_vocab if args.head == "decoder" else None),
-            keyinfo_idx=keyinfo_idx,
         )
 
     # stage C — Diff-VQA finetune with counterfactual evidence losses
@@ -567,13 +412,10 @@ def main(args):
             lambda_align=args.lambda_align,
             lambda_cf=args.lambda_cf,
             lambda_gate=1e-3,
-            classifier=(args.head == "classifier"),
-            vocab_size=(args.dec_vocab if args.head == "decoder" else None),
-            keyinfo_idx=keyinfo_idx,
         )
 
         print("Running validation...")
-        evaluate(model, val_loader, device, classifier=(args.head == "classifier"))
+        evaluate(model, val_loader, device, vocab)
 
     # --- SAVE THE FINAL MODEL ---
     print("\nTraining complete. Saving final model...")
