@@ -34,27 +34,16 @@ dec_vocab: 64
 
 # training
 # bs: 12
-bs: 1
-lr: 1.0e-4
+bs: 32
+# lr: 1.0e-4
+lr: 2.0e-4
 
-epochs_mrm: 1
-epochs_warmup: 1
-epochs_vqa: 1
+epochs_mrm: 5
+epochs_warmup: 5
+epochs_vqa: 10
 topk: 64
 
 lambda_mrm: 0.1
 lambda_align: 0.05
 lambda_cf: 0.05
 seed: 69
-
-# bs: 12
-# lr: 1.0e-4
-# epochs_mrm: 1
-# epochs_warmup: 1
-# epochs_vqa: 3
-# topk: 64
-
-
-# epochs_mrm: 1
-# epochs_warmup: 1
-# epochs_vqa: 3
