@@ -1,77 +1,71 @@
-# train.py
-import argparse, random, json, yaml
+import argparse
+import random
 from pathlib import Path
+import logging
+import json
+import yaml
+import os
+import sys # <-- IMPORT SYS
 
 import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.cuda.amp import GradScaler
-from torch.optim import AdamW
+import torch.nn as nn
+import torch.nn.functional as F
+# We can now safely use the standard tqdm
+from tqdm import tqdm 
 
+# Import project files
 from lib.dataset import DiffVQADataset
 from lib.utils import make_loader, setup_logging, run_nlg_evaluation
-from lib.model import DiffVQAModel
+from lib.model.vqa import DiffVQAModel
 from lib.losses import heatmap_kl, info_nce_token_sets
-from lib.phrases import load_keyinfo
 from lib.negate import negate_question
 
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-log_file = "logs/train.log"
-logger = setup_logging(log_file=log_file)
+# Global logger placeholder
+logger = logging.getLogger()
 
 
-# --------------------------
-# Args + YAML config
-# --------------------------
 def parse_args():
-    parser = argparse.ArgumentParser()
+    """
+    Parses command-line arguments and loads configuration from a YAML file.
+    """
+    parser = argparse.ArgumentParser(description="Train a DRIFT-VQA model.")
     parser.add_argument("--config", type=str, default="", help="Path to YAML config")
 
-    # All CLI args are OPTIONAL; YAML can override them
-    # Data
+    # --- Split-Specific Files ---
     parser.add_argument("--data_root", type=str, default="")
-    parser.add_argument("--pairs_csv", type=str, default="")
-    parser.add_argument("--meta_csv", type=str, default="")
+    parser.add_argument("--train_pairs_csv", type=str, default="")
+    parser.add_argument("--train_meta_csv", type=str, default="")
+    parser.add_argument("--val_pairs_csv", type=str, default="")
+    parser.add_argument("--val_meta_csv", type=str, default="")
+    parser.add_argument("--test_pairs_csv", type=str, default="")
+    parser.add_argument("--test_meta_csv", type=str, default="")
     parser.add_argument("--keyinfo_json", type=str, default="")
-    parser.add_argument("--ckpt", type=str, default="")
 
-    # Model
-    parser.add_argument("--backbone", type=str, default="")
-    # parser.add_argument(
-    #     "--head", type=str, default="classifier", choices=["classifier", "decoder"]
-    # )
-
-    # Text encoder
-    parser.add_argument(
-        "--text_encoder", type=str, default="tiny", choices=["tiny", "clinicalbert"]
-    )
-    parser.add_argument(
-        "--text_model_name", type=str, default="emilyalsentzer/Bio_ClinicalBERT"
-    )
+    # --- Model Params ---
+    parser.add_argument("--backbone", type=str)
+    parser.add_argument("--text_encoder", type=str)
+    parser.add_argument("--text_model_name", type=str)
     parser.add_argument("--text_finetune", action="store_true")
-    parser.add_argument("--text_dim", type=int, default=768)  # ClinicalBERT hidden size
-    parser.add_argument(
-        "--text_proj_dim", type=int, default=256
-    )  # projected dim into QDT
+    parser.add_argument("--text_dim", type=int)
+    parser.add_argument("--text_proj_dim", type=int)
+    parser.add_argument("--max_ans_len", type=int)
+    parser.add_argument("--topk", type=int)
 
-    # Decoder vocab (when head=decoder)
-    parser.add_argument("--dec_vocab", type=int, default=6000)
+    # --- Training Params ---
+    parser.add_argument("--bs", type=int)
+    parser.add_argument("--lr", type=float)
+    parser.add_argument("--num_workers", type=int)
+    parser.add_argument("--epochs_mrm", type=int)
+    parser.add_argument("--epochs_warmup", type=int)
+    parser.add_argument("--epochs_vqa", type=int)
+    
+    # --- Loss Weights ---
+    parser.add_argument("--main_loss_weight", type=float)
+    parser.add_argument("--lambda_mrm", type=float)
+    parser.add_argument("--lambda_align", type=float)
+    parser.add_argument("--lambda_cf", type=float)
 
-    # Train hyperparams
-    parser.add_argument("--bs", type=int, default=16)
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--epochs_mrm", type=int, default=1)
-    parser.add_argument("--epochs_warmup", type=int, default=1)
-    parser.add_argument("--epochs_vqa", type=int, default=3)
-    parser.add_argument("--topk", type=int, default=64)
-
-    # Loss weights
-    parser.add_argument("--lambda_mrm", type=float, default=0.1)
-    parser.add_argument("--lambda_align", type=float, default=0.05)
-    parser.add_argument("--lambda_cf", type=float, default=0.05)
-
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int)
 
     args = parser.parse_args()
 
@@ -82,94 +76,67 @@ def parse_args():
         for k, v in cfg.items():
             setattr(args, k, v)
 
-    # Basic sanity: these should be set by YAML or CLI
-    needed = ["data_root", "pairs_csv", "meta_csv"]
+    # Sanity check
+    needed = ["data_root", "train_pairs_csv", "train_meta_csv", "val_pairs_csv", "val_meta_csv"]
     missing = [k for k in needed if not getattr(args, k, None)]
     if missing:
-        raise SystemExit(
-            f"Missing required settings ({', '.join(missing)}). "
-            f"Provide them in the YAML passed by --config or as CLI flags."
-        )
+        raise SystemExit(f"Missing required settings: {', '.join(missing)}")
 
     return args
 
 
-# --------------------------
-# Utils
-# --------------------------
 def seed_all(s=42):
     random.seed(s)
+    os.environ["PYTHONHASHSEED"] = str(s)
     torch.manual_seed(s)
-    torch.cuda.manual_seed_all(s)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(s)
     torch.backends.cudnn.benchmark = True
 
 
-def text_to_ids(texts, vocab_size=6000, max_len=16):
-    """Hash-based toy tokenizer for decoder targets; 0=PAD."""
-    ids = []
-    for t in texts:
-        words = t.strip().lower().split()[:max_len] or ["<blank>"]
-        row = [(hash(w) % (vocab_size - 1)) + 1 for w in words]
-        row += [0] * (max_len - len(row))
-        ids.append(row)
-    return torch.tensor(ids, dtype=torch.long)
+def tokenize_questions(text_model, batch_questions, device=None):
+    """
+    Helper to tokenize a batch of questions using the HuggingFace tokenizer.
+    """
+    enc = text_model.tokenize(batch_questions)
+    if device is not None:
+        enc = {k: v.to(device) for k, v in enc.items()}
+    return enc
 
 
-def tokenize_questions(text_model, batch_questions, use_hf=False, device=None):
-    """Return token ids (TinyText) or dict of tensors (HF ClinicalBERT)."""
-    if use_hf:
-        enc = text_model.tokenize(batch_questions)
-        if device is not None:
-            enc = {k: v.to(device) for k, v in enc.items()}
-        return enc
-    else:
-        # create one tensor and immediately move it to the correct device
-        token_ids = text_model.tokenize(batch_questions)
-        if device is not None:
-            token_ids = token_ids.to(device)
-        return token_ids
-
-        # return text_model.tokenize(batch_questions)
-
-
-# --------------------------
-# One epoch
-# --------------------------
 def run_epoch(
     stage,
-    model: DiffVQAModel,
+    model,
     loader,
-    optimizer: AdamW,
-    scaler: GradScaler,
+    optimizer,
+    scaler,
     device,
+    main_loss_weight=1.0,
     lambda_mrm=0.1,
     lambda_align=0.05,
     lambda_cf=0.05,
     lambda_gate=1e-3,
 ):
     model.train()
-    total_steps = len(loader)
-    running = {"loss": 0.0, "acc": 0, "n": 0}
+    running_loss = 0.0
 
-    for i, batch in enumerate(loader):
+    # --- ADDED file=sys.stdout ---
+    pbar = tqdm(loader, desc=f"Stage {stage} Epoch", leave=False, file=sys.stdout)
+    
+    for i, batch in enumerate(pbar):
         img_cur = batch["img_cur"].to(device)
         img_ref = batch["img_ref"].to(device)
         qs = batch["question"]
         qs_cf = [negate_question(q) for q in qs]
-
         y_seq = batch["answer_ids"].to(device)
 
-        tokens = tokenize_questions(
-            model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device
-        )
-        tokens_cf = tokenize_questions(
-            model.text, qs_cf, use_hf=getattr(model, "uses_hf", False), device=device
-        )
+        tokens = tokenize_questions(model.text, qs, device=device)
+        tokens_cf = tokenize_questions(model.text, qs_cf, device=device)
         img_cur_cf, img_ref_cf = img_ref, img_cur
 
         with torch.autocast(
-            device_type=device.type,
-            dtype=torch.float16,
+            device_type=device.type if device.type == 'cuda' else 'cpu',
+            dtype=torch.float16 if device.type == 'cuda' else torch.bfloat16,
             enabled=(device.type == "cuda"),
         ):
             out = model(img_ref, img_cur, tokens)
@@ -183,167 +150,129 @@ def run_epoch(
             loss_nce = info_nce_token_sets(out["patches"], out_cf["patches"])
             loss_gate = out["gate_l1"]
 
-            main_loss = 0
-
             _, main_loss = model.head(out["sel_tokens"], targets=y_seq)
-
+            
             if stage == "mrm":
                 loss = loss_mrm
-                logger.info(
-                    f"  [Step {i+1}/{total_steps}] MRM Loss: {loss_mrm.item():.4f}"
-                )
-
             elif stage == "warmup":
                 loss = (
-                    main_loss
+                    (main_loss_weight * main_loss)
                     + lambda_mrm * loss_mrm
                     + lambda_align * loss_align
                     + lambda_gate * loss_gate
                 )
-                logger.debug(
-                    f"  [Step {i+1}/{total_steps}] Warmup Losses -> "
-                    f"Main: {main_loss.item():.4f}, MRM: {loss_mrm.item():.4f}, Align: {loss_align.item():.4f}"
-                )
-
             else:  # stage == "vqa"
                 loss_cf_combined = loss_hkl + loss_nce
                 loss = (
-                    main_loss
+                    (main_loss_weight * main_loss)
                     + lambda_mrm * loss_mrm
                     + lambda_align * loss_align
                     + lambda_cf * loss_cf_combined
                     + lambda_gate * loss_gate
                 )
-                logger.debug(
-                    f"  [Step {i+1}/{total_steps}] VQA Losses -> "
-                    f"Main: {main_loss.item():.4f}, MRM: {loss_mrm.item():.4f}, Align: {loss_align.item():.4f}, CF: {loss_cf_combined.item():.4f}"
-                )
-
+        
         optimizer.zero_grad(set_to_none=True)
         scaler.scale(loss).backward()
         nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         scaler.step(optimizer)
         scaler.update()
 
-        running["loss"] += loss.item()
+        running_loss += loss.item()
+        
+        avg_loss = running_loss / (i + 1)
+        pbar.set_description(f"Stage {stage} Epoch | Batch Loss: {loss.item():.4f} | Avg Loss: {avg_loss:.4f}")
 
-        if (i + 1) % 50 == 0:
-            logger.info(
-                f"[{stage}] {i+1}/{total_steps} loss={running['loss']/(i+1):.4f}"
-            )
+    return running_loss / len(loader)
 
 
 def evaluate(model, loader, device, vocab):
-    model.eval()  # Set the model to evaluation mode
-
-    # --- Decoder Evaluation Logic ---
-    gts = {"info": {}, "images": [], "annotations": []}
+    model.eval()
+    gts = {'info': {}, 'images': [], 'annotations': []}
     res = []
     sample_id_counter = 0
 
-    with torch.no_grad():  # Disable gradient calculation
-        for batch in loader:
+    # --- ADDED file=sys.stdout ---
+    pbar = tqdm(loader, desc="Validation", leave=False, file=sys.stdout)
+    with torch.no_grad():
+        for batch in pbar:
             img_cur = batch["img_cur"].to(device)
             img_ref = batch["img_ref"].to(device)
             qs = batch["question"]
-            ground_truth_ids = batch["answer_ids"].cpu()  # Get ground truth sequences
+            ground_truth_ids = batch["answer_ids"].cpu()
 
-            tokens = tokenize_questions(
-                model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device
-            )
+            tokens = tokenize_questions(model.text, qs, device=device)
             out = model(img_ref, img_cur, tokens)
 
-            # Generate predictions
-            _, preds_ids = model.head(out["sel_tokens"])
+            _, preds_ids = model.head(out['sel_tokens'])
             preds_ids = preds_ids.cpu().tolist()
 
-            # Collect ground truths and predictions
             for i in range(len(qs)):
-                # Convert ground truth IDs to string
                 gt_tokens = [
                     vocab[1][token_id]
-                    for token_id in ground_truth_ids[i].tolist()
-                    if token_id > 2
+                    for token_id in ground_truth_ids[i].tolist() if token_id > 2
                 ]
                 gt_answer_string = " ".join(gt_tokens)
-
-                # Convert predicted IDs to string
                 pred_tokens = []
                 for token_id in preds_ids[i]:
-                    if token_id == 2:
-                        break  # Stop at <end> token
-                    if token_id > 2:
-                        pred_tokens.append(vocab[1][token_id])
+                    if token_id == 2: break
+                    if token_id > 2: pred_tokens.append(vocab[1][token_id])
                 pred_answer_string = " ".join(pred_tokens)
 
-                # Populate COCO-style dictionaries
-                gts["images"].append({"id": sample_id_counter})
-                gts["annotations"].append(
-                    {
-                        "image_id": sample_id_counter,
-                        "id": sample_id_counter,
-                        "caption": gt_answer_string,
-                    }
-                )
-                res.append(
-                    {"image_id": sample_id_counter, "caption": pred_answer_string}
-                )
+                gts['images'].append({'id': sample_id_counter})
+                gts['annotations'].append({
+                    'image_id': sample_id_counter,
+                    'id': sample_id_counter,
+                    'caption': gt_answer_string
+                })
+                res.append({
+                    'image_id': sample_id_counter,
+                    'caption': pred_answer_string
+                })
                 sample_id_counter += 1
 
-    # Run the NLG evaluation
     if res:
         print("\n--- Validation Metrics ---")
         run_nlg_evaluation(gts, res)
 
 
-# --------------------------
-# Main
-# --------------------------
 def main(args):
-
-    logger.info("Starting DRIFT-VQA Training")
-    logger.info(f"Configuration: {vars(args)}")
-
+    global logger 
+    if not logger.hasHandlers():
+        logger = setup_logging(log_file="logs/train.log")
+        
+    logger.info("Starting DRIFT-VQA Training.")
+    logger.info(f"Full config: {vars(args)}")
+    
     seed_all(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Using device: {torch.cuda.get_device_name()}")
-
-    # datasets (ensure your DiffVQADataset filters by split internally)
+    logger.info(f"Using device: {device}")
+    
+    # --- Data Loading ---
+    logger.info(f"Loading training data from: {args.train_pairs_csv}")
     train_ds = DiffVQADataset(
-        args.data_root,
-        args.train_pairs_csv,
-        args.train_meta_csv,
-        split="train",
-        max_ans_len=args.max_ans_len,
+        args.data_root, args.train_pairs_csv, args.train_meta_csv, split="train", max_ans_len=args.max_ans_len
     )
     vocab = (train_ds.stoi, train_ds.itos)
-    # num_classes = len(train_ds.itos) if args.head == "classifier" else args.dec_vocab
     num_classes = len(train_ds.itos)
-
+    
     vocab_save_path = Path("models/vocab.json")
     vocab_save_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with open(vocab_save_path, "w") as f:
-        json.dump({"stoi": train_ds.stoi, "itos": train_ds.itos}, f, indent=4)
-    logger.info(f"vocabulary saved to {vocab_save_path}")
-
+    with open(vocab_save_path, 'w') as f:
+        json.dump({'stoi': train_ds.stoi, 'itos': train_ds.itos}, f, indent=2)
+    logger.info(f"Vocabulary saved to {vocab_save_path} (Size: {num_classes})")
+    
+    logger.info(f"Loading validation data from: {args.val_pairs_csv}")
     val_ds = DiffVQADataset(
-        args.data_root,
-        args.val_pairs_csv,
-        args.val_meta_csv,
-        split="val",
-        vocab=vocab,
-        max_ans_len=args.max_ans_len,
+        args.data_root, args.val_pairs_csv, args.val_meta_csv, split="val", vocab=vocab, max_ans_len=args.max_ans_len
     )
+    
+    num_workers = args.num_workers
+    logger.info(f"Using {num_workers} data loader workers.")
+    train_loader = make_loader(train_ds, args.bs, shuffle=True, num_workers=num_workers)
+    val_loader = make_loader(val_ds, args.bs, shuffle=False, num_workers=num_workers)
 
-    print(f"Answer classes / Decoder vocab: {num_classes}")
-
-    train_loader = make_loader(train_ds, args.bs, shuffle=True)
-    val_loader = make_loader(
-        val_ds, args.bs, shuffle=False
-    )  # TODO: wire evaluation if needed
-
-    # Model
+    # --- Model Initialization ---
+    logger.info("Initializing model...")
     model = DiffVQAModel(
         backbone=args.backbone,
         text_encoder=args.text_encoder,
@@ -352,78 +281,92 @@ def main(args):
         text_proj_dim=args.text_proj_dim,
         text_finetune=args.text_finetune,
         topk=args.topk,
-        num_rows=3,
-        num_cols=2,
         num_classes=num_classes,
         max_ans_len=args.max_ans_len,
     ).to(device)
 
-    opt = AdamW(
+    # if args.ckpt and Path(args.ckpt).exists():
+    #     logger.info(f"Loading backbone weights from: {args.ckpt}")
+    #     try:
+    #         sd = torch.load(args.ckpt, map_location="cpu", weights_only=False)
+    #         if 'state_dict' in sd: sd = sd['state_dict']
+    #         elif 'model' in sd: sd = sd['model']
+            
+    #         missing, unexpected = model.drs.backbone.load_state_dict(sd, strict=False)
+    #         logger.info(f"Loaded weights: missing={len(missing)} unexpected={len(unexpected)}")
+    #     except Exception as e:
+    #         logger.error(f"Failed to load checkpoint: {e}")
+
+    opt = torch.optim.AdamW(
         [p for p in model.parameters() if p.requires_grad],
         lr=float(args.lr),
         weight_decay=1e-4,
     )
+    scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
 
-    scaler = GradScaler(enabled=(device.type == "cuda"))
-
-    # stage A — MaskedResidualModel warm-up
-    for ep in range(int(args.epochs_mrm)):
-        print(f"\n=== Stage A: MaskedResidualModel epoch {ep+1}/{args.epochs_mrm} ===")
-        run_epoch(
-            "mrm",
-            model,
-            train_loader,
-            opt,
-            scaler,
-            device,
-            lambda_mrm=1.0,
-            lambda_align=0.0,
-            lambda_cf=0.0,
-            lambda_gate=0.0,
+    print("\nStarting Model Training...")
+    
+    # --- Stage A (MRM) ---
+    for ep in tqdm(range(int(args.epochs_mrm)), desc="Stage A (MRM)", leave=True, file=sys.stdout):
+        logger.info(f"\n=== Stage A Epoch {ep+1} ===")
+        avg_loss = run_epoch(
+            "mrm", model, train_loader, opt, scaler, device,
+            main_loss_weight=args.main_loss_weight,
+            lambda_mrm=1.0, lambda_align=0.0, lambda_cf=0.0, lambda_gate=0.0
         )
+        logger.info(f"Stage A Epoch {ep+1} Avg Loss: {avg_loss:.9f}")
 
-    # stage B — warm-up with KeyInfo phrases
-    for ep in range(int(args.epochs_warmup)):
-        print(f"\n=== Stage B: Warm-up epoch {ep+1}/{args.epochs_warmup} ===")
-        run_epoch(
-            "warmup",
-            model,
-            train_loader,
-            opt,
-            scaler,
-            device,
-            lambda_mrm=0.1,
-            lambda_align=0.05,
-            lambda_cf=0.0,
-            lambda_gate=1e-3,
-        )
-
-    # stage C — Diff-VQA finetune with counterfactual evidence losses
-    for ep in range(int(args.epochs_vqa)):
-        print(f"\n=== Stage C: VQA epoch {ep+1}/{args.epochs_vqa} ===")
-        run_epoch(
-            "vqa",
-            model,
-            train_loader,
-            opt,
-            scaler,
-            device,
+    # --- Stage B (Warm-up) ---
+    for ep in tqdm(range(int(args.epochs_warmup)), desc="Stage B (Warm-up)", leave=True, file=sys.stdout):
+        logger.info(f"\n=== Stage B Epoch {ep+1} ===")
+        avg_loss = run_epoch(
+            "warmup", model, train_loader, opt, scaler, device,
+            main_loss_weight=args.main_loss_weight,
             lambda_mrm=args.lambda_mrm,
             lambda_align=args.lambda_align,
-            lambda_cf=args.lambda_cf,
-            lambda_gate=1e-3,
+            lambda_cf=0.0,
+            lambda_gate=1e-3
         )
+        logger.info(f"Stage B Epoch {ep+1} Avg Loss: {avg_loss:.9f}")
 
-        print("Running validation...")
+    # --- RE-INITIALIZE OPTIMIZER FOR FINETUNING ---
+    logger.info("Re-initializing optimizer for Stage C (VQA) with lower LR.")
+    opt = torch.optim.AdamW(
+        [p for p in model.parameters() if p.requires_grad],
+        lr=float(args.lr) / 100.0, 
+        weight_decay=1e-4,
+    )
+
+    # --- Stage C (VQA + Counterfactuals) ---
+    for ep in tqdm(range(int(args.epochs_vqa)), desc="Stage C (VQA)", leave=True, file=sys.stdout):
+        logger.info(f"\n=== Stage C Epoch {ep+1} ===")
+        avg_loss = run_epoch(
+            "vqa", model, train_loader, opt, scaler, device,
+            main_loss_weight=args.main_loss_weight,
+            lambda_mrm=0.0,
+            lambda_align=0.0,
+            lambda_cf=args.lambda_cf,
+            lambda_gate=1e-3
+        )
+        logger.info(f"Stage C Epoch {ep+1} Avg Loss: {avg_loss:.9f}")
+        
+        logger.info("Running validation...")
         evaluate(model, val_loader, device, vocab)
 
-    # --- SAVE THE FINAL MODEL ---
-    print("\nTraining complete. Saving final model...")
+    # --- Save Model ---
     save_path = Path("models/drift_vqa_final.pth")
+    save_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(model.state_dict(), save_path)
-    print(f"Model saved to {save_path}")
+    logger.info(f"Training complete. Model saved to {save_path}")
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    main(args)
+    Path("logs").mkdir(exist_ok=True)
+    logger = setup_logging(log_file="logs/train.log", console_level=logging.INFO)
+    
+    try:
+        args = parse_args()
+        main(args)
+    except Exception as e:
+        logger.exception("Training failed due to an uncaught exception:")
+        raise e

@@ -1,1 +1,151 @@
-{"info": {}, "images": [{"id": 0}, {"id": 1}, {"id": 2}, {"id": 3}, {"id": 4}, {"id": 5}, {"id": 6}, {"id": 7}, {"id": 8}, {"id": 9}, {"id": 10}, {"id": 11}, {"id": 12}, {"id": 13}, {"id": 14}, {"id": 15}, {"id": 16}, {"id": 17}], "annotations": [{"image_id": 0, "id": 0, "caption": "lung opacity"}, {"image_id": 1, "id": 1, "caption": "yes"}, {"image_id": 2, "id": 2, "caption": "no"}, {"image_id": 3, "id": 3, "caption": "<unk> area"}, {"image_id": 4, "id": 4, "caption": "the main image has an additional finding"}, {"image_id": 5, "id": 5, "caption": "fracture"}, {"image_id": 6, "id": 6, "caption": "no"}, {"image_id": 7, "id": 7, "caption": "left rib area"}, {"image_id": 8, "id": 8, "caption": "<unk> has <unk>"}, {"image_id": 9, "id": 9, "caption": "fracture"}, {"image_id": 10, "id": 10, "caption": "yes"}, {"image_id": 11, "id": 11, "caption": "pa view"}, {"image_id": 12, "id": 12, "caption": "left side"}, {"image_id": 13, "id": 13, "caption": "<unk> has <unk>"}, {"image_id": 14, "id": 14, "caption": "yes"}, {"image_id": 15, "id": 15, "caption": "no"}, {"image_id": 16, "id": 16, "caption": "left side"}, {"image_id": 17, "id": 17, "caption": "<unk> has <unk>"}]}
+{
+    "info": {},
+    "images": [
+        {
+            "id": 0
+        },
+        {
+            "id": 1
+        },
+        {
+            "id": 2
+        },
+        {
+            "id": 3
+        },
+        {
+            "id": 4
+        },
+        {
+            "id": 5
+        },
+        {
+            "id": 6
+        },
+        {
+            "id": 7
+        },
+        {
+            "id": 8
+        },
+        {
+            "id": 9
+        },
+        {
+            "id": 10
+        },
+        {
+            "id": 11
+        },
+        {
+            "id": 12
+        },
+        {
+            "id": 13
+        },
+        {
+            "id": 14
+        },
+        {
+            "id": 15
+        },
+        {
+            "id": 16
+        },
+        {
+            "id": 17
+        }
+    ],
+    "annotations": [
+        {
+            "image_id": 0,
+            "id": 0,
+            "caption": "lung opacity"
+        },
+        {
+            "image_id": 1,
+            "id": 1,
+            "caption": "yes"
+        },
+        {
+            "image_id": 2,
+            "id": 2,
+            "caption": "no"
+        },
+        {
+            "image_id": 3,
+            "id": 3,
+            "caption": "<unk> area"
+        },
+        {
+            "image_id": 4,
+            "id": 4,
+            "caption": "the main image has an additional finding of fracture than the reference image the main image is missing the finding of lung opacity than the reference image"
+        },
+        {
+            "image_id": 5,
+            "id": 5,
+            "caption": "fracture"
+        },
+        {
+            "image_id": 6,
+            "id": 6,
+            "caption": "no"
+        },
+        {
+            "image_id": 7,
+            "id": 7,
+            "caption": "left rib area"
+        },
+        {
+            "image_id": 8,
+            "id": 8,
+            "caption": "<unk> has <unk>"
+        },
+        {
+            "image_id": 9,
+            "id": 9,
+            "caption": "fracture"
+        },
+        {
+            "image_id": 10,
+            "id": 10,
+            "caption": "yes"
+        },
+        {
+            "image_id": 11,
+            "id": 11,
+            "caption": "pa view"
+        },
+        {
+            "image_id": 12,
+            "id": 12,
+            "caption": "left side"
+        },
+        {
+            "image_id": 13,
+            "id": 13,
+            "caption": "<unk> has <unk>"
+        },
+        {
+            "image_id": 14,
+            "id": 14,
+            "caption": "yes"
+        },
+        {
+            "image_id": 15,
+            "id": 15,
+            "caption": "no"
+        },
+        {
+            "image_id": 16,
+            "id": 16,
+            "caption": "left side"
+        },
+        {
+            "image_id": 17,
+            "id": 17,
+            "caption": "<unk> has <unk>"
+        }
+    ]
+}

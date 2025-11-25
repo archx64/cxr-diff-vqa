@@ -1,0 +1,51 @@
+# data
+data_root: /home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/
+
+train_pairs_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_pair_questions_train.csv'
+train_meta_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_all_train.csv'
+
+val_pairs_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_pair_questions_val.csv'
+val_meta_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_all_val.csv'
+
+test_pairs_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_pair_questions_test.csv'
+test_meta_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_all_test.csv'
+
+keyinfo_json: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/all_diseases.json'
+
+# ckpt: '/home/kaungs/work/DRIFT/models/r50_mcc.tar'
+
+# model
+# backbone: resnet50
+backbone: resnet18
+text_encoder: clinicalbert
+text_model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+max_ans_len: 64
+
+# text_encoder: tiny
+text_finetune: false
+text_dim: 768
+text_proj_dim: 256
+# dec_vocab: 64
+
+num_workers: 0
+main_loss_weight: 10
+
+# training
+# bs: 12
+bs: 128
+lr: 1.0e-4
+# lr: 2.0e-4
+
+epochs_mrm: 1
+epochs_warmup: 5
+epochs_vqa: 10
+
+# epochs_mrm: 5
+# epochs_warmup: 5
+# epochs_vqa: 10
+topk: 32
+
+lambda_mrm: 0.01
+lambda_align: 0.01
+lambda_cf: 0.00
+seed: 69

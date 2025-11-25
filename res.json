@@ -1,1 +1,74 @@
-[{"image_id": 0, "caption": "yes"}, {"image_id": 1, "caption": "yes"}, {"image_id": 2, "caption": "yes"}, {"image_id": 3, "caption": "yes"}, {"image_id": 4, "caption": "yes"}, {"image_id": 5, "caption": "yes"}, {"image_id": 6, "caption": "yes"}, {"image_id": 7, "caption": "yes"}, {"image_id": 8, "caption": "yes"}, {"image_id": 9, "caption": "yes"}, {"image_id": 10, "caption": "yes"}, {"image_id": 11, "caption": "yes"}, {"image_id": 12, "caption": "yes"}, {"image_id": 13, "caption": "yes"}, {"image_id": 14, "caption": "yes"}, {"image_id": 15, "caption": "yes"}, {"image_id": 16, "caption": "yes"}, {"image_id": 17, "caption": "yes"}]
+[
+    {
+        "image_id": 0,
+        "caption": ""
+    },
+    {
+        "image_id": 1,
+        "caption": ""
+    },
+    {
+        "image_id": 2,
+        "caption": ""
+    },
+    {
+        "image_id": 3,
+        "caption": ""
+    },
+    {
+        "image_id": 4,
+        "caption": ""
+    },
+    {
+        "image_id": 5,
+        "caption": ""
+    },
+    {
+        "image_id": 6,
+        "caption": ""
+    },
+    {
+        "image_id": 7,
+        "caption": ""
+    },
+    {
+        "image_id": 8,
+        "caption": ""
+    },
+    {
+        "image_id": 9,
+        "caption": ""
+    },
+    {
+        "image_id": 10,
+        "caption": ""
+    },
+    {
+        "image_id": 11,
+        "caption": ""
+    },
+    {
+        "image_id": 12,
+        "caption": ""
+    },
+    {
+        "image_id": 13,
+        "caption": ""
+    },
+    {
+        "image_id": 14,
+        "caption": ""
+    },
+    {
+        "image_id": 15,
+        "caption": ""
+    },
+    {
+        "image_id": 16,
+        "caption": ""
+    },
+    {
+        "image_id": 17,
+        "caption": ""
+    }
+]

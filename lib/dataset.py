@@ -20,7 +20,7 @@ def gray_to_rgb(img):
 
 img_tf = transforms.Compose(
     [
-        transforms.Resize((384, 384)),
+        # transforms.Resize((384, 384)),
         transforms.Lambda(gray_to_rgb),
         transforms.ToTensor(),
         transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),

@@ -62,37 +62,47 @@ def collate(batch):
     return out
 
 
-def make_loader(ds, bs, shuffle):
+def make_loader(ds, bs, shuffle, num_workers=4):
     return DataLoader(
         ds,
         batch_size=bs,
         shuffle=shuffle,
-        num_workers=0,
+        num_workers=num_workers,
         pin_memory=True,
         collate_fn=collate,
     )
 
 
-def setup_logging(log_file: str):
-    # add a custom 'SUCCESS' log level
-    SUCCESS_LEVEL_NUM = 25
-    logging.addLevelName(SUCCESS_LEVEL_NUM, "SUCCESS")
+def setup_logging(log_file: str, console_level=logging.DEBUG):
+    """
+    Sets up the root logger to log to a file and the console.
+    log_file: The file to log to.
+    console_level: The minimum level to show in the console (e.g., logging.WARNING)
+    """
+    logger = logging.getLogger() # get the root logger
+    logger.setLevel(logging.DEBUG) # set the lowest level to process (DEBUG)
 
-    def success(self, message, *args, **kws):
-        if self.isEnabledFor(SUCCESS_LEVEL_NUM):
-            self._log(SUCCESS_LEVEL_NUM, message, args, **kws)
-
-    logging.Logger.success = success
-
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    logger.propagate = True
-
-    # avoid adding handlers if they already exist
+    # clear any existing handlers to avoid duplicates
     if logger.hasHandlers():
         logger.handlers.clear()
 
-    # formatter for the console with colors
+    logger.propagate = True
+
+    # File Handler
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    file_handler = RotatingFileHandler(
+        log_file,
+        maxBytes=10485760, # 10MB
+        backupCount=5,
+        mode="a",
+    )
+    file_handler.setFormatter(file_formatter)
+    file_handler.setLevel(logging.DEBUG) # Log everything to the file
+    logger.addHandler(file_handler)
+
+    # Console Handler (respects the new 'console_level')
     console_formatter = colorlog.ColoredFormatter(
         "%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         log_colors={
@@ -104,26 +114,10 @@ def setup_logging(log_file: str):
             "CRITICAL": "bold_white, bg_red",
         },
     )
-
-    # formatter for the file (plain text)
-    file_formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-
-    # console handler
     console_handler = colorlog.StreamHandler()
     console_handler.setFormatter(console_formatter)
+    console_handler.setLevel(console_level) # Set the desired console log level
     logger.addHandler(console_handler)
-
-    # this will create up to 5 backup files, each 10MB in size.
-    file_handler = RotatingFileHandler(
-        log_file,
-        maxBytes=10485760,  # 10 * 1024 * 1024 bytes = 10MB
-        backupCount=5,
-        mode="a",
-    )
-    file_handler.setFormatter(file_formatter)
-    logger.addHandler(file_handler)
 
     return logger
 

@@ -47,6 +47,9 @@ def main(args):
     model = DiffVQAModel(
         backbone=cfg.get("backbone"),
         text_encoder=cfg.get("text_encoder"),
+        text_model_name=cfg.get("text_model_name"),
+        text_dim=cfg.get("text_dim"),
+        text_finetune=cfg.get('text_finetune'),
         num_classes=num_classes,
         text_proj_dim=cfg.get("text_proj_dim"),
         topk=cfg.get("topk", 64),
@@ -73,7 +76,7 @@ def main(args):
             ground_truth_ids = batch["answer_ids"]  # Sequence of IDs
 
             tokens = tokenize_questions(
-                model.text, qs, use_hf=getattr(model, "uses_hf", False), device=device
+                model.text, qs, device=device
             )
             out = model(img_ref, img_cur, tokens)
 
@@ -110,7 +113,7 @@ def main(args):
                     }
                 )
                 res.append(
-                    {"image_id": sample_id_counter, "caption": pred_answer_string}
+                    {"image_id": sample_id_counter, "id": sample_id_counter, "caption": pred_answer_string}
                 )
                 sample_id_counter += 1
 

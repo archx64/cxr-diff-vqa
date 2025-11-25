@@ -13,10 +13,10 @@ class DirectionalResidualStack(nn.Module):
     Returns R+ (cur-ref, relu), R- (ref-cur, relu), R_abs, and signed residual.
     """
 
-    def __init__(self, backbone_name="resnet18", out_index=-1, freeze_backbone=True):
+    def __init__(self, backbone_name, out_index=-1, freeze_backbone=True):
         super(DirectionalResidualStack, self).__init__()
         self.backbone = timm.create_model(
-            backbone_name, pretrained=False, features_only=True, out_indices=[out_index]
+            backbone_name, pretrained=True, features_only=True, out_indices=[out_index]
         )
 
         if freeze_backbone:
@@ -44,10 +44,10 @@ class DirectionalResidualStack(nn.Module):
         return self.backbone(x)[0]  # (B, C, H, W)
 
     def forward(self, img_ref, img_cur):
-        logger.debug(f"DRS input shapes: img_ref={img_ref.shape}, img_cur={img_cur.shape}")
+        # logger.debug(f"DRS input shapes: img_ref={img_ref.shape}, img_cur={img_cur.shape}")
         f_ref = self.calib(self.encode(img_ref))
         f_cur = self.calib(self.encode(img_cur))
-        logger.debug(f"DRS feature map shapes: f_ref={f_ref.shape}, f_cur={f_cur.shape}")
+        # logger.debug(f"DRS feature map shapes: f_ref={f_ref.shape}, f_cur={f_cur.shape}")
         signed = f_cur - f_ref
         r_pos = F.relu(signed)
         r_neg = F.relu(-signed)
