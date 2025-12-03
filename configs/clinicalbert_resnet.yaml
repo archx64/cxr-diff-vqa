@@ -1,16 +1,16 @@
 # data
-data_root: /home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/
+data_root: E:/MIMIC-CXR-JPG-512x512/
 
-train_pairs_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_pair_questions_train.csv'
-train_meta_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_all_train.csv'
+train_pairs_csv: 'E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_train.csv'
+train_meta_csv: 'E:/MIMIC-CXR-JPG-512x512/mimic_all_train.csv'
 
-val_pairs_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_pair_questions_val.csv'
-val_meta_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_all_val.csv'
+val_pairs_csv: 'E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_val.csv'
+val_meta_csv: 'E:/MIMIC-CXR-JPG-512x512/mimic_all_val.csv'
 
-test_pairs_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_pair_questions_test.csv'
-test_meta_csv: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/mimic_all_test.csv'
+test_pairs_csv: 'E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_test.csv'
+test_meta_csv: 'E:/MIMIC-CXR-JPG-512x512/mimic_all_test.csv'
 
-keyinfo_json: '/home/kaungs/work/DRIFT/MIMIC-CXR-JPG-512x512/all_diseases.json'
+keyinfo_json: 'E:/MIMIC-CXR-JPG-512x512/all_diseases.json'
 
 # ckpt: '/home/kaungs/work/DRIFT/models/r50_mcc.tar'
 
