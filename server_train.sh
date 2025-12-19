@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=1 nohup python3 -u -m src.train --config configs/clinicalbert_resnet.yaml > nohup_train_2_00.log 2>&1 &

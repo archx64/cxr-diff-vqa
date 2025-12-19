@@ -1,165 +1,486 @@
-2025-11-06 11:48:34,290 - root - INFO - Starting DRIFT-VQA Training (Decoder-Only)
-2025-11-06 11:48:34,290 - root - INFO - Configuration: {'data_root': 'D:/MIMIC-CXR-JPG/', 'train_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_train.csv', 'train_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_train.csv', 'val_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_val.csv', 'val_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_val.csv', 'test_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_test.csv', 'test_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_test.csv', 'keyinfo_json': 'D:/MIMIC-CXR-JPG/all_diseases_p10.json', 'backbone': 'resnet18', 'max_ans_len': 8, 'text_encoder': 'tiny', 'text_model_name': 'emilyalsentzer/Bio_ClinicalBERT', 'text_finetune': False, 'text_dim': 768, 'text_proj_dim': 256, 'num_workers': 0, 'bs': 32, 'lr': 0.0002, 'epochs_mrm': 1, 'epochs_warmup': 1, 'epochs_vqa': 1, 'topk': 64, 'lambda_mrm': 0.1, 'lambda_align': 0.05, 'lambda_cf': 0.05, 'seed': 69}
-2025-11-06 11:48:34,290 - root - INFO - Using device: cuda
-2025-11-06 11:48:34,290 - root - INFO - Loading training data and building vocabulary...
-2025-11-06 11:48:34,290 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_word_cache.pt...
-2025-11-06 11:48:34,290 - lib.dataset - INFO - [train split] Building new WORD-LEVEL vocabulary...
-2025-11-06 11:48:34,290 - root - INFO - Vocabulary built. Total size: 39 tokens.
-2025-11-06 11:48:34,290 - root - INFO - Vocabulary saved to models\vocab.json
-2025-11-06 11:48:34,290 - root - INFO - Loading validation data...
-2025-11-06 11:48:34,290 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_val_word_cache.pt...
-2025-11-06 11:48:34,290 - root - INFO - Using 0 data loader workers.
-2025-11-06 11:48:34,290 - root - INFO - Initializing model...
-2025-11-06 11:48:34,290 - lib.model.vqa - INFO - Initializing DiffVQAModel (Decoder-Only) with backbone: resnet18
-2025-11-06 11:48:34,440 - lib.model.vqa - INFO - DRS output channels: 512, Total visual dim: 2048
-2025-11-06 11:48:34,440 - lib.model.vqa - INFO - Using TinyText text encoder.
-2025-11-06 11:48:34,940 - lib.model.vqa - INFO - Initializing Decoder Head. Vocab size: 39, Max len: 8
-2025-11-06 11:48:35,940 - root - INFO - 
-=== Stage A: MaskedResidualModel epoch 1/1 ===
-2025-11-06 11:48:38,248 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-06 11:48:39,163 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-06 11:48:39,274 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-06 11:48:39,340 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-06 11:48:39,857 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-06 11:48:39,874 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-06 11:48:39,874 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-06 11:48:39,874 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-06 11:48:41,107 - root - INFO - Stage A Epoch 1 Avg Loss: 0.3456
-2025-11-06 11:48:41,107 - root - INFO - 
-=== Stage B: Warm-up epoch 1/1 ===
-2025-11-06 11:48:43,515 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-06 11:48:43,524 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-06 11:48:43,524 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-06 11:48:43,524 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-06 11:48:43,524 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-06 11:48:43,540 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-06 11:48:43,540 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-06 11:48:43,556 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-06 11:48:44,157 - root - INFO - Stage B Epoch 1 Avg Loss: 3.7988
-2025-11-06 11:48:44,157 - root - INFO - 
-=== Stage C: VQA epoch 1/1 ===
-2025-11-06 11:48:46,344 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-06 11:48:46,357 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-06 11:48:46,357 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-06 11:48:46,357 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-06 11:48:46,357 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-06 11:48:46,377 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-06 11:48:46,377 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-06 11:48:46,377 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-06 11:48:47,941 - root - INFO - Stage C Epoch 1 Avg Loss: 4.0036
-2025-11-06 11:48:47,941 - root - INFO - Running validation...
-2025-11-06 11:48:49,658 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([18, 3, 384, 384]), img_cur=torch.Size([18, 3, 384, 384])
-2025-11-06 11:48:58,274 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([18, 512, 12, 12]), f_cur=torch.Size([18, 512, 12, 12])
-2025-11-06 11:48:58,274 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([18, 256]), concatenated feature map=torch.Size([18, 2048, 12, 12])
-2025-11-06 11:48:58,298 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([18, 64, 2048]), heatmap=torch.Size([18, 12, 12])
-2025-11-06 11:49:08,920 - root - INFO - Model saved to models\drift_vqa_final.pth
-2025-11-08 02:04:06,665 - root - INFO - Starting DRIFT-VQA Training (Decoder-Only)
-2025-11-08 02:04:06,665 - root - INFO - Configuration: {'data_root': 'D:/MIMIC-CXR-JPG/', 'train_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_train.csv', 'train_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_train.csv', 'val_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_val.csv', 'val_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_val.csv', 'test_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_test.csv', 'test_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_test.csv', 'keyinfo_json': 'D:/MIMIC-CXR-JPG/all_diseases_p10.json', 'backbone': 'resnet18', 'max_ans_len': 8, 'text_encoder': 'tiny', 'text_model_name': 'emilyalsentzer/Bio_ClinicalBERT', 'text_finetune': False, 'text_dim': 768, 'text_proj_dim': 256, 'num_workers': 0, 'bs': 32, 'lr': 0.0002, 'epochs_mrm': 1, 'epochs_warmup': 1, 'epochs_vqa': 1, 'topk': 64, 'lambda_mrm': 0.1, 'lambda_align': 0.05, 'lambda_cf': 0.05, 'seed': 69}
-2025-11-08 02:04:06,731 - root - INFO - Using device: cuda
-2025-11-08 02:04:06,731 - root - INFO - Loading training data and building vocabulary...
-2025-11-08 02:04:07,053 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_word_cache.pt...
-2025-11-08 02:04:07,129 - lib.dataset - INFO - [train split] Building new WORD-LEVEL vocabulary...
-2025-11-08 02:04:07,129 - root - INFO - Vocabulary built. Total size: 39 tokens.
-2025-11-08 02:04:07,132 - root - INFO - Vocabulary saved to models\vocab.json
-2025-11-08 02:04:07,132 - root - INFO - Loading validation data...
-2025-11-08 02:04:07,147 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_val_word_cache.pt...
-2025-11-08 02:04:07,165 - root - INFO - Using 0 data loader workers.
-2025-11-08 02:04:07,165 - root - INFO - Initializing model...
-2025-11-08 02:04:07,165 - lib.model.vqa - INFO - Initializing DiffVQAModel (Decoder-Only) with backbone: resnet18
-2025-11-08 02:04:07,368 - lib.model.vqa - INFO - DRS output channels: 512, Total visual dim: 2048
-2025-11-08 02:04:07,368 - lib.model.vqa - INFO - Using TinyText text encoder.
-2025-11-08 02:04:07,888 - lib.model.vqa - INFO - Initializing Decoder Head. Vocab size: 39, Max len: 8
-2025-11-08 02:04:08,852 - root - INFO - 
-=== Stage A: MaskedResidualModel epoch 1/1 ===
-2025-11-08 02:04:11,622 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:04:13,169 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:04:13,412 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:04:13,648 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:04:14,222 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:04:14,232 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:04:14,233 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:04:14,235 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:04:15,878 - root - INFO - Stage A Epoch 1 Avg Loss: 0.3456
-2025-11-08 02:04:15,881 - root - INFO - 
-=== Stage B: Warm-up epoch 1/1 ===
-2025-11-08 02:04:18,035 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:04:18,051 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:04:18,052 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:04:18,053 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:04:18,055 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:04:18,062 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:04:18,063 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:04:18,064 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:04:18,667 - root - INFO - Stage B Epoch 1 Avg Loss: 3.8009
-2025-11-08 02:04:18,670 - root - INFO - 
-=== Stage C: VQA epoch 1/1 ===
-2025-11-08 02:04:20,754 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:04:20,772 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:04:20,773 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:04:20,776 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:04:20,779 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:04:20,795 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:04:20,796 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:04:20,799 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:04:23,191 - root - INFO - Stage C Epoch 1 Avg Loss: 4.0047
-2025-11-08 02:04:23,191 - root - INFO - Running validation...
-2025-11-08 02:04:25,105 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([18, 3, 384, 384]), img_cur=torch.Size([18, 3, 384, 384])
-2025-11-08 02:04:37,909 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([18, 512, 12, 12]), f_cur=torch.Size([18, 512, 12, 12])
-2025-11-08 02:04:37,910 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([18, 256]), concatenated feature map=torch.Size([18, 2048, 12, 12])
-2025-11-08 02:04:37,994 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([18, 64, 2048]), heatmap=torch.Size([18, 12, 12])
-2025-11-08 02:04:51,140 - root - INFO - Model saved to models\drift_vqa_final.pth
-2025-11-08 02:31:00,218 - root - INFO - Starting DRIFT-VQA Training (Decoder-Only)
-2025-11-08 02:31:00,219 - root - INFO - Configuration: {'data_root': 'D:/MIMIC-CXR-JPG/', 'train_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_train.csv', 'train_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_train.csv', 'val_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_val.csv', 'val_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_val.csv', 'test_pairs_csv': 'D:/MIMIC-CXR-JPG/mimic_pair_questions_p10_test.csv', 'test_meta_csv': 'D:/MIMIC-CXR-JPG/mimic_all_p10_test.csv', 'keyinfo_json': 'D:/MIMIC-CXR-JPG/all_diseases_p10.json', 'backbone': 'resnet18', 'max_ans_len': 64, 'text_encoder': 'tiny', 'text_model_name': 'emilyalsentzer/Bio_ClinicalBERT', 'text_finetune': False, 'text_dim': 768, 'text_proj_dim': 256, 'num_workers': 0, 'bs': 32, 'lr': 0.0002, 'epochs_mrm': 1, 'epochs_warmup': 1, 'epochs_vqa': 1, 'topk': 64, 'lambda_mrm': 0.1, 'lambda_align': 0.05, 'lambda_cf': 0.05, 'seed': 69}
-2025-11-08 02:31:00,271 - root - INFO - Using device: cuda
-2025-11-08 02:31:00,271 - root - INFO - Loading training data and building vocabulary...
-2025-11-08 02:31:00,271 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_train_word_cache.pt...
-2025-11-08 02:31:00,281 - lib.dataset - INFO - [train split] Building new WORD-LEVEL vocabulary...
-2025-11-08 02:31:00,282 - root - INFO - Vocabulary built. Total size: 39 tokens.
-2025-11-08 02:31:00,282 - root - INFO - Vocabulary saved to models\vocab.json
-2025-11-08 02:31:00,283 - root - INFO - Loading validation data...
-2025-11-08 02:31:00,283 - lib.dataset - INFO - Loading cached dataset manifest from D:\MIMIC-CXR-JPG\mimic_diff_vqa_val_word_cache.pt...
-2025-11-08 02:31:00,293 - root - INFO - Using 0 data loader workers.
-2025-11-08 02:31:00,293 - root - INFO - Initializing model...
-2025-11-08 02:31:00,293 - lib.model.vqa - INFO - Initializing DiffVQAModel (Decoder-Only) with backbone: resnet18
-2025-11-08 02:31:00,436 - lib.model.vqa - INFO - DRS output channels: 512, Total visual dim: 2048
-2025-11-08 02:31:00,436 - lib.model.vqa - INFO - Using TinyText text encoder.
-2025-11-08 02:31:00,941 - lib.model.vqa - INFO - Initializing Decoder Head. Vocab size: 39, Max len: 64
-2025-11-08 02:31:01,937 - root - INFO - 
-=== Stage A: MaskedResidualModel epoch 1/1 ===
-2025-11-08 02:31:04,253 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:31:05,186 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:31:05,298 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:31:05,354 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:31:05,876 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:31:05,884 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:31:05,885 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:31:05,887 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:31:07,153 - root - INFO - Stage A Epoch 1 Avg Loss: 0.3457
-2025-11-08 02:31:07,157 - root - INFO - 
-=== Stage B: Warm-up epoch 1/1 ===
-2025-11-08 02:31:09,252 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:31:09,262 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:31:09,262 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:31:09,264 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:31:09,265 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:31:09,275 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:31:09,275 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:31:09,277 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:31:10,032 - root - INFO - Stage B Epoch 1 Avg Loss: 3.9073
-2025-11-08 02:31:10,036 - root - INFO - 
-=== Stage C: VQA epoch 1/1 ===
-2025-11-08 02:31:12,080 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:31:12,090 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:31:12,090 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:31:12,092 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:31:12,093 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([27, 3, 384, 384]), img_cur=torch.Size([27, 3, 384, 384])
-2025-11-08 02:31:12,101 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([27, 512, 12, 12]), f_cur=torch.Size([27, 512, 12, 12])
-2025-11-08 02:31:12,102 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([27, 256]), concatenated feature map=torch.Size([27, 2048, 12, 12])
-2025-11-08 02:31:12,104 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([27, 64, 2048]), heatmap=torch.Size([27, 12, 12])
-2025-11-08 02:31:14,227 - root - INFO - Stage C Epoch 1 Avg Loss: 4.1098
-2025-11-08 02:31:14,227 - root - INFO - Running validation...
-2025-11-08 02:31:15,863 - lib.model.drs - DEBUG - DRS input shapes: img_ref=torch.Size([18, 3, 384, 384]), img_cur=torch.Size([18, 3, 384, 384])
-2025-11-08 02:31:24,325 - lib.model.drs - DEBUG - DRS feature map shapes: f_ref=torch.Size([18, 512, 12, 12]), f_cur=torch.Size([18, 512, 12, 12])
-2025-11-08 02:31:24,326 - lib.model.qdt - DEBUG - QDT inputs: q_vec=torch.Size([18, 256]), concatenated feature map=torch.Size([18, 2048, 12, 12])
-2025-11-08 02:31:24,388 - lib.model.qdt - DEBUG - QDT outputs: selected_tokens=torch.Size([18, 64, 2048]), heatmap=torch.Size([18, 12, 12])
-2025-11-08 02:31:34,923 - root - INFO - Model saved to models\drift_vqa_final.pth
+2025-12-16 01:09:53,379 - requests_oauthlib.oauth2_session - DEBUG - Adding auto refresh key word arguments {'client_id': 'neptune-cli'}.
+2025-12-16 01:09:53,380 - requests_oauthlib.oauth2_session - DEBUG - Prepared refresh token request body grant_type=refresh_token&client_id=neptune-cli&refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyMGY3MjNjMS1hOTk3LTQxNTQtYjdkMi03ZDk3NTU2M2NkZjEifQ.eyJpYXQiOjE3NjU4MjIxOTIsImp0aSI6IjQ2NmE5MTNiLTUwMzQtNDZmMC05MjY3LTg2MzFjYzFhNzc3YSIsImlzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsImF1ZCI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsInN1YiI6ImIzYjAwZTk0LWQ0NjgtNDJlOC04ZjY0LWYxNTU2YjBkMjFlNyIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJuZXB0dW5lLWNsaSIsInNlc3Npb25fc3RhdGUiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwic2lkIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2In0.rz6ZBPEKbFekwoYNOmLOsu3z24UsOdtqlvbegS4beeU
+2025-12-16 01:09:53,380 - requests_oauthlib.oauth2_session - DEBUG - Requesting url https://app.neptune.ai/auth/realms/neptune/protocol/openid-connect/token using method POST.
+2025-12-16 01:09:53,380 - requests_oauthlib.oauth2_session - DEBUG - Supplying headers {'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'} and data {'grant_type': 'refresh_token', 'client_id': 'neptune-cli', 'refresh_token': 'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyMGY3MjNjMS1hOTk3LTQxNTQtYjdkMi03ZDk3NTU2M2NkZjEifQ.eyJpYXQiOjE3NjU4MjIxOTIsImp0aSI6IjQ2NmE5MTNiLTUwMzQtNDZmMC05MjY3LTg2MzFjYzFhNzc3YSIsImlzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsImF1ZCI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsInN1YiI6ImIzYjAwZTk0LWQ0NjgtNDJlOC04ZjY0LWYxNTU2YjBkMjFlNyIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJuZXB0dW5lLWNsaSIsInNlc3Npb25fc3RhdGUiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwic2lkIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2In0.rz6ZBPEKbFekwoYNOmLOsu3z24UsOdtqlvbegS4beeU'}
+2025-12-16 01:09:53,380 - requests_oauthlib.oauth2_session - DEBUG - Passing through key word arguments {'json': None, 'auth': None, 'timeout': None, 'verify': True, 'proxies': None}.
+2025-12-16 01:09:54,219 - requests_oauthlib.oauth2_session - DEBUG - Request to refresh token completed with status 200.
+2025-12-16 01:09:54,219 - requests_oauthlib.oauth2_session - DEBUG - Response headers were {'Date': 'Mon, 15 Dec 2025 18:09:53 GMT', 'Content-Type': 'application/json', 'Content-Length': '2427', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'SAMEORIGIN', 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Pragma': 'no-cache', 'X-XSS-Protection': '1; mode=block', 'Via': '1.1 google', 'Alt-Svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'} and content {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJFS1dvUkZhUGJVdGlwSHVmVVpmVzZYWm1VT2J1VmR2T28yQXNNTkpacHBzIn0.eyJleHAiOjE3NjU4MjI0OTMsImlhdCI6MTc2NTgyMjE5MywianRpIjoiZjMzZjk0MmEtN2IyMC00ZmJkLWFjYjYtNjVkNWJhN2QzN2EyIiwiaXNzIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haS9hdXRoL3JlYWxtcy9uZXB0dW5lIiwiYXVkIjpbImJyb2tlciIsImFjY291bnQiXSwic3ViIjoiYjNiMDBlOTQtZDQ2OC00MmU4LThmNjQtZjE1NTZiMGQyMWU3IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibmVwdHVuZS1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2IiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3QqIiwiaHR0cDovL2xvY2FsaG9zdDoqIiwiaHR0cHM6Ly9hbHBoYS5uZXB0dW5lLmFpIiwiLyoiLCIvIiwiaHR0cHM6Ly9hbHBoYS5uZXB0dW5lLmFpLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbmVwdHVuZSIsIm5lcHR1bmVfd3JpdGUiLCJvZmZsaW5lX2FjY2VzcyIsIm5lcHR1bmVfcmVhZCIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYnJva2VyIjp7InJvbGVzIjpbInJlYWQtdG9rZW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib2ZmbGluZV9hY2Nlc3MiLCJzaWQiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhcmNoeDY0IiwibmVwdHVuZUhvc3QiOiJodHRwczovL2FwcC5uZXB0dW5lLm1sIiwiZW1haWwiOiJuZXVjbGV5b25AZ21haWwuY29tIn0.XRTsYhk-YOogPdfTegDwDowvhzUhyfL6s3QwJWdMg73npnRTGLYWPKf0fhVuASRIkl1B5nV-TfC4sOOufbqESA0qTKTaaDBSnhv3LWHiTLk6n0ut72dv1zgeyA2MrpSEvcOQMItwFoGCNPIPTvmUDlYqaLvLS0uVIM9LpFUUXtZ-LLG4Zxjdf41Hybg51njzyyWGcgV_HrNyk90KFDtHKIIwF6AEJfePWRi5hwTt9SCLFEDL9x8xmYcmo2BfWxL9pRNzgdskFvPoXb1Qf9kUbVAH2Ok8njbKwUKvWstvlWlFprFVxnTl5oN4uCLdDT3_9Z5h-jCPwi7HdT0s34BQew","expires_in":300,"refresh_expires_in":0,"refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyMGY3MjNjMS1hOTk3LTQxNTQtYjdkMi03ZDk3NTU2M2NkZjEifQ.eyJpYXQiOjE3NjU4MjIxOTMsImp0aSI6IjVjZjE0MWJhLTQxMmUtNGZlYi1iM2ZkLWIzYWQxNGE5MmJlOSIsImlzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsImF1ZCI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsInN1YiI6ImIzYjAwZTk0LWQ0NjgtNDJlOC04ZjY0LWYxNTU2YjBkMjFlNyIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJuZXB0dW5lLWNsaSIsInNlc3Npb25fc3RhdGUiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwic2lkIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2In0.OePpSykL_G28xYoAfyVupNnWhJNz8VIq8D6TCSfCIFg","token_type":"Bearer","not-before-policy":1501576317,"session_state":"35d905ba-c509-4297-8377-002a4423a566","scope":"offline_access"}.
+2025-12-16 01:09:54,220 - requests_oauthlib.oauth2_session - DEBUG - Invoking 0 token response hooks.
+2025-12-16 01:09:56,344 - git.cmd - DEBUG - Popen(['git', 'version'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=None, shell=False, universal_newlines=False)
+2025-12-16 01:09:56,382 - git.cmd - DEBUG - Popen(['git', 'version'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=None, shell=False, universal_newlines=False)
+2025-12-16 01:09:56,419 - git.util - DEBUG - sys.platform='win32', git_executable='git'
+2025-12-16 01:09:56,421 - git.cmd - DEBUG - Popen(['git', 'cat-file', '--batch-check'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=<valid stream>, shell=False, universal_newlines=False)
+2025-12-16 01:09:56,456 - git.cmd - DEBUG - Popen(['git', 'cat-file', '--batch'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=<valid stream>, shell=False, universal_newlines=False)
+2025-12-16 01:09:56,489 - git.cmd - DEBUG - Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=None, shell=False, universal_newlines=False)
+2025-12-16 01:09:57,482 - git.util - DEBUG - sys.platform='win32', git_executable='git'
+2025-12-16 01:09:57,484 - git.cmd - DEBUG - Popen(['git', 'diff', 'HEAD'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=None, shell=False, universal_newlines=False)
+2025-12-16 01:09:57,564 - git.cmd - DEBUG - Popen(['git', 'cat-file', '--batch-check'], cwd=C:\Users\neucl\Dev\Thesis\cxr-diff-vqa, stdin=<valid stream>, shell=False, universal_newlines=False)
+2025-12-16 01:09:57,601 - requests_oauthlib.oauth2_session - DEBUG - Adding auto refresh key word arguments {'client_id': 'neptune-cli'}.
+2025-12-16 01:09:57,602 - requests_oauthlib.oauth2_session - DEBUG - Prepared refresh token request body grant_type=refresh_token&client_id=neptune-cli&refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyMGY3MjNjMS1hOTk3LTQxNTQtYjdkMi03ZDk3NTU2M2NkZjEifQ.eyJpYXQiOjE3NjU4MjIxOTMsImp0aSI6IjVjZjE0MWJhLTQxMmUtNGZlYi1iM2ZkLWIzYWQxNGE5MmJlOSIsImlzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsImF1ZCI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsInN1YiI6ImIzYjAwZTk0LWQ0NjgtNDJlOC04ZjY0LWYxNTU2YjBkMjFlNyIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJuZXB0dW5lLWNsaSIsInNlc3Npb25fc3RhdGUiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwic2lkIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2In0.OePpSykL_G28xYoAfyVupNnWhJNz8VIq8D6TCSfCIFg
+2025-12-16 01:09:57,602 - requests_oauthlib.oauth2_session - DEBUG - Requesting url https://app.neptune.ai/auth/realms/neptune/protocol/openid-connect/token using method POST.
+2025-12-16 01:09:57,602 - requests_oauthlib.oauth2_session - DEBUG - Supplying headers {'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'} and data {'grant_type': 'refresh_token', 'client_id': 'neptune-cli', 'refresh_token': 'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyMGY3MjNjMS1hOTk3LTQxNTQtYjdkMi03ZDk3NTU2M2NkZjEifQ.eyJpYXQiOjE3NjU4MjIxOTMsImp0aSI6IjVjZjE0MWJhLTQxMmUtNGZlYi1iM2ZkLWIzYWQxNGE5MmJlOSIsImlzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsImF1ZCI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsInN1YiI6ImIzYjAwZTk0LWQ0NjgtNDJlOC04ZjY0LWYxNTU2YjBkMjFlNyIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJuZXB0dW5lLWNsaSIsInNlc3Npb25fc3RhdGUiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwic2lkIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2In0.OePpSykL_G28xYoAfyVupNnWhJNz8VIq8D6TCSfCIFg'}
+2025-12-16 01:09:57,602 - requests_oauthlib.oauth2_session - DEBUG - Passing through key word arguments {'json': None, 'auth': None, 'timeout': None, 'verify': None, 'proxies': None}.
+2025-12-16 01:09:57,647 - root - INFO - Neptune run initialized: topk-32_lambda_cf-0.0_dir-False
+2025-12-16 01:09:57,648 - root - INFO - Starting DRIFT-VQA Training.
+2025-12-16 01:09:57,648 - root - INFO - Full config: {'config': 'configs/clinicalbert_resnet.yaml', 'data_root': 'E:/MIMIC-CXR-JPG-512x512/', 'train_pairs_csv': 'E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_1p.csv', 'train_meta_csv': 'E:/MIMIC-CXR-JPG-512x512/mimic_all_1p.csv', 'val_pairs_csv': 'E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_1p.csv', 'val_meta_csv': 'E:/MIMIC-CXR-JPG-512x512/mimic_all_1p.csv', 'test_pairs_csv': 'E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_1p.csv', 'test_meta_csv': 'E:/MIMIC-CXR-JPG-512x512/mimic_all_1p.csv', 'keyinfo_json': 'E:/MIMIC-CXR-JPG-512x512/all_diseases_1p.json', 'ckpt': '', 'backbone': 'resnet18', 'text_encoder': 'clinicalbert', 'text_model_name': 'emilyalsentzer/Bio_ClinicalBERT', 'text_finetune': False, 'text_dim': 768, 'text_proj_dim': 256, 'max_ans_len': 64, 'topk': 32, 'ablation_no_direction': False, 'bs': 128, 'lr': 0.0001, 'num_workers': 0, 'epochs_mrm': 1, 'epochs_warmup': 5, 'epochs_vqa': 10, 'mask_ratio': 0.5, 'main_loss_weight': 10, 'lambda_mrm': 0.01, 'lambda_align': 0.01, 'lambda_cf': 0.0, 'seed': 69}
+2025-12-16 01:09:57,674 - root - INFO - Using device: cuda
+2025-12-16 01:09:57,675 - root - INFO - Loading training data from: E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_1p.csv
+2025-12-16 01:09:57,675 - lib.dataset - INFO - Loading cached dataset manifest from E:\MIMIC-CXR-JPG-512x512\mimic_diff_vqa_train_word_cache.pt...
+2025-12-16 01:09:57,689 - lib.dataset - INFO - [train split] Building new WORD-LEVEL vocabulary...
+2025-12-16 01:09:57,690 - root - INFO - Vocabulary saved to models\vocab.json (Size: 30)
+2025-12-16 01:09:57,691 - root - INFO - Loading validation data from: E:/MIMIC-CXR-JPG-512x512/mimic_pair_questions_1p.csv
+2025-12-16 01:09:57,691 - lib.dataset - INFO - Loading cached dataset manifest from E:\MIMIC-CXR-JPG-512x512\mimic_diff_vqa_val_word_cache.pt...
+2025-12-16 01:09:57,704 - root - INFO - Using 0 data loader workers.
+2025-12-16 01:09:57,705 - root - INFO - Initializing model...
+2025-12-16 01:09:57,705 - lib.model.vqa - INFO - Initializing DiffVQAModel in FULL (R+, R-, R_abs, Signed) mode with backbone: resnet18
+2025-12-16 01:09:58,015 - requests_oauthlib.oauth2_session - DEBUG - Request to refresh token completed with status 200.
+2025-12-16 01:09:58,015 - requests_oauthlib.oauth2_session - DEBUG - Response headers were {'Date': 'Mon, 15 Dec 2025 18:09:57 GMT', 'Content-Type': 'application/json', 'Content-Length': '2427', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'SAMEORIGIN', 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Pragma': 'no-cache', 'X-XSS-Protection': '1; mode=block', 'Via': '1.1 google', 'Alt-Svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'} and content {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJFS1dvUkZhUGJVdGlwSHVmVVpmVzZYWm1VT2J1VmR2T28yQXNNTkpacHBzIn0.eyJleHAiOjE3NjU4MjI0OTcsImlhdCI6MTc2NTgyMjE5NywianRpIjoiZDUwZTU3MTUtOWU0ZS00ZWIxLWE3NmMtZjE5YTlkMjg2ZGE0IiwiaXNzIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haS9hdXRoL3JlYWxtcy9uZXB0dW5lIiwiYXVkIjpbImJyb2tlciIsImFjY291bnQiXSwic3ViIjoiYjNiMDBlOTQtZDQ2OC00MmU4LThmNjQtZjE1NTZiMGQyMWU3IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibmVwdHVuZS1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2IiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3QqIiwiaHR0cDovL2xvY2FsaG9zdDoqIiwiaHR0cHM6Ly9hbHBoYS5uZXB0dW5lLmFpIiwiLyoiLCIvIiwiaHR0cHM6Ly9hbHBoYS5uZXB0dW5lLmFpLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtbmVwdHVuZSIsIm5lcHR1bmVfd3JpdGUiLCJvZmZsaW5lX2FjY2VzcyIsIm5lcHR1bmVfcmVhZCIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYnJva2VyIjp7InJvbGVzIjpbInJlYWQtdG9rZW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib2ZmbGluZV9hY2Nlc3MiLCJzaWQiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhcmNoeDY0IiwibmVwdHVuZUhvc3QiOiJodHRwczovL2FwcC5uZXB0dW5lLm1sIiwiZW1haWwiOiJuZXVjbGV5b25AZ21haWwuY29tIn0.oHYNlNOwpT44sp49CiNJA82GI34kMvWEv56UPMMGg2cQLMEjiSnMGAitPpBR0yD8Zej409dGyVMylZZXKLt1kmVBWXzvT_Xs5u2DpPQy3-STPNfuqdBrD_Bt1ph6QDZh44kaqUGpUmcqT5eEqYPzSdvJJrh-VHkyYUGJ7sr0KGJzcGN6IcyUkfI6ZPCMhEGVJ1O5zK1rh791R42svHSID-_CNsp8rIHX4gAkLDAWTMSSWYSY3L7hRWcgJ8ZuCc1F6ep-Qd7JsOFJpzmveW7TQk6ZbEFicPwdYS9DmoJO0RucrNwZVFGD_3KVQdZJhaXzRDSR0l4OzMfCxuBcTE_FeA","expires_in":300,"refresh_expires_in":0,"refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIyMGY3MjNjMS1hOTk3LTQxNTQtYjdkMi03ZDk3NTU2M2NkZjEifQ.eyJpYXQiOjE3NjU4MjIxOTcsImp0aSI6IjlhMDViYjNlLWFlNGMtNDNkNi1hNmNjLTE2YzA1ZDBhZWMxYiIsImlzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsImF1ZCI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkvYXV0aC9yZWFsbXMvbmVwdHVuZSIsInN1YiI6ImIzYjAwZTk0LWQ0NjgtNDJlOC04ZjY0LWYxNTU2YjBkMjFlNyIsInR5cCI6Ik9mZmxpbmUiLCJhenAiOiJuZXB0dW5lLWNsaSIsInNlc3Npb25fc3RhdGUiOiIzNWQ5MDViYS1jNTA5LTQyOTctODM3Ny0wMDJhNDQyM2E1NjYiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwic2lkIjoiMzVkOTA1YmEtYzUwOS00Mjk3LTgzNzctMDAyYTQ0MjNhNTY2In0.3F1V-mfLmqErfZzwMQ9v1ugRE-aUmESJPSWV4sXTt8w","token_type":"Bearer","not-before-policy":1501576317,"session_state":"35d905ba-c509-4297-8377-002a4423a566","scope":"offline_access"}.
+2025-12-16 01:09:58,015 - requests_oauthlib.oauth2_session - DEBUG - Invoking 0 token response hooks.
+2025-12-16 01:10:02,215 - lib.model.vqa - INFO - Initializing decoder head with input dim 2048.
+2025-12-16 01:10:03,252 - root - INFO - 
+=== Stage A Epoch 1 ===
+2025-12-16 01:10:07,588 - root - INFO - Stage A Epoch 1 Avg Loss: 0.3651
+2025-12-16 01:10:07,590 - root - INFO - 
+=== Stage B Epoch 1 ===
+2025-12-16 01:10:08,322 - root - INFO - Stage B Epoch 1 Avg Loss: 35.0317
+2025-12-16 01:10:08,323 - root - INFO - 
+=== Stage B Epoch 2 ===
+2025-12-16 01:10:09,017 - root - INFO - Stage B Epoch 2 Avg Loss: 35.2689
+2025-12-16 01:10:09,018 - root - INFO - 
+=== Stage B Epoch 3 ===
+2025-12-16 01:10:09,538 - root - INFO - Stage B Epoch 3 Avg Loss: 35.1530
+2025-12-16 01:10:09,538 - root - INFO - 
+=== Stage B Epoch 4 ===
+2025-12-16 01:10:11,327 - root - INFO - Stage B Epoch 4 Avg Loss: 35.0845
+2025-12-16 01:10:11,328 - root - INFO - 
+=== Stage B Epoch 5 ===
+2025-12-16 01:10:18,155 - root - INFO - Stage B Epoch 5 Avg Loss: 54.0360
+2025-12-16 01:10:18,157 - root - INFO - Re-initializing optimizer for Stage C (VQA) with lower LR.
+2025-12-16 01:10:18,158 - root - INFO - 
+=== Stage C Epoch 1 ===
+2025-12-16 01:10:19,243 - root - INFO - Stage C Epoch 1 Avg Loss: 53.4513
+2025-12-16 01:10:19,261 - root - INFO - current LR: 0.00000098
+2025-12-16 01:10:19,262 - root - INFO - Running validation...
+2025-12-16 01:10:32,270 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,270 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,286 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,286 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:10:32,301 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,301 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,315 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,315 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:10:32,330 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,330 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,344 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,344 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:10:32,359 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,359 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,372 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,372 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:10:32,385 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,385 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:10:32,399 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,399 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,413 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,413 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:10:32,428 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,428 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,442 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,442 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:10:32,456 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,456 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:32,470 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,470 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:10:32,484 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:10:32,484 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:10:37,460 - filelock - DEBUG - Attempting to acquire lock 1750363134896 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\.locks\models--StanfordAIMI--RRG_scorers\fadb5a3454e8996714b609e3105a07e447fa61aa88fffe966b650959475117b6.lock
+2025-12-16 01:10:37,462 - filelock - DEBUG - Lock 1750363134896 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\.locks\models--StanfordAIMI--RRG_scorers\fadb5a3454e8996714b609e3105a07e447fa61aa88fffe966b650959475117b6.lock
+2025-12-16 01:10:37,464 - huggingface_hub.file_download - WARNING - Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-12-16 01:10:52,673 - filelock - DEBUG - Attempting to release lock 1750363134896 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\.locks\models--StanfordAIMI--RRG_scorers\fadb5a3454e8996714b609e3105a07e447fa61aa88fffe966b650959475117b6.lock
+2025-12-16 01:10:52,674 - filelock - DEBUG - Lock 1750363134896 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\.locks\models--StanfordAIMI--RRG_scorers\fadb5a3454e8996714b609e3105a07e447fa61aa88fffe966b650959475117b6.lock
+2025-12-16 01:10:55,572 - filelock - DEBUG - Attempting to acquire lock 1756229038928 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:10:55,572 - filelock - DEBUG - Lock 1756229038928 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:10:55,590 - filelock - DEBUG - Attempting to release lock 1756229038928 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:10:55,591 - filelock - DEBUG - Lock 1756229038928 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:10:55,930 - filelock - DEBUG - Attempting to acquire lock 1750226770096 on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\bcab7319baa9b2d0620a92808581c48343e73bcb.lock
+2025-12-16 01:10:55,932 - filelock - DEBUG - Lock 1750226770096 acquired on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\bcab7319baa9b2d0620a92808581c48343e73bcb.lock
+2025-12-16 01:10:55,998 - filelock - DEBUG - Attempting to release lock 1750226770096 on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\bcab7319baa9b2d0620a92808581c48343e73bcb.lock
+2025-12-16 01:10:55,998 - filelock - DEBUG - Lock 1750226770096 released on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\bcab7319baa9b2d0620a92808581c48343e73bcb.lock
+2025-12-16 01:10:56,324 - filelock - DEBUG - Attempting to acquire lock 1750360315024 on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\976cc9c59dc0efa7a5d349cef15f3fa5402340b3.lock
+2025-12-16 01:10:56,325 - filelock - DEBUG - Lock 1750360315024 acquired on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\976cc9c59dc0efa7a5d349cef15f3fa5402340b3.lock
+2025-12-16 01:10:56,363 - filelock - DEBUG - Attempting to release lock 1750360315024 on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\976cc9c59dc0efa7a5d349cef15f3fa5402340b3.lock
+2025-12-16 01:10:56,363 - filelock - DEBUG - Lock 1750360315024 released on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\976cc9c59dc0efa7a5d349cef15f3fa5402340b3.lock
+2025-12-16 01:10:57,229 - filelock - DEBUG - Attempting to acquire lock 1750227337968 on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\a106caa20ff3c3d8feb06454feb2deaa93a3b69a.lock
+2025-12-16 01:10:57,229 - filelock - DEBUG - Lock 1750227337968 acquired on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\a106caa20ff3c3d8feb06454feb2deaa93a3b69a.lock
+2025-12-16 01:10:57,356 - filelock - DEBUG - Attempting to release lock 1750227337968 on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\a106caa20ff3c3d8feb06454feb2deaa93a3b69a.lock
+2025-12-16 01:10:57,357 - filelock - DEBUG - Lock 1750227337968 released on C:\Users\neucl\.cache\huggingface\hub\.locks\models--microsoft--BiomedVLP-CXR-BERT-general\a106caa20ff3c3d8feb06454feb2deaa93a3b69a.lock
+2025-12-16 01:11:04,335 - root - INFO - 
+=== Stage C Epoch 2 ===
+2025-12-16 01:11:05,834 - root - INFO - Stage C Epoch 2 Avg Loss: 52.9852
+2025-12-16 01:11:05,834 - root - INFO - current LR: 0.00000091
+2025-12-16 01:11:05,834 - root - INFO - Running validation...
+2025-12-16 01:11:14,124 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,124 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,137 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,137 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:14,152 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,152 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,165 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,165 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:14,180 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,180 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,194 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,194 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:14,208 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,209 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,222 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,223 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:14,236 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,236 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:14,251 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,251 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,266 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,266 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:14,280 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,281 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,294 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,294 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:14,309 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,309 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,323 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,324 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:14,338 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:14,338 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:14,370 - filelock - DEBUG - Attempting to acquire lock 1756229075264 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:14,371 - filelock - DEBUG - Lock 1756229075264 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:14,371 - filelock - DEBUG - Attempting to release lock 1756229075264 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:14,372 - filelock - DEBUG - Lock 1756229075264 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:17,526 - root - INFO - 
+=== Stage C Epoch 3 ===
+2025-12-16 01:11:26,154 - root - INFO - Stage C Epoch 3 Avg Loss: 52.0089
+2025-12-16 01:11:26,155 - root - INFO - current LR: 0.00000080
+2025-12-16 01:11:26,155 - root - INFO - Running validation...
+2025-12-16 01:11:33,318 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,318 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,331 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,331 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:33,346 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,347 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,360 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,360 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:33,375 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,375 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,388 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,388 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:33,403 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,403 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,416 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,416 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:33,430 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,430 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:33,445 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,445 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,459 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,459 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:33,473 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,473 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,487 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,487 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:33,501 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,501 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,516 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,516 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:33,531 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:33,531 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:33,547 - filelock - DEBUG - Attempting to acquire lock 1756226541888 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:33,548 - filelock - DEBUG - Lock 1756226541888 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:33,550 - filelock - DEBUG - Attempting to release lock 1756226541888 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:33,550 - filelock - DEBUG - Lock 1756226541888 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:35,827 - root - INFO - 
+=== Stage C Epoch 4 ===
+2025-12-16 01:11:43,188 - root - INFO - Stage C Epoch 4 Avg Loss: 50.4722
+2025-12-16 01:11:43,188 - root - INFO - current LR: 0.00000066
+2025-12-16 01:11:43,188 - root - INFO - Running validation...
+2025-12-16 01:11:49,208 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,208 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,221 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,221 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:49,236 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,236 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,250 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,250 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:49,265 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,265 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,279 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,279 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:49,294 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,294 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,307 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,307 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:49,320 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,321 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:11:49,335 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,335 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,350 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,350 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:49,364 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,364 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,378 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,378 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:49,392 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,392 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,406 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,406 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:11:49,420 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:11:49,420 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:11:49,451 - filelock - DEBUG - Attempting to acquire lock 1756226396256 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:49,452 - filelock - DEBUG - Lock 1756226396256 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:49,453 - filelock - DEBUG - Attempting to release lock 1756226396256 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:49,453 - filelock - DEBUG - Lock 1756226396256 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:11:50,998 - root - INFO - 
+=== Stage C Epoch 5 ===
+2025-12-16 01:11:56,559 - root - INFO - Stage C Epoch 5 Avg Loss: 49.3263
+2025-12-16 01:11:56,560 - root - INFO - current LR: 0.00000051
+2025-12-16 01:11:56,560 - root - INFO - Running validation...
+2025-12-16 01:12:02,577 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,577 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,590 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,591 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:02,604 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,604 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,618 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,618 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:02,632 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,633 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,646 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,646 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:02,662 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,662 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,676 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,676 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:02,690 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,690 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:02,705 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,706 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,721 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,721 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:02,736 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,736 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,750 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,751 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:02,765 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,765 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,780 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,780 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:02,794 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:02,794 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:02,813 - filelock - DEBUG - Attempting to acquire lock 1756223947648 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:02,813 - filelock - DEBUG - Lock 1756223947648 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:02,814 - filelock - DEBUG - Attempting to release lock 1756223947648 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:02,814 - filelock - DEBUG - Lock 1756223947648 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:04,559 - root - INFO - 
+=== Stage C Epoch 6 ===
+2025-12-16 01:12:10,188 - root - INFO - Stage C Epoch 6 Avg Loss: 49.0228
+2025-12-16 01:12:10,189 - root - INFO - current LR: 0.00000035
+2025-12-16 01:12:10,189 - root - INFO - Running validation...
+2025-12-16 01:12:15,572 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,572 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,586 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,586 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:15,600 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,600 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,614 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,614 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:15,629 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,629 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,643 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,643 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:15,657 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,657 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,671 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,671 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:15,684 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,684 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:15,698 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,699 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,713 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,713 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:15,728 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,728 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,741 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,741 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:15,756 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,756 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,770 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,770 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:15,784 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:15,784 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:15,803 - filelock - DEBUG - Attempting to acquire lock 1756226540592 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:15,804 - filelock - DEBUG - Lock 1756226540592 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:15,804 - filelock - DEBUG - Attempting to release lock 1756226540592 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:15,804 - filelock - DEBUG - Lock 1756226540592 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:17,373 - root - INFO - 
+=== Stage C Epoch 7 ===
+2025-12-16 01:12:22,580 - root - INFO - Stage C Epoch 7 Avg Loss: 48.1043
+2025-12-16 01:12:22,580 - root - INFO - current LR: 0.00000021
+2025-12-16 01:12:22,580 - root - INFO - Running validation...
+2025-12-16 01:12:27,930 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:27,930 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:27,944 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:27,944 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:27,958 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:27,958 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:27,971 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:27,971 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:27,986 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:27,986 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:27,999 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:27,999 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:28,014 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,014 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:28,027 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,027 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:28,041 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,041 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:28,056 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,056 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:28,070 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,070 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:28,084 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,085 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:28,098 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,099 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:28,113 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,113 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:28,127 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,127 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:28,141 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:28,141 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:28,160 - filelock - DEBUG - Attempting to acquire lock 1756223947072 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:28,161 - filelock - DEBUG - Lock 1756223947072 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:28,162 - filelock - DEBUG - Attempting to release lock 1756223947072 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:28,162 - filelock - DEBUG - Lock 1756223947072 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:29,695 - root - INFO - 
+=== Stage C Epoch 8 ===
+2025-12-16 01:12:35,140 - root - INFO - Stage C Epoch 8 Avg Loss: 47.6301
+2025-12-16 01:12:35,141 - root - INFO - current LR: 0.00000010
+2025-12-16 01:12:35,141 - root - INFO - Running validation...
+2025-12-16 01:12:40,536 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,536 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,549 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,549 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:40,564 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,564 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,578 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,578 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:40,593 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,593 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,606 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,606 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:40,622 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,622 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,635 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,635 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:40,649 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,649 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:40,663 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,664 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,678 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,678 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:40,692 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,692 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,706 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,706 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:40,720 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,720 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,734 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,734 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:40,748 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:40,748 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:40,768 - filelock - DEBUG - Attempting to acquire lock 1756227955856 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:40,768 - filelock - DEBUG - Lock 1756227955856 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:40,769 - filelock - DEBUG - Attempting to release lock 1756227955856 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:40,769 - filelock - DEBUG - Lock 1756227955856 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:42,400 - root - INFO - 
+=== Stage C Epoch 9 ===
+2025-12-16 01:12:47,593 - root - INFO - Stage C Epoch 9 Avg Loss: 47.3364
+2025-12-16 01:12:47,593 - root - INFO - current LR: 0.00000003
+2025-12-16 01:12:47,594 - root - INFO - Running validation...
+2025-12-16 01:12:53,609 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,609 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,622 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,622 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:53,637 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,637 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,651 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,651 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:53,665 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,665 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,679 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,679 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:53,694 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,694 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,707 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,707 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:53,721 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,721 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:12:53,735 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,735 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,750 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,750 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:53,765 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,765 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,778 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,778 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:53,794 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,794 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,807 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,808 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:12:53,821 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:12:53,821 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:12:53,840 - filelock - DEBUG - Attempting to acquire lock 1756227367904 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:53,840 - filelock - DEBUG - Lock 1756227367904 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:53,841 - filelock - DEBUG - Attempting to release lock 1756227367904 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:53,841 - filelock - DEBUG - Lock 1756227367904 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:12:55,377 - root - INFO - 
+=== Stage C Epoch 10 ===
+2025-12-16 01:13:00,690 - root - INFO - Stage C Epoch 10 Avg Loss: 47.3800
+2025-12-16 01:13:00,690 - root - INFO - current LR: 0.00000001
+2025-12-16 01:13:00,691 - root - INFO - Running validation...
+2025-12-16 01:13:06,377 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,377 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,391 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,391 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:13:06,405 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,405 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,419 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,419 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:13:06,434 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,434 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,448 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,448 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:13:06,463 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,463 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,477 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,477 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:13:06,491 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,491 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32287
+2025-12-16 01:13:06,505 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,505 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,520 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,520 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:13:06,534 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,535 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,549 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,549 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:13:06,563 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,564 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,577 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,578 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 32915
+2025-12-16 01:13:06,592 - PIL.PngImagePlugin - DEBUG - STREAM b'IHDR' 16 13
+2025-12-16 01:13:06,592 - PIL.PngImagePlugin - DEBUG - STREAM b'IDAT' 41 36783
+2025-12-16 01:13:06,609 - filelock - DEBUG - Attempting to acquire lock 1756226540928 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:13:06,610 - filelock - DEBUG - Lock 1756226540928 acquired on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:13:06,611 - filelock - DEBUG - Attempting to release lock 1756226540928 on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:13:06,611 - filelock - DEBUG - Lock 1756226540928 released on C:\Users\neucl\AppData\Local\radgraph\radgraph\Cache\0.1.18\radgraph-xl\vocabulary\.lock
+2025-12-16 01:13:10,700 - root - INFO - Training complete. Model saved to models\drift_k-32_lambda_cf-0.0_dir-False.pth
